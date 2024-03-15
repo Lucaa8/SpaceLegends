@@ -1,0 +1,7 @@
+find the *images* (not nfts) on IPFS:
+- Earth: https://bafybeie4n7ygwhczxutgdtkjvr4mmdbbwdgejf6jrwz3d47xonhir6lnja.ipfs.w3s.link/
+- Mars : ?
+
+find the nfts JSON on IPFS:
+- Earth: ?
+- Mars : ?
