@@ -11,6 +11,14 @@ w3 = Web3(Web3.HTTPProvider(f'https://eth-sepolia.g.alchemy.com/v2/{os.getenv("A
 
 assert w3.is_connected()
 
+# Create encode and decode function/routes
+
+# encoded_id = (collec << 16) | (row << 8) | col
+
+# collection_id_decoded = (encoded_id >> 16) & 0xFF
+# row_decoded = (encoded_id >> 8) & 0xFF
+# col_decoded = encoded_id & 0xFF
+
 @app.route('/token/<int:tokenid>')
 def generate_token(tokenid):
     return json.dumps({'tokenid': tokenid}, indent=4)
