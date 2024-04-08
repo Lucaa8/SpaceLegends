@@ -1,6 +1,9 @@
 async function main() {
   const CosmicRelic = await ethers.getContractFactory("CosmicRelic");
-  const cosmicRelic = await CosmicRelic.deploy(); //baseTokenURI argument?
+  
+  const baseTokenURI = "http://localhost/token/";
+  
+  const cosmicRelic = await CosmicRelic.deploy(baseTokenURI);
 
   console.log("CosmicRelic deployed to:", cosmicRelic.address);
 }

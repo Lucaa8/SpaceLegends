@@ -1,6 +1,7 @@
 from flask import Flask
 from web3 import Web3
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,10 +11,9 @@ w3 = Web3(Web3.HTTPProvider(f'https://eth-sepolia.g.alchemy.com/v2/{os.getenv("A
 
 assert w3.is_connected()
 
-
 @app.route('/token/<int:tokenid>')
 def generate_token(tokenid):
-    return f'Token {tokenid}'
+    return json.dumps({'tokenid': tokenid}, indent=4)
 
 
 if __name__ == '__main__':
