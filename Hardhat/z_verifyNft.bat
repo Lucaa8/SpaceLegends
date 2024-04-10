@@ -1,0 +1,1 @@
+npx hardhat verify --network sepolia 0x5a225648217ca3cE0fe7413903c2cDf4DCd429Fb "http://localhost/token/"

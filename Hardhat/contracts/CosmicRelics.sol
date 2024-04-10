@@ -27,7 +27,7 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
 	// Stores which image (piece of any collection) the NFTs will hold. E.g 010202 for the Mars collection, center piece (row 2, col 2), then packed into a single uint: 66050
 	mapping(uint256 => uint256) private _tokenType;
 
-    constructor(string memory baseTokenURI) ERC721("CosmicRelic", "CREL") Ownable(msg.sender) {
+    constructor(string memory baseTokenURI) ERC721("Cosmic Relic", "CREL") Ownable(msg.sender) {
         setBaseURI(baseTokenURI);
     }
 	
