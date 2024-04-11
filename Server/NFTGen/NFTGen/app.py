@@ -12,18 +12,16 @@ baseURL = "http://localhost/"
 
 assert w3.is_connected()
 
-@app.route('/token/<int:tokenid>')
-def generate_token(tokenid):
-    metadata = {
-        "name": f"Earth Piece 1",
-        "description": f"This is piece 1 of the Earth collection.",
-        "image": f"https://bafybeie4n7ygwhczxutgdtkjvr4mmdbbwdgejf6jrwz3d47xonhir6lnja.ipfs.w3s.link/00_Earth_r1c1.png",
-        "attributes": [
-            {"trait_type": "Collection", "value": "test"},
-            {"trait_type": "Piece Index", "value": "test"}
-        ]
-    }
-    return jsonify(metadata)
+
+@app.route('/token/<int:token_id>')
+def generate_token(token_id):
+    coll = 1256
+    row = 254
+    col = 12
+    rarity = 7
+    encode = (coll << 27) | (row << 11) | (col << 3) | rarity
+    print((encode >> 27) & 0xFFF, (encode >> 11) & 0xFF, (encode >> 3) & 0xFF, encode & 0x7)
+    return "Token ID {}".format(token_id)
 
 
 if __name__ == '__main__':
