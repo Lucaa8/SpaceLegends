@@ -1,0 +1,82 @@
+{
+    "collection": {
+        "id": 1,
+        "name": "Mars",
+        "description": "The red planet.",
+        "baseurl": "http://localhost/"
+    },
+    "items": [
+        {
+            "name": "Mars N°1",
+            "description": "Against the canvas of the cosmos, ships sail towards the crimson horizon, their silhouettes a beacon of mankind’s unwavering resolve.",
+            "collection_id": 1,
+            "row": 1,
+            "col": 1,
+            "rarity": 2
+        },
+        {
+            "name": "Mars N°2",
+            "description": "As dust dances in the Martian twilight, explorers ascend in a trio of light, defying the gravity of their challenges.",
+            "collection_id": 1,
+            "row": 1,
+            "col": 2,
+            "rarity": 3
+        },
+        {
+            "name": "Mars N°3",
+            "description": "The behemoth of interplanetary travel stands sentinel over a barren land, a monolith to human ambition amidst the Martian desolation.",
+            "collection_id": 1,
+            "row": 1,
+            "col": 3,
+            "rarity": 1
+        },
+        {
+            "name": "Mars N°4",
+            "description": "Biodomes bloom in the desert’s embrace, fragile bubbles of life against the might of a relentless Martian storm.",
+            "collection_id": 1,
+            "row": 2,
+            "col": 1,
+            "rarity": 1
+        },
+        {
+            "name": "Mars N°5",
+            "description": "A Martian settlement clings to survival, its domed oasis standing resilient in the face of a sprawling, dust-swept expanse.",
+            "collection_id": 1,
+            "row": 2,
+            "col": 2,
+            "rarity": 2
+        },
+        {
+            "name": "Mars N°6",
+            "description": "Towering columns of human ingenuity rise from the Martian soil, steel veins channeling the lifeblood of a nascent civilization.",
+            "collection_id": 1,
+            "row": 2,
+            "col": 3,
+            "rarity": 1
+        },
+        {
+            "name": "Mars N°7",
+            "description": "Astronauts tread softly on alien soil, their figures casting long shadows over the red dust that is now their home.",
+            "collection_id": 1,
+            "row": 3,
+            "col": 1,
+            "rarity": 4
+        },
+        {
+            "name": "Mars N°8",
+            "description": "Workers toil amidst a network of machinery, their efforts a testament to humanity’s persistence under a foreign sun.",
+            "collection_id": 1,
+            "row": 3,
+            "col": 2,
+            "rarity": 2
+        },
+        {
+            "name": "Mars N°9",
+            "description": "Pioneers traverse the rugged Martian terrain, their paths illuminated by the artificial glow of a settlement on the frontier of the unknown.",
+            "collection_id": 1,
+            "row": 3,
+            "col": 3,
+            "rarity": 1
+        }
+    ]
+}

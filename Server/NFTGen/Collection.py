@@ -1,4 +1,4 @@
-from app import baseURL
+import json
 
 
 def _encore_token_type(collection: int, row: int, col: int, rarity: int) -> int:
@@ -15,20 +15,24 @@ def _decode_token_type_formatted(encoded_type: int) -> str:
 
 
 class Collection:
-    def __init__(self, collection_id: int, name: str, description: str):
+    def __init__(self, collection_id: int, name: str, description: str, collection_base_url: str):
         self._collection_id = collection_id
         self._name = name
         self._description = description
+        self._base_url = collection_base_url
 
     def get_collection_id(self) -> str:
         return str(self._collection_id).zfill(2)
 
-    def json(self) -> dict[str, str]:
-        return {
-            'ID': self.get_collection_id(),
-            'Name': self._name,
-            'Description': self._description
-        }
+    def get_image_base_url(self) -> str:
+        return f"{self._base_url}{self.get_collection_id()}_{self.name}_"
+
+    @staticmethod
+    def from_file(json_object):
+        if ("id" not in json_object) or ("name" not in json_object) or ("description" not in json_object) or ("baseurl" not in json_object):
+            print("Invalid JSON. Cannot build collection. Missing values.")
+            return None
+        return Collection(json_object["id"], json_object["name"], json_object["description"], json_object["baseurl"])
 
     @property
     def collection_id(self):
@@ -39,10 +43,67 @@ class Collection:
         return self._name
 
 
-collections = [
-    Collection(0, "Earth", "The default planet."),
-    Collection(1, "Mars", "The red planet."),
-]
+class Item:
+    def __init__(self, item_id: int, name: str, description: str):
+        decode_id = _decode_token_type(item_id)
+        self._item_id = item_id
+        self._collection: Collection = get_collection(decode_id[0])
+        self._row = decode_id[1]
+        self._col = decode_id[2]
+        self._rarity = decode_id[3] # 1=Common, 2=Rare, 3=Epic, 4=Legendary
+        self._name = name
+        self._description = description
+
+    @property
+    def item_id(self):
+        return self._item_id
+
+    def get_image(self):
+        return f"{self._collection.get_image_base_url()}r{str(self._row).zfill(2)}c{str(self._col).zfill(2)}.png"
+
+    @staticmethod
+    def from_file(json_object):
+        if ("row" not in json_object) or ("col" not in json_object) or ("rarity" not in json_object) or ("collection_id" not in json_object):
+            print("Invalid JSON. Cannot build item token type.")
+            return None
+        if ("name" not in json_object) or ("description" not in json_object):
+            print("Invalid JSON. Cannot retrieve item name and/or description.")
+            return None
+        item_id = _encore_token_type(json_object["collection_id"], json_object["row"], json_object["col"], json_object["rarity"])
+        return Item(item_id, json_object["name"], json_object["description"])
+
+    def to_metadata(self):
+        return {
+            "name": self._name,
+            "description": self._description,
+            "external_url": "https://space-legends.luca-dc.ch/",
+            "image": self.get_image(),
+            "attributes": [
+                {
+                    "trait_type": "Collection",
+                    "value": f"{self._collection.get_collection_id()} {self._collection.name}"
+                },
+                {
+                    "display_type": "number",
+                    "trait_type": "Row",
+                    "value": self._row
+                },
+                {
+                    "display_type": "number",
+                    "trait_type": "Column",
+                    "value": self._col
+                },
+                {
+                    "display_type": "number",
+                    "trait_type": "Rarity",
+                    "value": self._rarity
+                }
+            ]
+        }
+
+
+collections = []
+items = []
 
 
 def get_collection(collection_id: int) -> Collection | None:
@@ -52,81 +113,17 @@ def get_collection(collection_id: int) -> Collection | None:
     return None
 
 
-class Item:
-    def __init__(self, item_id: int, name: str, description: str):
-        decode_id = _decode_token_type(item_id)
-        self._item_id = item_id
-        self._collection: Collection = get_collection(decode_id[0])
-        self._row = decode_id[1]
-        self._col = decode_id[2]
-        self._rarity = decode_id[3]
-        self._name = name
-        self._description = description
-
-    def get_image(self):
-        return f"{self._collection.get_collection_id()}_{self._collection.name}_r{str(self._row).zfill(2)}c{str(self._col).zfill(2)}.png"
-
-    def to_file(self):
-        return {
-            "id": self._item_id,
-            "name": self._name,
-            "description": self._description,
-            "collection_id": self._collection.collection_id,
-            "row": self._row,
-            "col": self._col,
-            "rarity": self._rarity
-        }
-
-    def to_metadata(self):
-        return {
-            "name": self._name,
-            "description": self._description,
-            "external_url": "https://space-legends.luca-dc.ch/",
-            "image": f"{baseURL}{self.get_image()}",
-            "attributes": [
-                {
-                    "trait_type": "Collection",
-                    "value": f"{self._collection.get_collection_id()} {self._collection.name}"
-                },
-                {
-                    "display_type": "number",
-                    "trait_type": "Row",
-                    "value": f"{str(self._row).zfill(2)}"
-                },
-                {
-                    "display_type": "number",
-                    "trait_type": "Column",
-                    "value": f"{str(self._col).zfill(2)}"
-                },
-                {
-                    "display_type": "number",
-                    "trait_type": "Rarity",
-                    "value": self._rarity
-                    #Common, Rare, Epic, Legendary
-                }
-            ]
-        }
+def get_item(item_id: int) -> Item | None:
+    for item in items:
+        if item.item_id == item_id:
+            return item
+    return None
 
 
-items = [
-    # Earth (refaire pr ajouter rareté)
-    Item(257, "Earth N°1", "Icy tendrils cling to the skeletal remains of urban progress, a frozen testament to a world in silent aftermath."),
-    Item(258, "Earth N°2", "Morning light whispers over the icy tomb of civilization, where once the bustle of life thrived now stands a chilling hush."),
-    Item(259, "Earth N°3", "The sun graces the frost-laden edifices of humanity’s hubris, offering no warmth to the cold desolation of regret."),
-    Item(513, "Earth N°4", "A car, once a symbol of freedom, now lies shackled in the relentless grip of an eternal winter’s embrace."),
-    Item(514, "Earth N°5", "A convoy of icy relics, stand in silent parade amidst the frozen breath of Earth’s desolate sigh."),
-    Item(515, "Earth N°6", "The urban graveyard sprawls into the horizon, with icy shrouds enveloping the echoes of a silenced world."),
-    Item(769, "Earth N°7", "Beneath a crystal cloak, a lone car rests, a frosty epitaph to the stillness that has befallen the Earth."),
-    Item(770, "Earth N°8", "A blanket of frost encases remnants of a rush hour frozen in time, an arctic echo of once warmer days."),
-    Item(771, "Earth N°9", "Nature’s icy fingers clasp over the remains of humanity's haste, a chilling reminder of the planet’s stoic indifference."),
-    # Mars
-    Item(65793, "Mars N°1", "Against the canvas of the cosmos, ships sail towards the crimson horizon, their silhouettes a beacon of mankind’s unwavering resolve."),
-    Item(65794, "Mars N°2", "As dust dances in the Martian twilight, explorers ascend in a trio of light, defying the gravity of their challenges."),
-    Item(65795, "Mars N°3", "The behemoth of interplanetary travel stands sentinel over a barren land, a monolith to human ambition amidst the Martian desolation."),
-    Item(66049, "Mars N°4", "Biodomes bloom in the desert’s embrace, fragile bubbles of life against the might of a relentless Martian storm."),
-    Item(66050, "Mars N°5", "A Martian settlement clings to survival, its domed oasis standing resilient in the face of a sprawling, dust-swept expanse."),
-    Item(66051, "Mars N°6", "Towering columns of human ingenuity rise from the Martian soil, steel veins channeling the lifeblood of a nascent civilization."),
-    Item(66305, "Mars N°7", "Astronauts tread softly on alien soil, their figures casting long shadows over the red dust that is now their home."),
-    Item(66306, "Mars N°8", "Workers toil amidst a network of machinery, their efforts a testament to humanity’s persistence under a foreign sun."),
-    Item(66307, "Mars N°9", "Pioneers traverse the rugged Martian terrain, their paths illuminated by the artificial glow of a settlement on the frontier of the unknown.")
-]
+def load(file: str) -> None:
+    with open(file, 'r', encoding="utf-8") as f:
+        data = json.load(f)
+        collections.append(Collection.from_file(data["collection"]))
+        for item in data["items"]:
+            items.append(Item.from_file(item))
+
