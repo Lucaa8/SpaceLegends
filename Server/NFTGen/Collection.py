@@ -66,7 +66,18 @@ class Item:
     def get_image(self):
         return f"{self._collection.get_collection_id()}_{self._collection.name}_r{str(self._row).zfill(2)}c{str(self._col).zfill(2)}.png"
 
-    def json(self):
+    def to_file(self):
+        return {
+            "id": self._item_id,
+            "name": self._name,
+            "description": self._description,
+            "collection_id": self._collection.collection_id,
+            "row": self._row,
+            "col": self._col,
+            "rarity": self._rarity
+        }
+
+    def to_metadata(self):
         return {
             "name": self._name,
             "description": self._description,
