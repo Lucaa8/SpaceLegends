@@ -1,6 +1,0 @@
-find the *images* on IPFS:
-- Earth: https://bafybeie4n7ygwhczxutgdtkjvr4mmdbbwdgejf6jrwz3d47xonhir6lnja.ipfs.w3s.link/
-- Mars : ?
-
-find the *NFT* on etherscan:
-- https://sepolia.etherscan.io/token/0x5a225648217ca3ce0fe7413903c2cdf4dcd429fb
