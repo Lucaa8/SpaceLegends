@@ -24,7 +24,8 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
     // Stores every owner of every NFT
     mapping(uint256 => OwnershipHistory[]) private _ownershipHistory;
 	
-	// Stores which image (piece of any collection) the NFTs will hold. E.g 010202 for the Mars collection, center piece (row 2, col 2), then packed into a single uint: 66050
+	// Stores which image (piece of any collection) the NFTs will hold. Also stores the rarity of the piece
+	// The mask is the following (collection << 27) | (row << 11) | (column << 3) | rarity
 	mapping(uint256 => uint256) private _tokenType;
 
     constructor(string memory baseTokenURI) ERC721("Cosmic Relic", "CREL") Ownable(msg.sender) {
@@ -48,7 +49,7 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
 		}
 	}
 
-	// Build a dynamic token URL for metadata. E.g. https://api.space-legends.ch/token/12
+	// Build a dynamic token URL for metadata. E.g. https://space-legends.luca-dc.ch/token/12
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
         require(exists(tokenId), "ERC721URI: URI query for nonexistent token");
         return string(abi.encodePacked(_baseURI(), Strings.toString(tokenId)));
@@ -88,7 +89,7 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
 		return _tokenCreationTimestamps[tokenId];
 	}
 	
-	// Get the token type (collection, row and col packed)
+	// Get the token type (collection, row, col and rarity packed)
 	function getTokenType(uint256 tokenId) public view returns (uint256) {
 		require(exists(tokenId), "ERC721Metadata: Token type query for nonexistent token");
 		return _tokenType[tokenId];

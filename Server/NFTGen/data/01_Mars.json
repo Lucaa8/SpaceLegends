@@ -3,7 +3,7 @@
         "id": 1,
         "name": "Mars",
         "description": "The red planet.",
-        "baseurl": "http://localhost/"
+        "image_cid": "bafybeifku5g36btmudmnsmrgyranj2dljz2ydwkywi3pwzquzkfvekgsh4"
     },
     "items": [
         {

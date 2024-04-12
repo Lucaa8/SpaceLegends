@@ -1,7 +1,7 @@
 import json
 
 
-def _encore_token_type(collection: int, row: int, col: int, rarity: int) -> int:
+def _encode_token_type(collection: int, row: int, col: int, rarity: int) -> int:
     return (collection << 27) | (row << 11) | (col << 3) | rarity
 
 
@@ -15,24 +15,24 @@ def _decode_token_type_formatted(encoded_type: int) -> str:
 
 
 class Collection:
-    def __init__(self, collection_id: int, name: str, description: str, collection_base_url: str):
+    def __init__(self, collection_id: int, name: str, description: str, collection_image_cid: str):
         self._collection_id = collection_id
         self._name = name
         self._description = description
-        self._base_url = collection_base_url
+        self._image_cid = collection_image_cid
 
     def get_collection_id(self) -> str:
         return str(self._collection_id).zfill(2)
 
     def get_image_base_url(self) -> str:
-        return f"{self._base_url}{self.get_collection_id()}_{self.name}_"
+        return f"https://{self._image_cid}.ipfs.w3s.link/{self.get_collection_id()}_{self.name}_"
 
     @staticmethod
     def from_file(json_object):
-        if ("id" not in json_object) or ("name" not in json_object) or ("description" not in json_object) or ("baseurl" not in json_object):
+        if ("id" not in json_object) or ("name" not in json_object) or ("description" not in json_object) or ("image_cid" not in json_object):
             print("Invalid JSON. Cannot build collection. Missing values.")
             return None
-        return Collection(json_object["id"], json_object["name"], json_object["description"], json_object["baseurl"])
+        return Collection(json_object["id"], json_object["name"], json_object["description"], json_object["image_cid"])
 
     @property
     def collection_id(self):
@@ -69,7 +69,7 @@ class Item:
         if ("name" not in json_object) or ("description" not in json_object):
             print("Invalid JSON. Cannot retrieve item name and/or description.")
             return None
-        item_id = _encore_token_type(json_object["collection_id"], json_object["row"], json_object["col"], json_object["rarity"])
+        item_id = _encode_token_type(json_object["collection_id"], json_object["row"], json_object["col"], json_object["rarity"])
         return Item(item_id, json_object["name"], json_object["description"])
 
     def to_metadata(self):
