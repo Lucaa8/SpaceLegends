@@ -51,4 +51,4 @@ def get_metadata(token_id):
 if __name__ == '__main__':
     for file in os.listdir("data"):
         load(f"data/{file}")
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=8082) # 80, 8080 and 8081 are already used on my web server.
