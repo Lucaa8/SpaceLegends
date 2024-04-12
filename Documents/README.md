@@ -4,7 +4,7 @@ In this readme you can retrieve all the smart contracts addresses. This will be 
 ## Smart Contracts Owner
 - Account Address : 0xd4C63a270Ceb9360b3dd6CA25bAd85EBf55466E4 
 - Find it on [Sepolia Etherscan](https://sepolia.etherscan.io/address/0xd4C63a270Ceb9360b3dd6CA25bAd85EBf55466E4). 
-- Find it on [OpenSea](https://opensea.io/fr/Lucaa_8).
+- Find it on [Sepolia OpenSea](https://testnets.opensea.io/Lucaa_8).
 
 ## Game cryptocurrency
 The ingame currency is the StarDust (SDT) deployed at 0xe9032bFa8ab47E71Cf8C7b978eAb9D14eA14e6D3. You can find it on [Sepolia Etherscan](https://sepolia.etherscan.io/token/0xe9032bfa8ab47e71cf8c7b978eab9d14ea14e6d3).
