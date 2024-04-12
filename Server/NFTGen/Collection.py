@@ -96,6 +96,7 @@ class Item:
                 {
                     "display_type": "number",
                     "trait_type": "Rarity",
+                    "max_value": "4",
                     "value": self._rarity
                 }
             ]

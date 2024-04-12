@@ -41,7 +41,10 @@ def get_metadata(token_id):
     meta = item.to_metadata()
     meta['attributes'].append({"trait_type": "Creation", "display_type": "date", "value": creation_date})
     meta['attributes'].append({"trait_type": "Creator", "value": ownership_history[0][1]})
-    # Find a nice way to store/display the ownership history
+    historical_trait: str = ""
+    for owner in ownership_history[1:]:
+        historical_trait += owner[1] + " -> "
+    meta['attributes'].append({"trait_type": "Ownership History", "value": "No other players" if historical_trait == "" else historical_trait[:-4]})
     return jsonify(meta), 200
 
 
