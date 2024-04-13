@@ -85,12 +85,14 @@ class Item:
                 },
                 {
                     "display_type": "number",
-                    "trait_type": "Row",
+                    "trait_type": "Image Row",
+                    "max_value": "9",
                     "value": self._row
                 },
                 {
                     "display_type": "number",
-                    "trait_type": "Column",
+                    "trait_type": "Image Column",
+                    "max_value": "9",
                     "value": self._col
                 },
                 {
