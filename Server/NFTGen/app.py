@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import jsonify
+from flask import Flask, jsonify, render_template, url_for
 from web3 import Web3
 from web3.exceptions import ContractLogicError
 import os
@@ -21,6 +20,11 @@ if crel_abi is None:
     crel = None
 else:
     crel = w3.eth.contract(address=contract_address, abi=crel_abi)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 @app.route('/token/<int:token_id>')
