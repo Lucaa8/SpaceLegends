@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <link href="{{ url_for('static', filename='explorer.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="height: 30vh;">
+        <div>
+            <h1>Our collection of NFTs : The Cosmic Relics</h1>
+            <p>On this page you can retrieve all our NFTs which you can earn by playing Space Legends.</p>
+        </div>
+    </section>
+    {% for nft in nfts %}
+        <section class="container my-5">
+            <div class="row align-items-center">
+                {% if loop.index is odd %}
+                    <div class="col-lg-6">
+                        <img src="{{ nft["collection"].image }}" class="img-fluid" alt="Espace">
+                    </div>
+                {% endif %}
+                <div class="col-lg-6">
+                    <h2>{{ nft["collection"].name }} Collection</h2>
+                    <p>{{ nft["collection"].description }}</p>
+                </div>
+                {% if loop.index is even %}
+                    <div class="col-lg-6">
+                        <img src="{{ nft["collection"].image }}" class="img-fluid" alt="Espace">
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+        <div class="container mt-4">
+            <div class="row">
+                {% for item in nft["items"] %}
+                    <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <div class="card h-100">
+                            <img src="{{ item.get_image() }}" class="card-img-top" alt="title">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item._name }}</h5>
+                                <p class="card-text"><small class="text-muted {{ "r-"+item.format_rarity()[0].lower() }}">{{ item.format_rarity()[0] }}</small></p>
+                                <p class="card-text">{{ item._description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    <!-- Add a token id retriever ? and tokentype decoder -->
+{% endblock %}

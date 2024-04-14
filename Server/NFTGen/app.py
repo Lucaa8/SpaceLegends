@@ -27,6 +27,32 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/download')
+def download():
+    return render_template('download.html')
+
+
+@app.route('/token-explorer')
+def token_explorer():
+    nfts = []
+    for collec in collections:
+        nfts.append({
+            "collection": collec.to_json(),
+            "items": collec.get_items()
+        })
+    return render_template('token_explorer.html', nfts=nfts)
+
+
+@app.route('/market')
+def market():
+    return render_template('market.html')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
 @app.route('/token/<int:token_id>')
 def get_metadata(token_id):
     if crel is None:

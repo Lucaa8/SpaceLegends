@@ -14,6 +14,18 @@ def _decode_token_type_formatted(encoded_type: int) -> str:
     return f"{str(decoded_type[0]).zfill(2)}_r{str(decoded_type[1]).zfill(2)}c{str(decoded_type[2]).zfill(2)}.png"
 
 
+def rarity_to_str(rarity: int) -> tuple[str, str]:
+    if rarity == 1:
+        return "Common", "r-common"
+    elif rarity == 2:
+        return "Rare", "r-rare"
+    elif rarity == 3:
+        return "Epic", "r-epic"
+    elif rarity == 4:
+        return "Legendary", "r-legendary"
+    return "Unknown", "r-unknown"
+
+
 class Collection:
     def __init__(self, collection_id: int, name: str, description: str, collection_image_cid: str):
         self._collection_id = collection_id
@@ -26,6 +38,9 @@ class Collection:
 
     def get_image_base_url(self) -> str:
         return f"https://{self._image_cid}.ipfs.w3s.link/{self.get_collection_id()}_{self.name}_"
+
+    def get_collection_image(self) -> str:
+        return f"https://{self._image_cid}.ipfs.w3s.link/{self.get_collection_id()}_{self.name}.png"
 
     @staticmethod
     def from_file(json_object):
@@ -41,6 +56,21 @@ class Collection:
     @property
     def name(self):
         return self._name
+
+    def get_items(self):
+        collec_items = []
+        for item in items:
+            if item._collection._collection_id == self._collection_id:
+                collec_items.append(item)
+        return collec_items
+
+    def to_json(self):
+        return {
+            "id": self._collection_id,
+            "name": self._name,
+            "description": self._description,
+            "image": self.get_collection_image()
+        }
 
 
 class Item:
@@ -60,6 +90,9 @@ class Item:
 
     def get_image(self):
         return f"{self._collection.get_image_base_url()}r{str(self._row).zfill(2)}c{str(self._col).zfill(2)}.png"
+
+    def format_rarity(self):
+        return rarity_to_str(self._rarity)
 
     @staticmethod
     def from_file(json_object):

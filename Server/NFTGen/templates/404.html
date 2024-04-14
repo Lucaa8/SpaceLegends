@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <link href="{{ url_for('static', filename='404.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <section class="error-section text-white text-center d-flex align-items-center justify-content-center" style="background-image: url('{{ url_for('static', filename='spacelegends.png') }}'); height: 100vh;">
+        <div>
+            <h1>Lost in Space</h1>
+            <p>Oops, the spaceship left without you...</p>
+            <p>The page you requested could not be found.</p>
+            <div>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Go back to safety</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

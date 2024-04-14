@@ -1,0 +1,9 @@
+.nav-item {
+    margin: 0 10px 0 10px;
+}
+
+@media (min-width: 992px) { /* Corresponds to 'lg' in Bootstrap */
+  #navbarContent > .navbar-nav {
+    margin-left: 50px;
+  }
+}
