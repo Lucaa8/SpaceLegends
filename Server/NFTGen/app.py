@@ -69,12 +69,10 @@ def get_metadata(token_id):
     if item is None:
         return jsonify({'error': 'Item not found'}), 404
     meta = item.to_metadata()
+    meta['id'] = token_id
     meta['attributes'].append({"trait_type": "Creation", "display_type": "date", "value": creation_date})
-    meta['attributes'].append({"trait_type": "Creator", "value": ownership_history[0][1]})
-    historical_trait: str = ""
-    for owner in ownership_history[1:]:
-        historical_trait += owner[1] + " -> "
-    meta['attributes'].append({"trait_type": "Ownership History", "value": "No other players" if historical_trait == "" else historical_trait[:-4]})
+    meta['ownership_history'] = ownership_history
+    meta['rarity'] = item.format_rarity()
     return jsonify(meta), 200
 
 
