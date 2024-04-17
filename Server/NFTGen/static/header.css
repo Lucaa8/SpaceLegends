@@ -1,9 +1,17 @@
-.nav-item {
-    margin: 0 10px 0 10px;
+@media (min-width: 992px) { /* Corresponds to 'lg' in Bootstrap */
+    #navbarContent > .navbar-nav {
+        margin-left: 10px;
+    }
+    .nav-item {
+        margin: 0 10px 0 10px;
+    }
 }
 
-@media (min-width: 992px) { /* Corresponds to 'lg' in Bootstrap */
-  #navbarContent > .navbar-nav {
-    margin-left: 50px;
-  }
+@media (max-width: 992px) {
+    #searchInput {
+        margin: 5px 0 8px;
+    }
+    #searchInput > input {
+        max-width: 30vh;
+    }
 }

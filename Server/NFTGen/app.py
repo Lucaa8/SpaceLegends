@@ -4,10 +4,13 @@ from web3.exceptions import ContractLogicError
 import os
 from dotenv import load_dotenv
 from Collection import *
+from blueprints.views import views_bp
 
 load_dotenv()
 
 app = Flask(__name__)
+app.register_blueprint(views_bp)
+
 w3 = Web3(Web3.HTTPProvider(f'https://eth-sepolia.g.alchemy.com/v2/{os.getenv("ALCHEMY_API_KEY")}'))
 
 assert w3.is_connected()
@@ -20,32 +23,6 @@ if crel_abi is None:
     crel = None
 else:
     crel = w3.eth.contract(address=contract_address, abi=crel_abi)
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/download')
-def download():
-    return render_template('download.html')
-
-
-@app.route('/token-explorer')
-def token_explorer():
-    nfts = []
-    for collec in collections:
-        nfts.append({
-            "collection": collec.to_json(),
-            "items": collec.get_items()
-        })
-    return render_template('token_explorer.html', nfts=nfts)
-
-
-@app.route('/market')
-def market():
-    return render_template('market.html')
 
 
 @app.errorhandler(404)

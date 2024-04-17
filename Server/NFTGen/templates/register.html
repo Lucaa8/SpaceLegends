@@ -1,0 +1,96 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        i {
+            color: #0d6efd;
+            scale: 150%;
+            margin-right: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+
+    <div class="container-fluid" style="height: 100vh;">
+        <div class="row h-100 justify-content-center align-items-center">
+            <!-- Left side of the page, title and marketing texts -->
+            <div class="col-md-5 offset-md-1 text-center text-md-left">
+                <div>
+                    <h1 style="margin-bottom: 20px;">Space Legends</h1>
+                    <p><i class="fas fa-rocket"></i> Explore the cosmos and claim digital realms, minting your conquests as NFTs.</p>
+                    <p><i class="fas fa-users"></i> Become part of our community and trade exclusive items with fellow players!</p>
+                </div>
+            </div>
+
+            <!-- Right side of the page, register form -->
+            <div class="col-md-5">
+                <div class="card shadow" style="width: auto;">
+                    <div class="card-body">
+                        <h3 class="card-title">Create your account</h3>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" pattern="[A-Za-z0-9_]+" title="The username must be unique, alphanumeric and can contain underscores.">
+                        </div>
+                        <div class="mb-3">
+                            <label for="displayName" class="form-label">Display Name (Can be changed later)</label>
+                            <input type="text" class="form-control" id="displayname" name="displayname">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" minlength="8">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm password</label>
+                            <input type="password" class="form-control" id="confirmPassword" minlength="8" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Do you already have a crypto wallet?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="hasWallet" id="yes" value="yes" onchange="handleWalletOptionChange(this.value);">
+                                <label class="form-check-label" for="yes">Yes (Can be changed later)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="hasWallet" id="no" value="no" onchange="handleWalletOptionChange(this.value);" checked>
+                                <label class="form-check-label" for="no">No</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="walletAddressContainer" style="display: none;">
+                            <label for="walletAddress" class="form-label">Wallet Address (Needs to support Sepolia Testnet)</label>
+                            <input type="text" class="form-control" id="walletAddress">
+                        </div>
+
+                        <div class="mb-3" id="walletInfoText">
+                            <p>We'll take care of that for you!</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Register</button>
+
+                        <div class="text-center mt-4">
+                            <a href="#">Already have an account? Log in</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function handleWalletOptionChange(value) {
+            const walletAddressContainer = document.getElementById('walletAddressContainer');
+            const walletInfoText = document.getElementById('walletInfoText');
+            if (value === 'yes') {
+                walletAddressContainer.style.display = 'block';
+                walletInfoText.style.display = 'none';
+            } else {
+                walletAddressContainer.style.display = 'none';
+                walletInfoText.style.display = 'block';
+            }
+        }
+    </script>
+{% endblock %}
