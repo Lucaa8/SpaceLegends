@@ -34,16 +34,16 @@
 
             <!-- Login and signup buttons for mobile, inside the collapsed content -->
             <div class="d-lg-none">
-                <a class="btn btn-primary w-30 my-1" href="#">Sign Up</a>
-                <a class="btn btn-outline-primary w-30 my-1" href="#">Log in</a>
+                <a class="btn btn-primary w-30 my-1" href="{{ url_for('views.register') }}">Sign Up</a>
+                <a class="btn btn-outline-primary w-30 my-1" href="{{ url_for('views.login') }}">Log in</a>
             </div>
         </div>
 
         <!-- Login and signup buttons for desktop, outside the collapsed content -->
         <div class="ms-auto d-none d-lg-block">
             <div class="btn-group">
-                <a class="btn btn-primary" href="#">Sign Up</a>
-                <a class="btn btn-outline-primary" href="#">Log in</a>
+                <a class="btn btn-primary" href="{{ url_for('views.register') }}">Sign Up</a>
+                <a class="btn btn-outline-primary" href="{{ url_for('views.login') }}">Log in</a>
             </div>
         </div>
     </div>

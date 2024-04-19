@@ -25,6 +25,13 @@ else:
     crel = w3.eth.contract(address=contract_address, abi=crel_abi)
 
 
+adresse = "0xd4C63a270Ceb9360b3dd6CA25bAd85EBf55466E4"
+print("L'adresse est valide:", w3.is_address(adresse))
+
+est_valide_checksum = w3.is_checksum_address(adresse)
+print("L'adresse a un checksum valide:", est_valide_checksum)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404

@@ -1,6 +1,5 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         i {
             color: #0d6efd;
@@ -30,11 +29,11 @@
                         <h3 class="card-title">Create your account</h3>
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" pattern="[A-Za-z0-9_]+" title="The username must be unique, alphanumeric and can contain underscores.">
+                            <input type="text" class="form-control" id="username" pattern="[A-Za-z0-9_]+" minlength="4" maxlength="16" title="The username must be unique, alphanumeric and can contain underscores.">
                         </div>
                         <div class="mb-3">
                             <label for="displayName" class="form-label">Display Name (Can be changed later)</label>
-                            <input type="text" class="form-control" id="displayname" name="displayname">
+                            <input type="text" class="form-control" id="displayname">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -46,7 +45,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Confirm password</label>
-                            <input type="password" class="form-control" id="confirmPassword" minlength="8" required>
+                            <input type="password" class="form-control" id="confirmPassword" minlength="8">
                         </div>
 
                         <div class="mb-3">
@@ -70,27 +69,16 @@
                             <p>We'll take care of that for you!</p>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="button" class="btn btn-primary" onclick="register()">Register</button>
 
                         <div class="text-center mt-4">
-                            <a href="#">Already have an account? Log in</a>
+                            <a href="{{ url_for('views.login') }}">Already have an account? Log in</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        function handleWalletOptionChange(value) {
-            const walletAddressContainer = document.getElementById('walletAddressContainer');
-            const walletInfoText = document.getElementById('walletInfoText');
-            if (value === 'yes') {
-                walletAddressContainer.style.display = 'block';
-                walletInfoText.style.display = 'none';
-            } else {
-                walletAddressContainer.style.display = 'none';
-                walletInfoText.style.display = 'block';
-            }
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.6.8/dist/ethers.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='register.js') }}"></script>
 {% endblock %}

@@ -11,10 +11,13 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
         <link href="{{ url_for('static', filename='font.css') }}" rel="stylesheet">
+        <!-- For icons (E.G: <i class="fas fa-rocket"></i>) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <!-- Header CSS -->
         <link href="{{ url_for('static', filename='header.css') }}" rel="stylesheet">
         <!-- Footer CSS -->
         <link href="{{ url_for('static', filename='footer.css') }}" rel="stylesheet">
+        <!-- To allow other HTML files to include custom CSS files later on -->
         {% block head %}
         {% endblock %}
     </head>
