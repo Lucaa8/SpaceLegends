@@ -5,11 +5,13 @@ import os
 from dotenv import load_dotenv
 from Collection import *
 from blueprints.views import views_bp
+from blueprints.api import api_bp
 
 load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(views_bp)
+app.register_blueprint(api_bp, url_prefix='/api')
 
 w3 = Web3(Web3.HTTPProvider(f'https://eth-sepolia.g.alchemy.com/v2/{os.getenv("ALCHEMY_API_KEY")}'))
 
@@ -25,18 +27,12 @@ else:
     crel = w3.eth.contract(address=contract_address, abi=crel_abi)
 
 
-adresse = "0xd4C63a270Ceb9360b3dd6CA25bAd85EBf55466E4"
-print("L'adresse est valide:", w3.is_address(adresse))
-
-est_valide_checksum = w3.is_checksum_address(adresse)
-print("L'adresse a un checksum valide:", est_valide_checksum)
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
 
+# TODO moves inside the api blueprint
 @app.route('/token/<int:token_id>')
 def get_metadata(token_id):
     if crel is None:

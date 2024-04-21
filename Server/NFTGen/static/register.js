@@ -12,15 +12,7 @@ function handleWalletOptionChange(value) {
 
 function generateWallet() {
     const wallet = ethers.Wallet.createRandom();
-    downloadPrivateKeyFile(wallet.privateKey)
-    return wallet.address;
-}
-
-function register()
-{
-    alert(document.getElementById('username').checkValidity()) //cheeeck
-
-    //alert(generateWallet())
+    return [wallet.address, wallet.privateKey];
 }
 
 function generateRandomString(length) {
@@ -34,11 +26,9 @@ function generateRandomString(length) {
 }
 
 function downloadPrivateKeyFile(privateKey) {
-    // Generate a random string between 10 and 15 char length
+    // Generate a random string between 10 and 15 char length (random name to avoid some programs to scan the download directory of the user if he forgets to delete the file)
     const filename = generateRandomString(Math.floor(Math.random() * 5) + 10) + '.txt';
-
     const blob = new Blob([privateKey], { type: 'text/plain' });
-
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = filename;
@@ -47,3 +37,44 @@ function downloadPrivateKeyFile(privateKey) {
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('registerForm');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const confirmPassword = document.getElementById('confirmPassword');
+        if (document.getElementById('password').value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity('Passwords do not match.');
+            confirmPassword.reportValidity();
+            return;
+        }
+
+        let walletPrivate = '';
+        if(document.getElementById('no').checked)
+        {
+            const wallet = generateWallet();
+            document.getElementById('walletAddress').value = wallet[0];
+            walletPrivate = wallet[1];
+        }
+
+        const formData = new FormData(form);
+        fetch(form.getAttribute("data-url"), {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(walletPrivate !== '')
+            {
+                downloadPrivateKeyFile(walletPrivate);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Gérer les erreurs ici
+        });
+
+    });
+});

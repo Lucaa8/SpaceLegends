@@ -24,57 +24,59 @@
 
             <!-- Right side of the page, register form -->
             <div class="col-md-5">
-                <div class="card shadow" style="width: auto;">
-                    <div class="card-body">
-                        <h3 class="card-title">Create your account</h3>
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" pattern="[A-Za-z0-9_]+" minlength="4" maxlength="16" title="The username must be unique, alphanumeric and can contain underscores.">
-                        </div>
-                        <div class="mb-3">
-                            <label for="displayName" class="form-label">Display Name (Can be changed later)</label>
-                            <input type="text" class="form-control" id="displayname">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" minlength="8">
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm password</label>
-                            <input type="password" class="form-control" id="confirmPassword" minlength="8">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Do you already have a crypto wallet?</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="hasWallet" id="yes" value="yes" onchange="handleWalletOptionChange(this.value);">
-                                <label class="form-check-label" for="yes">Yes (Can be changed later)</label>
+                <div class="card shadow" style="width: auto; max-height: calc(100vh - 100px);">
+                    <form id="registerForm" data-url="{{ url_for('api.register') }}">
+                        <div class="card-body">
+                            <h3 class="card-title">Create your account</h3>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" pattern="[a-z0-9_]+" minlength="3" maxlength="16" title="The username must be unique, alphanumeric, lowercase and can contain underscores. From 3 to 16 characters length" required>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="hasWallet" id="no" value="no" onchange="handleWalletOptionChange(this.value);" checked>
-                                <label class="form-check-label" for="no">No</label>
+                            <div class="mb-3">
+                                <label for="displayName" class="form-label">Display Name (Can be changed later)</label>   <!-- Check this regex failure -->
+                                <input type="text" class="form-control" id="displayname" name="displayname" pattern="[a-zA-ZÀ-Ÿ-_. 0-9]+" minlength="3" maxlength="24" title="The display name must be alphanumeric with underscore, dash, space or dots. From 3 to 24 characters length">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input oninput="document.getElementById('confirmPassword').setCustomValidity('')" type="password" class="form-control" id="password" name="pass1" minlength="8" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm password</label>
+                                <input oninput="document.getElementById('confirmPassword').setCustomValidity('')" type="password" class="form-control" id="confirmPassword" name="pass2" minlength="8" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Do you already have a crypto wallet?</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="hasWallet" id="yes" value="yes" onchange="handleWalletOptionChange(this.value);">
+                                    <label class="form-check-label" for="yes">Yes (Can be changed later)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="hasWallet" id="no" value="no" onchange="handleWalletOptionChange(this.value);" checked>
+                                    <label class="form-check-label" for="no">No</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3" id="walletAddressContainer" style="display: none;">
+                                <label for="walletAddress" class="form-label">Wallet Address (Needs to support Sepolia Testnet)</label>
+                                <input type="text" class="form-control" id="walletAddress" name="walletAddress">
+                            </div>
+
+                            <div class="mb-3" id="walletInfoText">
+                                <p>We'll take care of that for you!</p>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('confirmPassword').setCustomValidity('')">Register</button>
+
+                            <div class="text-center mt-4">
+                                <a href="{{ url_for('views.login') }}">Already have an account? Log in</a>
                             </div>
                         </div>
-
-                        <div class="mb-3" id="walletAddressContainer" style="display: none;">
-                            <label for="walletAddress" class="form-label">Wallet Address (Needs to support Sepolia Testnet)</label>
-                            <input type="text" class="form-control" id="walletAddress">
-                        </div>
-
-                        <div class="mb-3" id="walletInfoText">
-                            <p>We'll take care of that for you!</p>
-                        </div>
-
-                        <button type="button" class="btn btn-primary" onclick="register()">Register</button>
-
-                        <div class="text-center mt-4">
-                            <a href="{{ url_for('views.login') }}">Already have an account? Log in</a>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
