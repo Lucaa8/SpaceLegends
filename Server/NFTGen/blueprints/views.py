@@ -1,6 +1,6 @@
 from flask import render_template
 from flask.blueprints import Blueprint
-from Collection import collections
+from collection import collections
 
 views_bp = Blueprint('views', __name__, template_folder='templates')
 

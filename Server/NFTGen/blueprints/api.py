@@ -1,8 +1,31 @@
 from flask import request, jsonify
 from flask.blueprints import Blueprint
-from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, check_address
+from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX
+from collection import Item, get_item
+import chain
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
+
+
+@api_bp.route('/token/<int:token_id>')
+def get_metadata(token_id):
+    if not chain.cosmic.is_valid():
+        return jsonify({'error': 'API not initialized.'}), 500
+    try:
+        item_id = chain.cosmic.get_token_type(token_id)
+        ownership_history = chain.cosmic.get_ownership_history(token_id)
+        creation_date = chain.cosmic.get_token_creation_timestamp(token_id)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    item: Item = get_item(item_id)
+    if item is None:
+        return jsonify({'error': 'Item not found'}), 404
+    meta = item.to_metadata()
+    meta['id'] = token_id
+    meta['attributes'].append({"trait_type": "Creation", "display_type": "date", "value": creation_date})
+    meta['ownership_history'] = ownership_history
+    meta['rarity'] = item.format_rarity()
+    return jsonify(meta), 200
 
 
 @api_bp.route('register', methods=['POST'])
@@ -26,7 +49,7 @@ def register():
             errors['password'] = 'Password must be at least 8 characters long.'
         if password != confirm_password:
             errors['confirm_password'] = 'Passwords do not match.'
-        if (not wallet_address) or (not check_address(wallet_address)):
+        if (not wallet_address) or (not chain.cosmic.check_address(wallet_address)):
             errors['wallet_address'] = 'Invalid or missing wallet address.'
     except Exception as e:
         errors['other'] = str(e)
