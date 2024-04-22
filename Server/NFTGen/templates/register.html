@@ -33,8 +33,8 @@
                                 <input type="text" class="form-control" id="username" name="username" pattern="[a-z0-9_]+" minlength="3" maxlength="16" title="The username must be unique, alphanumeric, lowercase and can contain underscores. From 3 to 16 characters length" required>
                             </div>
                             <div class="mb-3">
-                                <label for="displayName" class="form-label">Display Name (Can be changed later)</label>   <!-- Check this regex failure -->
-                                <input type="text" class="form-control" id="displayname" name="displayname" pattern="[a-zA-ZÀ-Ÿ-_. 0-9]+" minlength="3" maxlength="24" title="The display name must be alphanumeric with underscore, dash, space or dots. From 3 to 24 characters length">
+                                <label for="displayName" class="form-label">Display Name (Can be changed later)</label>
+                                <input type="text" class="form-control" id="displayname" name="displayname" pattern="[a-zA-ZÀ-Ÿ\-_. 0-9]+" minlength="3" maxlength="24" title="The display name must be alphanumeric with underscore, dash, space or dots. From 3 to 24 characters length">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
@@ -70,7 +70,12 @@
                                 <p>We'll take care of that for you!</p>
                             </div>
 
-                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('confirmPassword').setCustomValidity('')">Register</button>
+                            <div class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary" onclick="document.getElementById('confirmPassword').setCustomValidity('')">Register</button>
+                                <div id="alertMessage" class="alert alert-danger d-none" style="--bs-alert-margin-bottom: 0; margin-left: 0.5rem;" role="alert">
+                                    Something went wrong, please try again.
+                                </div>
+                            </div>
 
                             <div class="text-center mt-4">
                                 <a href="{{ url_for('views.login') }}">Already have an account? Log in</a>

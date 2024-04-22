@@ -61,5 +61,6 @@ def register():
         display_name = username
 
     # DB register
+    print(f"Registering {username}... Display name: {display_name}, Email: {email}, Password: {password}, Wallet address: {wallet_address}")
 
     return jsonify({}), 204

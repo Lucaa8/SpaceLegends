@@ -64,16 +64,19 @@ document.addEventListener("DOMContentLoaded", function() {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
+            if(!response.ok)
+            {
+                return response.json().then(errorContent => Promise.reject(errorContent));
+            }
             if(walletPrivate !== '')
             {
                 downloadPrivateKeyFile(walletPrivate);
             }
         })
         .catch((error) => {
+            //afficher msg derreur
             console.error('Error:', error);
-            // Gérer les erreurs ici
         });
 
     });
