@@ -37,22 +37,22 @@ def register():
     confirm_password = request.form.get('pass2')
     wallet_address = request.form.get('walletAddress')
 
-    errors = {}
+    errors = []
     try:
         if (not username) or (not USERNAME_REGEX.match(username)):
-            errors['username'] = 'Invalid or missing username.'
+            errors.append('Invalid or missing username.')
         if display_name and (len(display_name) > 0) and (not DISPLAYNAME_REGEX.match(display_name)):
-            errors['display_name'] = 'Invalid or missing display name.'
+            errors.append('Invalid or missing display name.')
         if (not email) or (not EMAIL_REGEX.match(email)):
-            errors['email'] = 'Invalid or missing email address.'
+            errors.append('Invalid or missing email address.')
         if (not password) or (not PASSWORD_REGEX.match(password)):
-            errors['password'] = 'Password must be at least 8 characters long.'
+            errors.append('Password must be at least 8 characters long.')
         if password != confirm_password:
-            errors['confirm_password'] = 'Passwords do not match.'
+            errors.append('Passwords do not match.')
         if (not wallet_address) or (not chain.cosmic.check_address(wallet_address)):
-            errors['wallet_address'] = 'Invalid or missing wallet address.'
+            errors.append('Invalid or missing wallet address.')
     except Exception as e:
-        errors['other'] = str(e)
+        errors.append(str(e))
 
     if errors:
         return jsonify({'message': errors}), 400

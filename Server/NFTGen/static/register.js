@@ -44,6 +44,10 @@ document.addEventListener("DOMContentLoaded", function() {
     form.addEventListener('submit', function(event) {
         event.preventDefault();
 
+        const errorAlert = document.getElementById('alertMessage');
+        errorAlert.classList.add('d-none');
+        errorAlert.innerText = "";
+
         const confirmPassword = document.getElementById('confirmPassword');
         if (document.getElementById('password').value !== confirmPassword.value) {
             confirmPassword.setCustomValidity('Passwords do not match.');
@@ -75,8 +79,18 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         .catch((error) => {
-            //afficher msg derreur
-            console.error('Error:', error);
+            errorAlert.classList.remove('d-none');
+            if("message" in error) {
+                if(error["message"] instanceof Array) {
+                    for(let err of error["message"]) {
+                        errorAlert.innerText += err + "\n";
+                    }
+                } else {
+                    errorAlert.innerText = error["message"];
+                }
+            } else {
+                errorAlert.innerText = "Oops, something went wrong. Retry later.";
+            }
         });
 
     });

@@ -11,8 +11,8 @@
 {% endblock %}
 {% block content %}
 
-    <div class="container-fluid" style="height: 100vh;">
-        <div class="row h-100 justify-content-center align-items-center">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center" style="min-height: 100vh;">
             <!-- Left side of the page, title and marketing texts -->
             <div class="col-md-5 offset-md-1 text-center text-md-left">
                 <div>
@@ -24,7 +24,7 @@
 
             <!-- Right side of the page, register form -->
             <div class="col-md-5">
-                <div class="card shadow" style="width: auto; max-height: calc(100vh - 100px);">
+                <div class="card shadow" style="width: auto;">
                     <form id="registerForm" data-url="{{ url_for('api.register') }}">
                         <div class="card-body">
                             <h3 class="card-title">Create your account</h3>
@@ -70,10 +70,10 @@
                                 <p>We'll take care of that for you!</p>
                             </div>
 
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center" style="max-width: 100%;">
                                 <button type="submit" class="btn btn-primary" onclick="document.getElementById('confirmPassword').setCustomValidity('')">Register</button>
-                                <div id="alertMessage" class="alert alert-danger d-none" style="--bs-alert-margin-bottom: 0; margin-left: 0.5rem;" role="alert">
-                                    Something went wrong, please try again.
+                                <div id="alertMessage" class="alert alert-danger d-none" style="--bs-alert-margin-bottom: 0; margin-left: 0.5rem; word-break: break-all; font-size: 0.8rem" role="alert">
+                                    Error Text
                                 </div>
                             </div>
 
