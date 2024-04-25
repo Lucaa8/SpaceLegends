@@ -37,7 +37,7 @@ class CosmicRelic:
         return self._call("getTokenCreationTimestamp", token_id)
 
 
-cosmic = None
+cosmic: CosmicRelic | None = None
 
 
 def load():

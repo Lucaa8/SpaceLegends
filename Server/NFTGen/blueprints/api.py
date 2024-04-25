@@ -1,8 +1,9 @@
 from flask import request, jsonify
 from flask.blueprints import Blueprint
-from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX
+from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password
 from collection import Item, get_item
 import chain
+from smtp_service import smtp_service as smtp
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
 
@@ -61,6 +62,11 @@ def register():
         display_name = username
 
     # DB register
-    print(f"Registering {username}... Display name: {display_name}, Email: {email}, Password: {password}, Wallet address: {wallet_address}")
+    # hashed_password, salt = hash_password(password) # hash
+    # print(verify_password("test_password", hashed_password, salt)) # verify
+    print(f"Registering {username}... Display name: {display_name}, Email: {email}, Password: {hash_password(password)}, Wallet address: {wallet_address}")
+
+    # Send verif code
+    # smtp.send_verification_email("lucaa_8", "lucadicosola44@gmail.com", "https://space-legends.luca-dc.ch?token=18729291")
 
     return jsonify({}), 204

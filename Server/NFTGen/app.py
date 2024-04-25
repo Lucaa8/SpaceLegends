@@ -1,8 +1,9 @@
 from flask import Flask, render_template
 import os
 from dotenv import load_dotenv
-import chain
-from collection import load
+from chain import load as load_chain
+from smtp_service import load as load_smtp_service
+from collection import load as load_items
 from blueprints.views import views_bp
 from blueprints.api import api_bp
 
@@ -19,7 +20,8 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    chain.load()
+    load_smtp_service()
+    load_chain()
     for file in os.listdir("data"):
-        load(f"data/{file}")
+        load_items(f"data/{file}")
     app.run(host="0.0.0.0", port=8082) # 80, 8080 and 8081 are already used on my web server.
