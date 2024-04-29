@@ -1,3 +1,6 @@
 Flask~=3.0.3
 web3~=6.16.0
 python-dotenv~=1.0.1
+SQLAlchemy~=2.0.29
+Flask-SQLAlchemy~=3.1.1
+pymysql~=1.1.0
