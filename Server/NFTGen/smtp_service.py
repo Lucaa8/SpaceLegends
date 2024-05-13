@@ -51,4 +51,7 @@ smtp_service: SMTPServer | None = None
 
 def load():
     global smtp_service
-    smtp_service = SMTPServer("spacelegends@luca-dc.ch", "EjGQVJN2ej7!qAT", "mail.infomaniak.com", 465)
+    smtp_service = SMTPServer(os.getenv("SMTP_ADDRESS"),
+                              os.getenv("SMTP_PASSWORD"),
+                              os.getenv("SMTP_SERVER"),
+                              int(os.getenv("SMTP_PORT")))
