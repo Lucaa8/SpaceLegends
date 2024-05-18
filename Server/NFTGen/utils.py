@@ -1,6 +1,8 @@
 import re
 import os
 import hashlib
+import secrets
+import string
 
 
 USERNAME_REGEX = re.compile(r'^[a-z0-9_]{3,16}$')
@@ -25,4 +27,10 @@ def verify_password(password: str, hex_hashed_password: str, hex_salt: str) -> b
     salt = bytes.fromhex(hex_salt)
     hashed_password = hashlib.scrypt(password.encode(), salt=salt, n=16384, r=8, p=1, dklen=64)
     return hashed_password.hex() == hex_hashed_password
+
+
+def generate_confirmation_code(length: int = 12) -> str:
+    """Generate a confirmation code for email addresses."""
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
 

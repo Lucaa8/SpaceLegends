@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 import os
 from dotenv import load_dotenv
 from chain import load as load_chain
@@ -28,10 +28,9 @@ if __name__ == '__main__':
     load_database(app)
 
     with app.app_context():
+        # Keep this import otherwise the create_all() method wont know about all the models (they are imported inside models/__init__.py)
+        from models import __init__
         from database import db
         db.create_all()
-        #from models.User import User
-        #for u in User.query.all():
-            #print(u)
 
     app.run(host="0.0.0.0", port=int(os.getenv("API_PORT")))

@@ -1,6 +1,6 @@
-from flask import request, jsonify
+from flask import request, jsonify, url_for
 from flask.blueprints import Blueprint
-from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password
+from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, generate_confirmation_code
 from collection import Item, get_item
 import chain
 from smtp_service import smtp_service as smtp
@@ -62,11 +62,38 @@ def register():
         display_name = username
 
     # DB register
-    # hashed_password, salt = hash_password(password) # hash
+    hashed_password, salt = hash_password(password) # hash
+    email_code: str = generate_confirmation_code()
+    try:
+        from models import User
+        user = User.create_user(
+            username=username,
+            email=email,
+            email_code=email_code,
+            display_name=display_name,
+            password=hashed_password,
+            salt=salt,
+            wallet=wallet_address
+        )
+        print(f"Registered {user}")
+        verification_url = f"https://space-legends.luca-dc.ch{url_for('api.verification', code=email_code)}"
+        # smtp is None here
+        if not smtp.send_verification_email("lucaa_8", "lucadicosola44@gmail.com", verification_url):
+            return jsonify({'message': 'Your account has been successfully created but we failed to send you the verification code. Please retry the confirmation later in your user profile.'}), 200
+        return '', 204
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+
+@api_bp.route('/login', methods=['POST'])
+def login():
+    # user = db.get_or_404(User, id)
+    # if user:
+    #    user.password
     # print(verify_password("test_password", hashed_password, salt)) # verify
-    print(f"Registering {username}... Display name: {display_name}, Email: {email}, Password: {hash_password(password)}, Wallet address: {wallet_address}")
+    return '', 204
 
-    # Send verif code
-    # smtp.send_verification_email("lucaa_8", "lucadicosola44@gmail.com", "https://space-legends.luca-dc.ch?token=18729291")
 
-    return jsonify({}), 204
+@api_bp.route('/verification/<code>', methods=['POST'])
+def verification(code: str):
+    return '', 204

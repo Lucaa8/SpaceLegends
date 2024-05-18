@@ -1,5 +1,6 @@
 from database import db
 
+
 class NFT(db.Model):
     __tablename__ = 'nfts'
 
