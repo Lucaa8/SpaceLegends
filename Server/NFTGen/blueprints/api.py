@@ -3,7 +3,6 @@ from flask.blueprints import Blueprint
 from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, generate_confirmation_code
 from collection import Item, get_item
 import chain
-from smtp_service import smtp_service as smtp
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
 
@@ -62,7 +61,7 @@ def register():
         display_name = username
 
     # DB register
-    hashed_password, salt = hash_password(password) # hash
+    hashed_password, salt = hash_password(password)
     email_code: str = generate_confirmation_code()
     try:
         from models import User
@@ -74,11 +73,11 @@ def register():
             password=hashed_password,
             salt=salt,
             wallet=wallet_address
-        )
+        ) # Tries to register the new user in the database
         print(f"Registered {user}")
         verification_url = f"https://space-legends.luca-dc.ch{url_for('api.verification', code=email_code)}"
-        # smtp is None here
-        if not smtp.send_verification_email("lucaa_8", "lucadicosola44@gmail.com", verification_url):
+        from smtp_service import smtp_service as smtp
+        if not smtp.send_verification_email(username, email, verification_url):
             return jsonify({'message': 'Your account has been successfully created but we failed to send you the verification code. Please retry the confirmation later in your user profile.'}), 200
         return '', 204
     except Exception as e:

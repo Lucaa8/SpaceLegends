@@ -16,12 +16,12 @@ class SMTPServer:
         server.login(self.address, self._password)
         return server
 
-    def send_email(self, to: str, subject: str, body: str) -> bool:
+    def send_email(self, to: str, subject: str, html_body: str) -> bool:
         message = MIMEMultipart()
         message["From"] = self.address
         message["To"] = to
         message["Subject"] = subject
-        message.attach(MIMEText(body, "plain"))
+        message.attach(MIMEText(html_body, "html"))
         try:
             server = self._connect()
             text = message.as_string()
@@ -35,13 +35,14 @@ class SMTPServer:
     def send_verification_email(self, username: str, to: str, verification_url: str) -> bool:
         sub = "Please Verify Your Email Address"
         body = f"""
-        Hello {username},
-
-        Thank you for registering. Please click the link below to verify your email address:
-        {verification_url}
-
-        Best regards,
-        The Space Legends Team
+        <html>
+            <body>
+                <h3>Hello {username},</h3>
+                <p>Thank you for registering. Please click the button below to verify your email address.</p>
+                <a href="{verification_url}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: white; background-color: #007BFF; text-align: center; text-decoration: none; border-radius: 5px;">Verify</a>
+                <p>Best regards,<br>The Space Legends Team</p>
+            </body>
+        </html>
         """
         return self.send_email(to, sub, body)
 

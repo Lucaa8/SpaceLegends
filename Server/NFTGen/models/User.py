@@ -21,11 +21,7 @@ class User(db.Model):
 
     def __repr__(self):
         return (
-            f"User(id={self.id},\n"
-            f"username={self.username},\n"
-            f"email={self.email} (Verified: {'Yes' if self.email_verified else 'No'}),\n"
-            f"display_name={self.display_name},\n"
-            f"wallet_address={self.wallet_address} (Verified: {'Yes' if self.wallet_verified else 'No'}))"
+            f"User(id={self.id}, username={self.username}, email={self.email} (Verified: {'Yes' if self.email_verified else 'No'}), display_name={self.display_name}, wallet_address={self.wallet_address} (Verified: {'Yes' if self.wallet_verified else 'No'}))"
         )
 
     @staticmethod

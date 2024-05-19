@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template
 import os
 from dotenv import load_dotenv
 from chain import load as load_chain
