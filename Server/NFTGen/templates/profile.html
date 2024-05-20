@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <link href="{{ url_for('static', filename='profile.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container-fluid" style="min-height: 100vh">
+        <div class="row profile-header align-items-center">
+            <div class="col-2">
+                <img src="{{ url_for('static', filename='default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
+            </div>
+            <div class="col-10">
+                <h3>
+                    Luca Di Cosola
+                    <button class="btn btn-outline-light btn-sm edit-profile">Edit Profile</button>
+                </h3>
+                <div class="username-display">
+                    <p style="margin-bottom: 0">@lucaa_8</p>
+                    <div class="level-icon" data-toggle="tooltip" title="Level: 19 (197/344xp)">
+                        <img src="{{ url_for('static', filename='level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
+                        <span class="level-number">19</span>
+                    </div>
+                </div>
+                <p>Joined the 20/05/2024 | Money: 18'819 SDT | NFT count: 24</p>
+            </div>
+        </div>
+        <hr/>
+        <h1 style="text-align: center">NFT collected 7/18</h1>
+        <div class="nft-section d-flex flex-wrap justify-content-center">
+            <div>
+                <div class="card nft-card" data-tilt>
+                    <img src="https://bafybeieqjm2qvgzqpetzeucpkdk7rmhokp3sgglzyvxh2igrwshkjzxqwe.ipfs.w3s.link/00_Earth_r01c03.png" class="card-img-top" alt="NFT">
+                    <div class="card-body">
+                        <h5 style="text-align: center; margin-bottom: 0">Earth N°1</h5>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card nft-card" data-tilt>
+                    <img src="https://bafybeifku5g36btmudmnsmrgyranj2dljz2ydwkywi3pwzquzkfvekgsh4.ipfs.w3s.link/01_Mars_r03c01.png" class="card-img-top" alt="NFT">
+                    <div class="card-body">
+                        <h5 style="text-align: center; margin-bottom: 0">Mars N°1</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+{% endblock %}

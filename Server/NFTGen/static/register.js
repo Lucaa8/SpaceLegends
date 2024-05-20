@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
             {
                 downloadPrivateKeyFile(walletPrivate);
             }
+            //register ok
         })
         .catch((error) => {
             errorAlert.classList.remove('d-none');

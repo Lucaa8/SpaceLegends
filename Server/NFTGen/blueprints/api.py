@@ -1,6 +1,6 @@
 from flask import request, jsonify, url_for
 from flask.blueprints import Blueprint
-from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, generate_confirmation_code
+from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code
 from collection import Item, get_item
 import chain
 
@@ -86,13 +86,38 @@ def register():
 
 @api_bp.route('/login', methods=['POST'])
 def login():
-    # user = db.get_or_404(User, id)
-    # if user:
-    #    user.password
-    # print(verify_password("test_password", hashed_password, salt)) # verify
-    return '', 204
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    errors = []
+    try:
+        if (not username) or (not USERNAME_REGEX.match(username)):
+            errors.append('Invalid or missing username.')
+        if (not password) or (not PASSWORD_REGEX.match(password)):
+            errors.append('Invalid or missing password.')
+    except Exception as e:
+        errors.append(str(e))
+
+    if errors:
+        return jsonify({'message': errors}), 400
+
+    from models import User
+    user: User | None = User.get_user_by_creds(username=username, email=None)
+    error_msg = 'Unknown user or invalid password.'
+    if user:
+        try:
+            if verify_password(password, user.password, user.salt):
+                return '', 204 # Redirect ?
+        except Exception as e:
+            print(f"An unknown error occurred while checking password on login for user.id=={user.id}: {e}")
+            error_msg = 'Something went wrong while checking your password. Try again later.'
+
+    return jsonify({'message': error_msg}), 401
 
 
 @api_bp.route('/verification/<code>', methods=['POST'])
 def verification(code: str):
-    return '', 204
+    from models import User
+    if User.validate_email(code):
+        return '', 204
+    return '', 400

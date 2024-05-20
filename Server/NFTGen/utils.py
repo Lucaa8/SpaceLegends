@@ -29,7 +29,7 @@ def verify_password(password: str, hex_hashed_password: str, hex_salt: str) -> b
     return hashed_password.hex() == hex_hashed_password
 
 
-def generate_confirmation_code(length: int = 12) -> str:
+def generate_confirmation_code(length: int = 36) -> str:
     """Generate a confirmation code for email addresses."""
     alphabet = string.ascii_letters + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(length))

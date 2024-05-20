@@ -39,3 +39,8 @@ def register():
 @views_bp.route('/login')
 def login():
     return render_template('login.html')
+
+
+@views_bp.route('/profile')
+def profile():
+    return render_template('profile.html')
