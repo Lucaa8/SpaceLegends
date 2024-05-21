@@ -1,6 +1,7 @@
 from flask import render_template
 from flask.blueprints import Blueprint
 from collection import collections
+from flask_jwt_extended import jwt_required
 
 views_bp = Blueprint('views', __name__, template_folder='templates')
 
@@ -42,5 +43,6 @@ def login():
 
 
 @views_bp.route('/profile')
+@jwt_required() # Some tokens are accepted but they souldnt
 def profile():
     return render_template('profile.html')

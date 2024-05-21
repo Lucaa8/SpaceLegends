@@ -43,6 +43,15 @@ class User(db.Model):
             raise Exception('Failed to create a new user. Invalid data.')
 
     @staticmethod
+    def get_user_by_id(user_id: int) -> 'User | None':
+        stmt = select(User).filter_by(id=user_id)
+        try:
+            return db.session.execute(stmt).scalar_one_or_none()
+        except Exception as e:
+            print(f"An unknown error occurred while fetching user by id=={user_id}: {e}")
+        return None
+
+    @staticmethod
     def get_user_by_creds(username: str | None, email: str | None) -> 'User | None':
         stmt = None
         if username is not None:
