@@ -1,9 +1,9 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <link href="{{ url_for('static', filename='404.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/404.css') }}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <section class="error-section text-white text-center d-flex align-items-center justify-content-center" style="background-image: url('{{ url_for('static', filename='spacelegends.png') }}'); height: 100vh;">
+    <section class="error-section text-white text-center d-flex align-items-center justify-content-center" style="background-image: url('{{ url_for('static', filename='files/spacelegends.png') }}'); height: 100vh;">
         <div>
             <h1>Lost in Space</h1>
             <p>Oops, the spaceship left without you...</p>

@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <link href="{{ url_for('static', filename='explorer.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/explorer.css') }}" rel="stylesheet">
 {% endblock %}
 {% block content %}
     <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="height: 30vh;">
@@ -112,5 +112,5 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename="searchToken.js") }}"></script>
+    <script src="{{ url_for('static', filename="scripts/searchToken.js") }}"></script>
 {% endblock %}

@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <!-- Left logo -->
         <a class="navbar-brand" href="{{ url_for('views.index') }}">
-            <img src="{{ url_for('static', filename='spacelegends.png') }}" alt="Logo" class="align-top" width="30" height="30">
+            <img src="{{ url_for('static', filename='files/spacelegends.png') }}" alt="Logo" class="align-top" width="30" height="30">
             Space Legends
         </a>
         <!-- Toggler Button for smaller screens, always at the right -->
@@ -34,16 +34,26 @@
 
             <!-- Login and signup buttons for mobile, inside the collapsed content -->
             <div class="d-lg-none">
-                <a class="btn btn-primary w-30 my-1" href="{{ url_for('views.register') }}">Sign Up</a>
-                <a class="btn btn-outline-primary w-30 my-1" href="{{ url_for('views.login') }}">Log in</a>
+                {% if user %}
+                    <a class="btn btn-primary w-30 my-1" href="{{ url_for('views.own_profile') }}">{{ user.username }}</a>
+                    <a class="btn btn-outline-primary w-30 my-1" onclick="logout()">Logout</a>
+                {% else %}
+                    <a class="btn btn-primary w-30 my-1" href="{{ url_for('views.register') }}">Sign Up</a>
+                    <a class="btn btn-outline-primary w-30 my-1" href="{{ url_for('views.login') }}">Log in</a>
+                {% endif %}
             </div>
         </div>
 
         <!-- Login and signup buttons for desktop, outside the collapsed content -->
         <div class="ms-auto d-none d-lg-block">
             <div class="btn-group">
-                <a class="btn btn-primary" href="{{ url_for('views.register') }}">Sign Up</a>
-                <a class="btn btn-outline-primary" href="{{ url_for('views.login') }}">Log in</a>
+                {% if user %}
+                    <a class="btn btn-primary" href="{{ url_for('views.own_profile') }}">{{ user.username }}</a>
+                    <a class="btn btn-outline-primary" onclick="logout()">Logout</a>
+                {% else %}
+                    <a class="btn btn-primary" href="{{ url_for('views.register') }}">Sign Up</a>
+                    <a class="btn btn-outline-primary" href="{{ url_for('views.login') }}">Log in</a>
+                {% endif %}
             </div>
         </div>
     </div>

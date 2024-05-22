@@ -1,9 +1,18 @@
-from flask import render_template
+from flask import render_template, session, redirect, url_for
 from flask.blueprints import Blueprint
 from collection import collections
-from flask_jwt_extended import jwt_required
 
 views_bp = Blueprint('views', __name__, template_folder='templates')
+
+
+@views_bp.context_processor
+def inject_user():
+    if "user_id" in session:
+        from models.User import User
+        user = User.get_user_by_id(session["user_id"])
+        if user:
+            return dict(user=user)
+    return dict(user=None)
 
 
 @views_bp.route('/')
@@ -34,15 +43,32 @@ def market():
 
 @views_bp.route('/register')
 def register():
+    if "user_id" in session:
+        return redirect(url_for('views.own_profile'))
     return render_template('register.html')
 
 
 @views_bp.route('/login')
 def login():
+    if "user_id" in session:
+        return redirect(url_for('views.own_profile'))
     return render_template('login.html')
 
 
-@views_bp.route('/profile')
-@jwt_required() # Some tokens are accepted but they souldnt
-def profile():
-    return render_template('profile.html')
+@views_bp.route('/profile', methods=['GET'])
+def own_profile():
+    if "user_id" in session:
+        from models.User import User
+        user = User.get_user_by_id(session.get("user_id"))
+        if user:
+            return render_template('profile.html', displayed_user=user, can_edit=True)
+    return redirect(url_for('views.login'))
+
+
+@views_bp.route('/profile/<username>', methods=['GET'])
+def user_profile(username: str):
+    from models.User import User
+    user = User.get_user_by_creds(username=username)
+    if user and user.email_verified:
+        return render_template('profile.html', displayed_user=user, can_edit=False)
+    return render_template('404.html'), 404

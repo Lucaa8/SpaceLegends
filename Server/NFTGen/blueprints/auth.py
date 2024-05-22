@@ -1,7 +1,9 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, url_for
+from flask import request, jsonify, url_for, session
+
 from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code
 from authentification import create_refresh, create_access
+from flask_jwt_extended import jwt_required, current_user, get_jwt, decode_token
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
@@ -56,6 +58,7 @@ def register():
         print(f"Registered {user}")
         verification_url = f"https://space-legends.luca-dc.ch{url_for('api.verification', code=email_code)}"
         from smtp_service import smtp_service as smtp
+        session['user_id'] = str(user.id)
         if not smtp.send_verification_email(username, email, verification_url):
             return jsonify({'message': 'Your account has been successfully created but we failed to send you the verification code. Please retry the confirmation later in your user profile.'}), 200
         return jsonify(refresh_token=create_refresh(user), access_token=create_access(user)), 200
@@ -86,9 +89,34 @@ def login():
     if user:
         try:
             if verify_password(password, user.password, user.salt):
+                session['user_id'] = str(user.id)
                 return jsonify(refresh_token=create_refresh(user), access_token=create_access(user)), 200
         except Exception as e:
             print(f"An unknown error occurred while checking password on login for user.id=={user.id}: {str(e)}")
             error_msg = 'Something went wrong while checking your password. Try again later.'
 
     return jsonify({'message': error_msg}), 401
+
+
+@auth_bp.route("/logout", methods=["DELETE"])
+@jwt_required()
+def logout():
+    from models.TokenRevoked import TokenRevoked
+    jti = get_jwt()["jti"]
+    try:
+        session.pop('user_id', None)
+        TokenRevoked.revoke(jti, "access")
+        if "refresh" in request.json:
+            jti_refresh = decode_token(request.json["refresh"])["jti"]
+            TokenRevoked.revoke(jti_refresh, "refresh")
+        return '', 204
+    except Exception as e:
+        print(f"Failed to revoke one of the token for user.id=={current_user.id if current_user is not None else 'unknown'}: {str(e)}")
+    return jsonify({'message': 'Failed to revoke token.'}), 400
+
+
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    access_token = create_access(user=current_user)
+    return jsonify(access_token=access_token)

@@ -77,7 +77,10 @@ document.addEventListener("DOMContentLoaded", function() {
             {
                 downloadPrivateKeyFile(walletPrivate);
             }
-            //register ok
+            return response.json().then(r => {
+                updateTokens(r);
+                window.location.href = '/profile';
+            });
         })
         .catch((error) => {
             errorAlert.classList.remove('d-none');

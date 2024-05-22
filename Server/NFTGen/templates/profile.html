@@ -1,12 +1,12 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <link href="{{ url_for('static', filename='profile.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/profile.css') }}" rel="stylesheet">
 {% endblock %}
 {% block content %}
     <div class="container-fluid" style="min-height: 100vh">
         <div class="row profile-header align-items-center">
             <div class="col-2">
-                <img src="{{ url_for('static', filename='default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
+                <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
             </div>
             <div class="col-10">
                 <h3>
@@ -16,10 +16,11 @@
                 <div class="username-display">
                     <p style="margin-bottom: 0">@lucaa_8</p>
                     <div class="level-icon" data-toggle="tooltip" title="Level: 19 (197/344xp)">
-                        <img src="{{ url_for('static', filename='level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
+                        <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
                         <span class="level-number">19</span>
                     </div>
                 </div>
+                <!-- displayed_user (user object), can_edit (bool, if /profile). Todo: Add user nfts list -->
                 <p>Joined the 20/05/2024 | Money: 18'819 SDT | NFT count: 24</p>
             </div>
         </div>

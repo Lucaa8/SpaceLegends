@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask_session import Session
 import os
 from dotenv import load_dotenv
 from chain import load as load_chain
@@ -13,6 +14,9 @@ from blueprints.auth import auth_bp
 load_dotenv()
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 app.register_blueprint(views_bp)
 app.register_blueprint(api_bp, url_prefix='/api')

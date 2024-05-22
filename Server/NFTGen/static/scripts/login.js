@@ -18,7 +18,10 @@ document.addEventListener("DOMContentLoaded", function() {
             {
                 return response.json().then(errorContent => Promise.reject(errorContent));
             }
-            //login ok
+            return response.json().then(r => {
+                updateTokens(r);
+                window.location.href = '/profile';
+            });
         })
         .catch((error) => {
             errorAlert.classList.remove('d-none');
