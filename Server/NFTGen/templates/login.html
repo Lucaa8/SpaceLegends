@@ -37,6 +37,9 @@
         </div>
     </div>
 
+    <script>
+        _clearTokens() //otherwise we get some nasty loops between /profile and /login, trust me.
+    </script>
     <script src="{{ url_for('static', filename='scripts/login.js') }}"></script>
 
 {% endblock %}

@@ -4,55 +4,64 @@
     <link href="{{ url_for('static', filename='styles/explorer.css') }}" rel="stylesheet"> <!-- Needed for rarity classes -->
 {% endblock %}
 {% block content %}
-    <div class="container-fluid" style="min-height: 100vh">
-        <div class="row profile-header align-items-center">
-            <div class="col-2">
-                <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
-            </div>
-            <div class="col-10">
-                <h3>
-                    {{ displayed_user.display_name }}
-                    {% if can_edit %}
-                    <button class="btn btn-outline-light btn-sm edit-profile">Edit Profile</button>
-                    {% endif %}
-                </h3>
-                <div class="username-display">
-                    <p style="margin-bottom: 0">@lucaa_8</p>
-                    <div class="level-icon" data-toggle="tooltip" title="Level: 19 (197/344xp)">
-                        <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
-                        <span class="level-number">19</span>
-                    </div>
-                </div>
-                <p>Joined the {{ displayed_user.joined_date|replace(" ", " at ") }} | Money: 18'819 SDT | NFTs collected: 1/18</p>
-            </div>
+
+    {% if can_edit and not user.email_verified %}
+        <div style="height: 100dvh; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="text-align: center">Please verify your email {{ user.email }} and then refresh this page.</h2>
         </div>
-        <hr/>
-        <h1 style="text-align: center">Total NFTs collection ({{ displayed_user.nfts|length }})</h1>
-        <div class="nft-section d-flex flex-wrap justify-content-center">
-            {% if displayed_user.nfts|length==0 %}
-                <p style="margin-top: 100px">Nothing to show here...</p>
-            {% endif %}
-            {% for item in displayed_user.nfts %}
-                {% set nft = item.as_complete_nft() %}
-                <div class="flip-card">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                            <img src="{{ nft.image }}" alt="NFT Card">
-                        </div>
-                        <div class="flip-card-back">
-                            <h1>{{ nft.name }} {{ nft.id }}</h1>
-                            <p>Collection - {{ nft.Collection }}</p>
-                            <p>Row {{ nft["Image Row"] }} | Col {{ nft["Image Column"] }}</p>
-                            <p class="text-muted {{ nft.Rarity[1] }}">{{ nft.Rarity[0] }}</p>
-                            <p>Created the {{ nft.created }}</p>
+    {% else %}
+        <div class="container-fluid" style="min-height: 100vh">
+            <div class="row profile-header align-items-center">
+                <div class="col-2">
+                    <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
+                </div>
+                <div class="col-10">
+                    <h3>
+                        {{ displayed_user.display_name }}
+                        {% if can_edit %}
+                        <a class="btn btn-outline-light btn-sm edit-profile" href="{{ url_for('views.edit_profile') }}">Edit Profile</a>
+                        {% endif %}
+                    </h3>
+                    <div class="username-display">
+                        <p style="margin-bottom: 0">@{{ user.username }}</p>
+                        <div class="level-icon" data-toggle="tooltip" title="Level: {{ lvl[0] }} ({{ lvl[1] }}/{{ lvl[2] }}xp)">
+                            <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
+                            <span class="level-number">{{ lvl[0] }}</span>
                         </div>
                     </div>
+                    <p>Joined the {{ displayed_user.joined_date|replace(" ", " at ") }} | Money: {{ displayed_user.money_sdt }} SDT | NFTs discovered: {{ current }}/{{ max }}</p>
                 </div>
-            {% endfor %}
+            </div>
+            <hr/>
+            <h1 style="text-align: center">Total NFTs collection ({{ displayed_user.nfts|length }})</h1>
+            <div class="d-flex flex-wrap justify-content-center" style="margin: 50px">
+                {% if displayed_user.nfts|length==0 %}
+                    <p style="margin-top: 100px">Nothing to show here...</p>
+                {% endif %}
+                {% for item in displayed_user.nfts %}
+                    {% set nft = item.as_complete_nft() %}
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="{{ nft.image }}" alt="NFT Card">
+                            </div>
+                            <div class="flip-card-back">
+                                <h1>{{ nft.name }} {{ nft.id }}</h1>
+                                <p>Collection - {{ nft.Collection }}</p>
+                                <p>Row {{ nft["Image Row"] }} | Col {{ nft["Image Column"] }}</p>
+                                <p class="text-muted {{ nft.Rarity[1] }}">{{ nft.Rarity[0] }}</p>
+                                <p>Created the {{ nft.created }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    </div>
+    {% endif %}
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            //Display tooltip with level xp on top of level div
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);

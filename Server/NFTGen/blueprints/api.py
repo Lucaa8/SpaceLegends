@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, redirect, url_for
 from flask.blueprints import Blueprint
 from collection import Item, get_item
 import chain
@@ -27,9 +27,9 @@ def get_metadata(token_id):
     return jsonify(meta), 200
 
 
-@api_bp.route('/verification/<code>', methods=['POST'])
+@api_bp.route('/verification/<code>', methods=['GET'])
 def verification(code: str):
     from models import User
     if User.validate_email(code):
-        return '', 204
+        return redirect(url_for('views.own_profile'))
     return '', 400

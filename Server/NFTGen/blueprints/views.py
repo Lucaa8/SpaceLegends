@@ -1,6 +1,6 @@
 from flask import render_template, session, redirect, url_for
 from flask.blueprints import Blueprint
-from collection import collections
+from collection import collections, items
 
 views_bp = Blueprint('views', __name__, template_folder='templates')
 
@@ -60,9 +60,15 @@ def own_profile():
     if "user_id" in session:
         from models.User import User
         user = User.get_user_by_id(session.get("user_id"))
-        if user:
-            return render_template('profile.html', displayed_user=user, can_edit=True)
+        if user:                                                                                                                                     # level, current xp, xp to rankup
+            return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), lvl=[1, 0, 10])
     return redirect(url_for('views.login'))
+
+
+@views_bp.route('/edit-profile', methods=['GET'])
+def edit_profile():
+    # check if user_id in session
+    return render_template('edit_profile.html')
 
 
 @views_bp.route('/profile/<username>', methods=['GET'])
@@ -70,5 +76,5 @@ def user_profile(username: str):
     from models.User import User
     user = User.get_user_by_creds(username=username, email=None)
     if user and user.email_verified:
-        return render_template('profile.html', displayed_user=user, can_edit=False)
+        return render_template('profile.html', displayed_user=user, can_edit=False, max=len(items), current=len(user.nfts_discovered()), lvl=[1, 0, 10])
     return render_template('404.html'), 404

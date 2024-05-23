@@ -18,6 +18,8 @@ class User(db.Model):
     salt = db.Column(db.String(32), nullable=False)
     wallet_address = db.Column(db.String(42), nullable=False)
     wallet_verified = db.Column(db.Boolean, nullable=False, default=False, comment='If the user has proven that this is his wallet')
+    level_xp = db.Column(db.Integer, nullable=False, default=0)
+    money_sdt = db.Column(db.Integer, nullable=False, default=2)
 
     # Relationship to nfts
     nfts = db.relationship('NFT', backref='user', lazy=True)
@@ -82,3 +84,13 @@ class User(db.Model):
                 db.session.rollback()
                 print(f"An unknown error occurred while validating email of user.id=={user.id}: {e}")
         return False
+
+    def nfts_discovered(self, as_complete_nfts: bool = False):
+        test = set()
+        discovered_nfts = []
+        for nft in self.nfts:
+            old = len(test)
+            test.add(nft.type)
+            if len(test) != old:
+                discovered_nfts.append(nft.as_complete_nft() if as_complete_nfts else nft)
+        return discovered_nfts
