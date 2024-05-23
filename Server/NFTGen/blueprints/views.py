@@ -68,7 +68,7 @@ def own_profile():
 @views_bp.route('/profile/<username>', methods=['GET'])
 def user_profile(username: str):
     from models.User import User
-    user = User.get_user_by_creds(username=username)
+    user = User.get_user_by_creds(username=username, email=None)
     if user and user.email_verified:
         return render_template('profile.html', displayed_user=user, can_edit=False)
     return render_template('404.html'), 404

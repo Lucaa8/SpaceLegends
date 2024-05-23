@@ -29,31 +29,55 @@
     font-weight: bold;
 }
 
-.nft-section {
-    max-height: calc(100vh - 180px);
-    overflow-y: auto;
-    padding: 20px;
-}
-
-.nft-card {
-    background-color: #777;
-    width: 150px;
-    height: 200px;
+.flip-card {
     margin: 10px;
+    background-color: transparent;
+    width: 350px;
+    height: 350px;
+    perspective: 1000px; /* 3D effect */
 }
 
-.card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
 }
 
-.card:hover {
-    transform: scale(1.05);
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
 }
 
-.card-body {
+.flip-card-front, .flip-card-back {
+    border-radius: 15px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+}
+
+.flip-card-front > img {
+    border-radius: 15px;
+    width: 350px;
+}
+
+.flip-card-front {
+    background-color: #bbb;
+    color: black;
+}
+
+.flip-card-back {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    background-color: #16181b;
+    color: white;
+    transform: rotateY(180deg);
+    font-size: 0.9rem;
+    padding: 20px;
+    box-sizing: border-box;
 }
