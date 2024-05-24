@@ -46,6 +46,21 @@ class SMTPServer:
         """
         return self.send_email(to, sub, body)
 
+    def send_new_password_email(self, user, new_password) -> bool:
+        sub = f"Your new password for account {user.username}"
+        body = f"""
+        <html>
+            <body>
+                <h3>Hello {user.display_name},</h3>
+                <p>You made a request about a lost password. We'll send you a new one so you can login and change it in the edit profile page.</p>
+                <p>Your new password is: {new_password}</p>
+                <a href="https://space-legends.luca-dc.ch/login" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: white; background-color: #007BFF; text-align: center; text-decoration: none; border-radius: 5px;">Login</a>
+                <p>Best regards,<br>The Space Legends Team</p>
+            </body>
+        </html>
+        """
+        return self.send_email(user.email, sub, body)
+
 
 smtp_service: SMTPServer | None = None
 

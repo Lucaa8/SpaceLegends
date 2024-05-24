@@ -1,17 +1,16 @@
 from flask import render_template, session, redirect, url_for
 from flask.blueprints import Blueprint
 from collection import collections, items
+from utils import user_session, get_user_from_session
 
 views_bp = Blueprint('views', __name__, template_folder='templates')
 
 
-@views_bp.context_processor
+@views_bp.context_processor # Needed for the header template (buttons on the right are different if a user is logged in)
 def inject_user():
-    if "user_id" in session:
-        from models.User import User
-        user = User.get_user_by_id(session["user_id"])
-        if user:
-            return dict(user=user)
+    user = get_user_from_session()
+    if user:
+        return dict(user=user)
     return dict(user=None)
 
 
@@ -55,19 +54,20 @@ def login():
     return render_template('login.html')
 
 
+@views_bp.route('/forgot-password')
+def forgot_password():
+    return render_template('forgot_password.html')
+
+
 @views_bp.route('/profile', methods=['GET'])
-def own_profile():
-    if "user_id" in session:
-        from models.User import User
-        user = User.get_user_by_id(session.get("user_id"))
-        if user:                                                                                                                                     # level, current xp, xp to rankup
-            return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), lvl=[1, 0, 10])
-    return redirect(url_for('views.login'))
+@user_session()
+def own_profile(user):                                                                                                                        # level, current xp, xp to rankup
+    return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), lvl=[1, 0, 10])
 
 
 @views_bp.route('/edit-profile', methods=['GET'])
-def edit_profile():
-    # check if user_id in session
+@user_session()
+def edit_profile(user):
     return render_template('edit_profile.html')
 
 

@@ -1,7 +1,7 @@
 from flask.blueprints import Blueprint
 from flask import request, jsonify, url_for, session
 
-from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code
+from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code, generate_password
 from authentification import create_refresh, create_access
 from flask_jwt_extended import jwt_required, current_user, get_jwt, decode_token
 
@@ -120,3 +120,35 @@ def logout():
 def refresh():
     access_token = create_access(user=current_user)
     return jsonify(access_token=access_token)
+
+
+@auth_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    if "user_id" in session:
+        return jsonify(message="You are already logged in."), 400
+
+    if "username" in request.json:
+        from utils import USERNAME_REGEX
+        try:
+            username = request.json["username"]
+            if not USERNAME_REGEX.match(username):
+                return jsonify(message="Invalid username"), 404
+            from models.User import User
+            user = User.get_user_by_creds(username=username, email=None)
+            if user is None:
+                return jsonify(message="Invalid username"), 404
+            if not user.email_verified:
+                return jsonify(message="Your email is not verified"), 404
+            new_pass = generate_password()
+            hashed_password, salt = hash_password(new_pass)
+            if user.set_new_password(hashed_password, salt):
+                from smtp_service import smtp_service
+                smtp_service.send_new_password_email(user, new_pass)
+                return jsonify(message="You received a new password in your email inbox! Please login with the new password and change it in your edit profile page!"), 200
+            else:
+                return jsonify(message="Something went wrong while updating your password. Please retry again later."), 500
+        except Exception as e:
+            print("An error occurred while trying to check username before a forgot-password procedure." + str(e))
+
+    return jsonify(message="An unknown error occurred. Please retry later."), 400
+

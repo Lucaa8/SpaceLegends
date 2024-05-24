@@ -8,30 +8,35 @@
         <div class="row h-100 justify-content-center align-items-center" style="min-height: 100vh;">
             <div class="col-md-4">
                 <div class="card shadow" style="width: 100%;">
-                    <form id="loginForm" data-url="{{ url_for('api.edit_profile') }}">
-                        <div class="card-body">
-                            <h3 class="card-title">Edit your profile</h3>
+                    <div class="card-body">
+                        <h3 class="card-title">Edit your profile</h3>
 
-                            <div class="mb-3">
-                                <label for="displayname" class="form-label">Display Name</label>
-                                <input type="text" class="form-control" id="displayname" name="displayname">
-                            </div>
-
-                            <div class="d-flex align-items-center">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                                <div id="alertMessage" class="alert alert-danger d-none" style="--bs-alert-margin-bottom: 0; margin-left: 0.5rem; word-break: break-all; font-size: 0.8rem" role="alert">
-                                    Error Text
-                                </div>
-                            </div>
-
-                            <div class="text-center mt-4">
-                                <a href="{{ url_for('views.own_profile') }}">Go back</a>
-                            </div>
+                        <div class="mb-3">
+                            <label for="displayname" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="displayname" name="displayname" value="{{ user.display_name }}">
+                            <button onclick="changeDisplayname()" class="btn btn-primary mt-2">Change Name</button>
                         </div>
-                    </form>
+
+                        <h4>Change your password</h4>
+                        <div class="mb-3">
+                            <label for="currpassword" class="form-label">Current Password</label>
+                            <input type="text" class="form-control" id="currpassword" name="currpassword">
+                            <label for="pass1" class="form-label">New Password</label>
+                            <input type="text" class="form-control" id="pass1" name="pass1">
+                            <label for="pass2" class="form-label">Confirm new Password</label>
+                            <input type="text" class="form-control" id="pass2" name="pass2">
+                            <button onclick="" class="btn btn-primary mt-2">Change Password</button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('views.own_profile') }}">Go back</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="{{ url_for('static', filename='scripts/edit_profile.js') }}"></script>
 
 {% endblock %}

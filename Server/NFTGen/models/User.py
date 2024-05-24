@@ -85,6 +85,27 @@ class User(db.Model):
                 print(f"An unknown error occurred while validating email of user.id=={user.id}: {e}")
         return False
 
+    def set_new_password(self, hex_password: str, hex_salt: str) -> bool:
+        try:
+            self.password = hex_password
+            self.salt = hex_salt
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"An unknown error occurred while changing password of user.id=={self.id}: {e}")
+        return False
+
+    def set_new_display_name(self, display_name: str) -> bool:
+        try:
+            self.display_name = display_name
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"An unknown error occurred while changing display name of user.id=={self.id}: {e}")
+        return False
+
     def nfts_discovered(self, as_complete_nfts: bool = False):
         test = set()
         discovered_nfts = []
