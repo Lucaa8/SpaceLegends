@@ -1,7 +1,9 @@
-from flask import jsonify, redirect, url_for
+from flask import jsonify, redirect, url_for, request
 from flask.blueprints import Blueprint
+from flask_jwt_extended import jwt_required, current_user
 from collection import Item, get_item
 import chain
+from utils import save_profile_pic, delete_profile_pic
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
 
@@ -33,3 +35,45 @@ def verification(code: str):
     if User.validate_email(code):
         return redirect(url_for('views.own_profile'))
     return '', 400
+
+
+@api_bp.route('/change-displayname', methods=['POST'])
+@jwt_required()
+def change_displayname():
+    if "display_name" in request.json:
+        display_name = request.json["display_name"]
+        from utils import DISPLAYNAME_REGEX
+        if (len(display_name) > 0) and (DISPLAYNAME_REGEX.match(display_name)):
+            if display_name == current_user.display_name:
+                return jsonify(message="It's already your display name!"), 400
+            if current_user.set_new_display_name(display_name):
+                return jsonify(message="Successfully changed your display name!"), 200
+            return jsonify(message="An unexpected error occurred while changing your display name. Please retry later."), 500
+    return jsonify(message="Invalid display_name"), 400
+
+
+@api_bp.route('/change-picture', methods=['POST'])
+@jwt_required()
+def change_picture():
+    if "file" in request.files:
+        file = request.files["file"]
+        try:
+            path = save_profile_pic(file, current_user.id)
+            if path is None:
+                return jsonify(message="File too big. Max. is 5 MB"), 400
+            return jsonify(message="Profile picture updated successfully!", path=path), 200
+        except Exception as e:
+            print(f'An unknown error occurred while saving the new profile picture of user.id=={current_user.id}: {str(e)}')
+    return jsonify(message="Something went wrong while updating your profile picture please retry later."), 400
+
+
+@api_bp.route('/delete-picture', methods=['DELETE'])
+@jwt_required()
+def delete_picture():
+    try:
+        if delete_profile_pic(current_user.id):
+            return jsonify(message="Profile picture deleted successfully.", path=url_for('static', filename='files/default_pp.png')), 200
+        return jsonify(message="You have no profile picture"), 404
+    except Exception as e:
+        print(f'An unknown error occurred while deleting the profile picture of user.id=={current_user.id}: {str(e)}')
+    return jsonify(message="Something went wrong while deleting your profile picture please retry later."), 400

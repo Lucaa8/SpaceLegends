@@ -12,9 +12,19 @@
     {% else %}
         <div class="container-fluid" style="min-height: 100vh">
             <div class="row profile-header align-items-center">
-                <div class="col-2">
-                    <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
-                </div>
+                {% if can_edit %}
+                    <div class="col-2 profile-pic-section" onclick="changeProfilePic()">
+                        <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle profile-pic">
+                        <i class="fas fa-pencil-alt edit-icon"></i>
+                    </div>
+                    <form id="profilePicForm" style="display: none" enctype="multipart/form-data" data-url="{{ url_for('api.change_picture') }}">
+                        <input id="profilePicInput" name="file" type="file" accept="image/png, image/jpeg">
+                    </form>
+                {% else %}
+                    <div class="col-2">
+                        <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
+                    </div>
+                {% endif %}
                 <div class="col-10">
                     <h3>
                         {{ displayed_user.display_name }}
@@ -23,7 +33,7 @@
                         {% endif %}
                     </h3>
                     <div class="username-display">
-                        <p style="margin-bottom: 0">@{{ user.username }}</p>
+                        <p style="margin-bottom: 0">@{{ displayed_user.username }}</p>
                         <div class="level-icon" data-toggle="tooltip" title="Level: {{ lvl[0] }} ({{ lvl[1] }}/{{ lvl[2] }}xp)">
                             <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
                             <span class="level-number">{{ lvl[0] }}</span>
@@ -59,13 +69,6 @@
         </div>
     {% endif %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            //Display tooltip with level xp on top of level div
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='scripts/profile.js') }}"></script>
+
 {% endblock %}

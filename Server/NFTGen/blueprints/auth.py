@@ -128,7 +128,6 @@ def forgot_password():
         return jsonify(message="You are already logged in."), 400
 
     if "username" in request.json:
-        from utils import USERNAME_REGEX
         try:
             username = request.json["username"]
             if not USERNAME_REGEX.match(username):
@@ -149,6 +148,31 @@ def forgot_password():
                 return jsonify(message="Something went wrong while updating your password. Please retry again later."), 500
         except Exception as e:
             print("An error occurred while trying to check username before a forgot-password procedure." + str(e))
+
+    return jsonify(message="An unknown error occurred. Please retry later."), 400
+
+
+@auth_bp.route('/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+
+    if ("current" in request.json) and ("pass1" in request.json) and ("pass2" in request.json):
+        current = request.json["current"]
+        pass1 = request.json["pass1"]
+        pass2 = request.json["pass2"]
+        if not PASSWORD_REGEX.match(current) or not PASSWORD_REGEX.match(pass1):
+            return jsonify(message="Invalid request. Password must be min. 8 characters."), 400
+        if pass1 != pass2:
+            return jsonify(message="Passwords dont match"), 400
+        try:
+            if not verify_password(current, current_user.password, current_user.salt):
+                return jsonify(message="Your current password does not match"), 400
+            hex_pass, hex_salt = hash_password(pass1)
+            if current_user.set_new_password(hex_pass, hex_salt):
+                return jsonify(message="Successfully changed your password!"), 200
+            return jsonify(message="Something went wrong while updating your password. Please retry again later."), 500
+        except Exception as e:
+            print(f"An error occurred while trying to change password of user.id=={current_user.id}: " + str(e))
 
     return jsonify(message="An unknown error occurred. Please retry later."), 400
 

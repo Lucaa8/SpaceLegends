@@ -3,6 +3,37 @@
     padding: 20px;
 }
 
+.profile-pic-section {
+    position: relative;
+    display: inline-block;
+    clip-path: circle(48.5% at 50% 50%);
+}
+
+.profile-pic-section:hover .profile-pic {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.profile-pic-section:hover .edit-icon {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.profile-pic {
+    transition: opacity 0.3s ease;
+}
+
+.edit-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 .username-display {
     display: flex;
     align-items: center;
@@ -35,6 +66,7 @@
     width: 350px;
     height: 350px;
     perspective: 1000px; /* 3D effect */
+    transition: transform 0.2s;
 }
 
 .flip-card-inner {
@@ -46,7 +78,13 @@
     transform-style: preserve-3d;
 }
 
-.flip-card:hover .flip-card-inner {
+.flip-card:hover {
+    /* Scale */
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.flipped {
     transform: rotateY(180deg);
 }
 
@@ -55,6 +93,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    /* Tries to remove the blurry effect on text when scaling up but does not seems to work */
     -webkit-backface-visibility: hidden; /* Safari */
     backface-visibility: hidden;
 }
@@ -80,4 +119,7 @@
     font-size: 0.9rem;
     padding: 20px;
     box-sizing: border-box;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }

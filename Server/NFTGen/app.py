@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+
+import utils
 from flask_session import Session
 import os
 from dotenv import load_dotenv
@@ -21,6 +23,11 @@ Session(app)
 app.register_blueprint(views_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(auth_bp, url_prefix='/auth')
+
+utils.PROFILE_PIC_FOLDER = os.getenv('PROFILE_PICTURE_FOLDER')
+utils.PROFILE_PIC_MAX_MB = float(os.getenv('MAX_PROFILE_PICTURE_SIZE_MB'))
+if not os.path.isdir(f"static/{utils.PROFILE_PIC_FOLDER}"):
+    os.mkdir(f"static/{utils.PROFILE_PIC_FOLDER}")
 
 
 @app.errorhandler(404)
