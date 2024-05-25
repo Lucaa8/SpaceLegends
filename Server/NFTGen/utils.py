@@ -79,6 +79,7 @@ def generate_password(length=12, include_uppercase=True, include_numbers=True):
 
 
 def save_profile_pic(file, user_id) -> str | None:
+    delete_profile_pic(user_id)
     file_len = file.seek(0, 2) # Check until the eof (2 is os.SEEK_END) to get the size in bytes
     if file_len / (1024 * 1024) < PROFILE_PIC_MAX_MB:
         file.seek(0, 0) # Replace the cursor at the start (0 is os.SEEK_SET) otherwise the save won't work
@@ -88,15 +89,24 @@ def save_profile_pic(file, user_id) -> str | None:
     return None
 
 
-def delete_profile_pic(user_id) -> bool:
+def get_profile_pic(user_id, default_on_fail=True) -> str | None:
     as_jpeg = f"static/{PROFILE_PIC_FOLDER}/{user_id}.jpeg"
     if os.path.isfile(as_jpeg):
-        os.remove(as_jpeg)
-        return True
+        return as_jpeg
     as_png = f"static/{PROFILE_PIC_FOLDER}/{user_id}.png"
     if os.path.isfile(as_png):
-        os.remove(as_png)
+        return as_png
+    return url_for('static', filename='files/default_pp.png')[1:] if default_on_fail else None
+
+
+def delete_profile_pic(user_id) -> bool:
+    pic = get_profile_pic(user_id, default_on_fail=False)
+    if pic is not None and os.path.exists(pic):
+        os.remove(pic)
         return True
     return False
+
+
+
 
 

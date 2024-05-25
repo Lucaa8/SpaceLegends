@@ -10,19 +10,42 @@
             <h2 style="text-align: center">Please verify your email {{ user.email }} and then refresh this page.</h2>
         </div>
     {% else %}
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit profile picture</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>Choose one of the two options below</p>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="changeProfilePic()">Update</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="deleteProfilePic()">Delete</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid" style="min-height: 100vh">
             <div class="row profile-header align-items-center">
                 {% if can_edit %}
-                    <div class="col-2 profile-pic-section" onclick="changeProfilePic()">
-                        <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle profile-pic">
-                        <i class="fas fa-pencil-alt edit-icon"></i>
+                    <div class="col-2 profile-pic-section" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <div class="profile-pic-container">
+                            <img id="profilePic" src="{{ ppic }}" alt="Profile Image" class="img-fluid rounded-circle profile-pic">
+                            <i class="fas fa-pencil-alt edit-icon"></i>
+                        </div>
                     </div>
-                    <form id="profilePicForm" style="display: none" enctype="multipart/form-data" data-url="{{ url_for('api.change_picture') }}">
+                    <form id="profilePicForm" style="display: none" enctype="multipart/form-data" data-update-url="{{ url_for('api.change_picture') }}" data-delete-url="{{ url_for('api.delete_picture') }}">
                         <input id="profilePicInput" name="file" type="file" accept="image/png, image/jpeg">
                     </form>
                 {% else %}
                     <div class="col-2">
-                        <img src="{{ url_for('static', filename='files/default_pp.png') }}" alt="Profile Image" class="img-fluid rounded-circle">
+                        <div class="profile-pic-container">
+                            <img src="/{{ ppic }}" alt="Profile Image" class="img-fluid rounded-circle">
+                        </div>
                     </div>
                 {% endif %}
                 <div class="col-10">
@@ -32,7 +55,7 @@
                         <a class="btn btn-outline-light btn-sm edit-profile" href="{{ url_for('views.edit_profile') }}">Edit Profile</a>
                         {% endif %}
                     </h3>
-                    <div class="username-display">
+                    <div class="username-display mb-2">
                         <p style="margin-bottom: 0">@{{ displayed_user.username }}</p>
                         <div class="level-icon" data-toggle="tooltip" title="Level: {{ lvl[0] }} ({{ lvl[1] }}/{{ lvl[2] }}xp)">
                             <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">

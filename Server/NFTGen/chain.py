@@ -9,9 +9,9 @@ import time
 
 class CosmicRelic:
     def __init__(self, alchemy_key: str, contract_address: str, contract_abi_path: str):
-        self._alchemy = f'wss://eth-sepolia.g.alchemy.com/v2/{alchemy_key}'
-        self.w3 = Web3(Web3.WebsocketProvider(self._alchemy))
-        self.w3.middleware_onion.inject(geth_poa_middleware, layer=0) # To allow event listening
+        self._alchemy = f'https://eth-sepolia.g.alchemy.com/v2/{alchemy_key}'
+        self.w3 = Web3(Web3.HTTPProvider(self._alchemy))
+        # self.w3.middleware_onion.inject(geth_poa_middleware, layer=0) # To allow event listening
         assert self.w3.is_connected()
         cs_contract_address = self.w3.to_checksum_address(contract_address)
         with open(contract_abi_path, 'r', encoding='utf-8') as f:
