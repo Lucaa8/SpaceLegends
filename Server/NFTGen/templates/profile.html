@@ -11,11 +11,13 @@
         </div>
     {% else %}
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        {% set lvl = displayed_user.get_level_info() %}
+
+        <div class="modal fade" id="profilePicModal" tabindex="-1" aria-labelledby="profilePicModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit profile picture</h5>
+                        <h5 class="modal-title" id="profilePicModalLabel">Edit profile picture</h5>
                     </div>
                     <div class="modal-body">
                         <p>Choose one of the two options below</p>
@@ -29,10 +31,35 @@
             </div>
         </div>
 
+        <div class="modal fade" id="levelModal" tabindex="-1" aria-labelledby="levelModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="levelModalLabel">{{ displayed_user.username }}'s progression</h5>
+                    </div>
+                    <div class="modal-body" style="text-align: center">
+                        <div class="level-icon mb-2">
+                            <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level" style="width: 100px; height: 100px">
+                            <span class="level-number" style="font-size: 2.5rem">{{ lvl[0] }}</span>
+                        </div>
+                        <div class="progress position-relative mb-2">
+                            {% set ratio = '%0.1f'| format(lvl[3]) %}
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ ratio }}%;" aria-valuenow="{{ ratio }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            <small class="justify-content-center d-flex position-absolute w-100">{{ ratio }}%</small>
+                        </div>
+                        <div>{{ lvl[1]|format_number }}/{{ lvl[2]|format_number }} exp</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid" style="min-height: 100vh">
             <div class="row profile-header align-items-center">
                 {% if can_edit %}
-                    <div class="col-2 profile-pic-section" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <div class="col-2 profile-pic-section" data-bs-toggle="modal" data-bs-target="#profilePicModal">
                         <div class="profile-pic-container">
                             <img id="profilePic" src="{{ ppic }}" alt="Profile Image" class="img-fluid rounded-circle profile-pic">
                             <i class="fas fa-pencil-alt edit-icon"></i>
@@ -57,7 +84,7 @@
                     </h3>
                     <div class="username-display mb-2">
                         <p style="margin-bottom: 0">@{{ displayed_user.username }}</p>
-                        <div class="level-icon" data-toggle="tooltip" title="Level: {{ lvl[0] }} ({{ lvl[1] }}/{{ lvl[2] }}xp)">
+                        <div class="level-icon" data-bs-toggle="modal" data-bs-target="#levelModal">
                             <img src="{{ url_for('static', filename='files/level_icon.png') }}" class="img-fluid rounded-circle" alt="User's level">
                             <span class="level-number">{{ lvl[0] }}</span>
                         </div>

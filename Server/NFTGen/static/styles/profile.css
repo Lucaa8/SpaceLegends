@@ -56,24 +56,28 @@
     align-items: center;
 }
 
-.username-display .level-icon {
+.level-icon {
     position: relative;
     margin-left: 10px;
     min-width: 50px;
 }
 
-.username-display .level-icon img {
+.username-display .level-icon:hover {
+    cursor: pointer;
+}
+
+.level-icon img {
     width: 55px;
     height: 55px;
 }
 
-.username-display .level-number {
+.level-number {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-size: 1.4rem;
+    font-size: 1.7rem;
     font-weight: bold;
 }
 

@@ -30,6 +30,10 @@ if not os.path.isdir(f"static/{utils.PROFILE_PIC_FOLDER}"):
     os.mkdir(f"static/{utils.PROFILE_PIC_FOLDER}")
 
 
+# Inject the function format_number in the jinja2 environment. Now this function can be called inside templates (if used with render_template)
+app.jinja_env.filters['format_number'] = lambda value: f"{value:,}".replace(",", "'")
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404

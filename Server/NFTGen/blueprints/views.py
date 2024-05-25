@@ -61,8 +61,8 @@ def forgot_password():
 
 @views_bp.route('/profile', methods=['GET'])
 @user_session()
-def own_profile(user):                                                                                                                      # level, current xp, xp to rankup
-    return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), lvl=[1, 0, 10], ppic=get_profile_pic(user.id))
+def own_profile(user):
+    return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), ppic=get_profile_pic(user.id))
 
 
 @views_bp.route('/edit-profile', methods=['GET'])
@@ -76,5 +76,5 @@ def user_profile(username: str):
     from models.User import User
     user = User.get_user_by_creds(username=username, email=None)
     if user and user.email_verified:
-        return render_template('profile.html', displayed_user=user, can_edit=False, max=len(items), current=len(user.nfts_discovered()), lvl=[1, 0, 10], ppic=get_profile_pic(user.id))
+        return render_template('profile.html', displayed_user=user, can_edit=False, max=len(items), current=len(user.nfts_discovered()), ppic=get_profile_pic(user.id))
     return render_template('404.html'), 404

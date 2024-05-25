@@ -1,6 +1,7 @@
 import sqlalchemy.exc
 from sqlalchemy import select, func
 from database import db
+from level_system import level_system
 
 
 class User(db.Model):
@@ -115,3 +116,6 @@ class User(db.Model):
             if len(test) != old:
                 discovered_nfts.append(nft.as_complete_nft() if as_complete_nfts else nft)
         return discovered_nfts
+
+    def get_level_info(self) -> tuple[int, int, int, float]:
+        return level_system.for_user(self)

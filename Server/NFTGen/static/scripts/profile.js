@@ -1,11 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-    //Display tooltip with level xp on top of level div
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-
 //Add the logic to rotate the cards on click
 const cards = document.getElementsByClassName("flip-card");
 for(let card of cards) {

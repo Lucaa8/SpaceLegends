@@ -25,9 +25,9 @@
                 </li>
             </ul>
 
-            <form class="mx-auto d-none d-md-flex">
+            <form id="searchUserForm" class="mx-auto d-flex">
                 <div class="input-group" id="searchInput">
-                    <input class="form-control me-1" type="search" placeholder="Search user..." aria-label="Search">
+                    <input id="searchUserInput" class="form-control me-1" type="search" placeholder="Search user..." aria-label="Search">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
             </form>
@@ -58,3 +58,11 @@
         </div>
     </div>
 </nav>
+
+<script>
+    document.getElementById('searchUserForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const userToSearch = document.getElementById('searchUserInput').value;
+        window.location.href = '{{ url_for('views.user_profile', username='') }}'+userToSearch;
+    });
+</script>
