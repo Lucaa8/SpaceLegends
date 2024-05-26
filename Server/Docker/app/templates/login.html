@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+
+    <div class="container-fluid h-100">
+        <div class="row h-100 justify-content-center align-items-center" style="min-height: 100vh;">
+            <div class="col-md-4">
+                <div class="card shadow" style="width: 100%;">
+                    <form id="loginForm" data-url="{{ url_for('auth.login') }}">
+                        <div class="card-body">
+                            <h3 class="card-title">Login</h3>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" pattern="[a-z0-9_]+" minlength="3" maxlength="16" title="The username must be unique, alphanumeric, lowercase and can contain underscores. From 3 to 16 characters length" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <a href="{{ url_for('views.forgot_password') }}">Forgot password?</a>
+                                <input type="password" class="form-control" id="password" name="password" minlength="8" required>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                                <div id="alertMessage" class="alert alert-danger d-none" style="--bs-alert-margin-bottom: 0; margin-left: 0.5rem; word-break: break-all; font-size: 0.8rem" role="alert">
+                                    Error Text
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <a href="{{ url_for('views.register') }}">Don’t have an account? Sign up</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        _clearTokens() //otherwise we get some nasty loops between /profile and /login, trust me.
+    </script>
+    <script src="{{ url_for('static', filename='scripts/login.js') }}"></script>
+
+{% endblock %}

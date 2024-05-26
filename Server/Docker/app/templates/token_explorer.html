@@ -1,0 +1,116 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <link href="{{ url_for('static', filename='styles/explorer.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="height: 30vh;">
+        <div>
+            <h1>Our collection of NFTs : The Cosmic Relics</h1>
+            <p>On this page you can retrieve all our NFTs which you can earn by playing Space Legends.</p>
+        </div>
+    </section>
+    {% for nft in nfts %}
+        <section class="container my-5">
+            <div class="row align-items-center">
+                {% if loop.index is odd %}
+                    <div class="col-lg-6">
+                        <img src="{{ nft["collection"].image }}" class="img-fluid" alt="Espace">
+                    </div>
+                {% endif %}
+                <div class="col-lg-6">
+                    <h2>{{ nft["collection"].name }} Collection</h2>
+                    <p>{{ nft["collection"].description }}</p>
+                </div>
+                {% if loop.index is even %}
+                    <div class="col-lg-6">
+                        <img src="{{ nft["collection"].image }}" class="img-fluid" alt="Espace">
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+        <div class="container mt-4">
+            <div class="row">
+                {% for item in nft["items"] %}
+                    <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <div class="card h-100">
+                            <img src="{{ item.get_image() }}" class="card-img-top" alt="title">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item._name }}</h5>
+                                <p class="card-text"><small class="text-muted {{ "r-"+item.format_rarity()[0].lower() }}">{{ item.format_rarity()[0] }}</small></p>
+                                <p class="card-text">{{ item._description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="margin: 30px 0 10px 0;">
+        <div>
+            <h1>Token Finder</h1>
+            <p>In this section you can retrieve any NFT with his Token ID</p>
+        </div>
+    </section>
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-4">
+                <input id="tbxSearchNFT" type="number" class="form-control" placeholder="Search by token ID...">
+            </div>
+        </div>
+        <div class="row justify-content-center my-2">
+            <div id="alertSearchNft" class="alert alert-danger col-lg-4" role="alert" style="text-align: center" hidden>
+              Error
+            </div>
+        </div>
+        <div class="row justify-content-center my-2">
+            <div class="col-lg-2">
+                <button id="btnSearchNFT" data-url="{{ url_for('api.get_metadata', token_id=0) }}" onclick="searchNFT()" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <img id="imgNFT" src="https://bafybeifku5g36btmudmnsmrgyranj2dljz2ydwkywi3pwzquzkfvekgsh4.ipfs.w3s.link/01_Mars_r03c01.png" class="card-img-top" alt="title">
+                    <div class="card-body">
+                        <h5 id="txtTitleNFT" class="card-title">Example NFT<small class="text-muted">#0</small></h5> <!-- The #x is the token id -->
+                        <p class="card-text"><small id="txtRarityNFT" class="text-muted r-legendary">Legendary</small></p>
+                        <p id="txtDescriptionNFT" class="card-text">This text will be replaced by your researched NFT's one.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" style="align-content: center">
+                <div class="mt-4 mb-4" style="max-height: 75vh;">
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="padding-left: 0" scope="col">Collection</th>
+                                <th scope="col">Row</th>
+                                <th scope="col">Column</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding-left: 0" id="txtCollectionNFT">Mars</td>
+                                <td id="txtRowNFT">3</td>
+                                <td id="txtColNFT">1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h4>Creation Date</h4>
+                    <p id="txtCreationDateNFT">2024-04-01 at 12:30:00</p>
+                    <h4 class="mt-2">Ownership History</h4>
+                    <div class="overflow-auto" style="max-height: 35vh">
+                        <ul id="ulOwnershipHistoryNFT" class="list-unstyled">
+                            <li>0x0000000000000000000000000000000000000000 - <span class="text-muted">Lucaa_8</span></li>
+                            <li>0x0000000000000000000000000000000000000000 - <span class="text-muted">Luca008</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename="scripts/searchToken.js") }}"></script>
+{% endblock %}

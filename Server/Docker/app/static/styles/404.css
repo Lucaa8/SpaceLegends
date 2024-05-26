@@ -1,0 +1,15 @@
+body, html {
+    height: 100%;
+    margin: 0;
+}
+.error-section {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.error-section > div {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    border-radius: 0.5rem;
+}

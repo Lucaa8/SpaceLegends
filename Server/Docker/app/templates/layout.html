@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <title>Space Legends</title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='files/spacelegends.ico') }}">
+        <!-- CSS Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Quantico -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+        <link href="{{ url_for('static', filename='styles/font.css') }}" rel="stylesheet">
+        <!-- For icons (E.G: <i class="fas fa-rocket"></i>) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <!-- Helps to display toast notifications -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/toast.css') }}">
+        <!-- Header CSS -->
+        <link href="{{ url_for('static', filename='styles/header.css') }}" rel="stylesheet">
+        <!-- Footer CSS -->
+        <link href="{{ url_for('static', filename='styles/footer.css') }}" rel="stylesheet">
+        <!-- To allow other HTML files to include custom CSS files later on -->
+        {% block head %}
+        {% endblock %}
+        <!-- Helps to display toast notifications -->
+        <script src="{{ url_for('static', filename='scripts/toast.js') }}"></script>
+        <!-- My script used to make authenticated requests with Fetch API to my backend (JWT) -->
+        <script src="{{ url_for('static', filename='scripts/auth.js') }}"></script>
+    </head>
+    <body>
+        {% include 'header.html' %}
+        {% include 'toasts.html' %}
+        {% block content %}
+        {% endblock %}
+        {% include 'footer.html' %}
+    </body>
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        bootstrap.Toast.Default.delay = 7000;
+    </script>
+</html>

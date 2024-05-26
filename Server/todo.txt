@@ -1,2 +1,0 @@
-créer des event d'écoute lorsqu'un NFT est créé, détruit ou transféré et actualiser une base de données pour suivre la possession des NFT entre joueurs
-Egalement le faire pour le StarDust

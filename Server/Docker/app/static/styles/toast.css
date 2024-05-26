@@ -1,0 +1,14 @@
+.toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1050;
+}
+
+.toast .toast-header .close {
+    margin-left: auto;
+    padding: 0.25rem 0.5rem;
+    color: white;
+    background: none;
+    border: none;
+}

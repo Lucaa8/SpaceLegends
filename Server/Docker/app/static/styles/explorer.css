@@ -1,0 +1,29 @@
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-body small.text-muted {
+    display: block;
+}
+
+/* Rarity colors (important to bypass bootstrap's one) */
+.r-common {
+    color: green !important;
+}
+
+.r-rare {
+    color: #3498db !important;
+}
+
+.r-epic {
+    color: purple !important;
+}
+
+.r-legendary {
+    color: gold !important;
+}

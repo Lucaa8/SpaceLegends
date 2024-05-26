@@ -1,0 +1,82 @@
+{
+    "collection": {
+	    "id": 0,
+	    "name": "Earth",
+	    "description": "The default planet.",
+	    "image_cid": "bafybeieqjm2qvgzqpetzeucpkdk7rmhokp3sgglzyvxh2igrwshkjzxqwe"
+    },
+    "items": [
+        {
+            "name": "Earth N°1",
+            "description": "Icy tendrils cling to the skeletal remains of urban progress, a frozen testament to a world in silent aftermath.",
+            "collection_id": 0,
+            "row": 1,
+            "col": 1,
+            "rarity": 1
+        },
+        {
+            "name": "Earth N°2",
+            "description": "Morning light whispers over the icy tomb of civilization, where once the bustle of life thrived now stands a chilling hush.",
+            "collection_id": 0,
+            "row": 1,
+            "col": 2,
+            "rarity": 1
+        },
+        {
+            "name": "Earth N°3",
+            "description": "The sun graces the frost-laden edifices of humanity’s hubris, offering no warmth to the cold desolation of regret.",
+            "collection_id": 0,
+            "row": 1,
+            "col": 3,
+            "rarity": 3
+        },
+        {
+            "name": "Earth N°4",
+            "description": "A car, once a symbol of freedom, now lies shackled in the relentless grip of an eternal winter’s embrace.",
+            "collection_id": 0,
+            "row": 2,
+            "col": 1,
+            "rarity": 2
+        },
+        {
+            "name": "Earth N°5",
+            "description": "A convoy of icy relics, stand in silent parade amidst the frozen breath of Earth’s desolate sigh.",
+            "collection_id": 0,
+            "row": 2,
+            "col": 2,
+            "rarity": 2
+        },
+        {
+            "name": "Earth N°6",
+            "description": "The urban graveyard sprawls into the horizon, with icy shrouds enveloping the echoes of a silenced world.",
+            "collection_id": 0,
+            "row": 2,
+            "col": 3,
+            "rarity": 2
+        },
+        {
+            "name": "Earth N°7",
+            "description": "Beneath a crystal cloak, a lone car rests, a frosty epitaph to the stillness that has befallen the Earth.",
+            "collection_id": 0,
+            "row": 3,
+            "col": 1,
+            "rarity": 1
+        },
+        {
+            "name": "Earth N°8",
+            "description": "A blanket of frost encases remnants of a rush hour frozen in time, an arctic echo of once warmer days.",
+            "collection_id": 0,
+            "row": 3,
+            "col": 2,
+            "rarity": 1
+        },
+        {
+            "name": "Earth N°9",
+            "description": "Nature’s icy fingers clasp over the remains of humanity's haste, a chilling reminder of the planet’s stoic indifference.",
+            "collection_id": 0,
+            "row": 3,
+            "col": 3,
+            "rarity": 1
+        }
+    ]
+}

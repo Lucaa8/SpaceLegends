@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <link href="{{ url_for('static', filename='styles/home.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="background-image: url('{{ url_for('static', filename='files/spacelegends.png') }}'); height: 100vh;">
+        <div>
+            <h1>Welcome on Space Legends</h1>
+            <p>Explore the solar system and craft powerful artifacts</p>
+            <div>
+                <a href="{{ url_for('views.register') }}" class="btn btn-primary">Sign Up</a>
+                <a href="{{ url_for('views.download') }}" class="btn btn-secondary">Download</a>
+            </div>
+        </div>
+    </section>
+    <section class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <img src="{{ url_for('static', filename='files/spacelegends.png') }}" class="img-fluid" alt="Espace">
+            </div>
+            <div class="col-lg-6">
+                <h2>Découverte de l'espace</h2>
+                <p>Rejoignez-nous pour explorer de nouveaux mondes et civilisations au-delà de notre galaxie.</p>
+            </div>
+        </div>
+    </section>
+    <section class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2>Conquête spatiale</h2>
+                <p>Prenez les commandes de vaisseaux spatiaux avancés et défiez les frontières de l'espace connu.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="{{ url_for('static', filename='files/spacelegends.png') }}" class="img-fluid" alt="Vaisseau Spatial">
+            </div>
+        </div>
+    </section>
+{% endblock %}

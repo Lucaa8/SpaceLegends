@@ -1,0 +1,27 @@
+@media (min-width: 992px) { /* Corresponds to 'lg' in Bootstrap */
+    #navbarContent > .navbar-nav {
+        margin-left: 10px;
+    }
+    .nav-item {
+        margin: 0 10px 0 10px;
+    }
+}
+
+@media (max-width: 992px) {
+    #searchInput {
+        margin: 5px 0 8px;
+    }
+    #searchInput > input {
+        max-width: 30vh;
+    }
+}
+
+/* Disable the ugly drag animation on image when click+move */
+img {
+    user-select: none;
+    user-drag: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}

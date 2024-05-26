@@ -1,0 +1,16 @@
+.hero-section {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.hero-section > div {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 0.5rem;
+}
+
+img.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
