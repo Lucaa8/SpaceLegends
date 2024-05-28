@@ -95,6 +95,12 @@ def login():
     return jsonify({'message': error_msg}), 401
 
 
+@auth_bp.route('/user', methods=['GET'])
+@jwt_required()
+def get_user():
+    return jsonify(name=current_user.username, displayname=current_user.display_name)
+
+
 @auth_bp.route("/logout", methods=["DELETE"])
 @jwt_required()
 def logout():

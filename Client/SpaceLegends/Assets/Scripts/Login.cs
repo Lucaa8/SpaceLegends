@@ -11,6 +11,21 @@ public class Login : MonoBehaviour
     [SerializeField] TMP_InputField password;
     [SerializeField] TMP_Text error;
 
+
+    public void Start()
+    {
+        Auth.OnResponse Callback = (ok, status, jrep) =>
+        {
+            Debug.Log("UWUWUWUWUWUWUWUWUW " + status.ToString());
+            if (ok)
+            {
+                Debug.Log("Hello " + jrep.Value<string>("displayname") + "!");
+                //TODO Menu Scene
+            }
+        };
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetAuthURL("user"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, Callback));
+    }
+
     public void quit()
     {
         Application.Quit();
@@ -60,7 +75,9 @@ public class Login : MonoBehaviour
 
     private void HandleLoginResponse(JObject response)
     {
-        Debug.Log("Login réussi ! Réponse : " + response);
+        Auth.Instance.UpdateTokens(response);
+        Debug.Log(PlayerPrefs.GetString("a"));
+        //TODO Menu Scene
     }
 
 }
