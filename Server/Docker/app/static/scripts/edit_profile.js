@@ -2,7 +2,7 @@ async function _displayResult(response) {
 
     if(!response.headers.has("Content-Type") || response.headers.get("Content-Type") !== 'application/json') {
         showErrorToast('An unexcepted error occurred, please retry later.');
-        return;
+        return false;
     }
 
     const jrep = await response.json();
@@ -12,6 +12,8 @@ async function _displayResult(response) {
     } else {
         showErrorToast(jrep.message);
     }
+
+    return response.ok;
 
 }
 
@@ -52,6 +54,12 @@ async function changePassword(url) {
         })
     });
 
-    await _displayResult(response);
+    const isOk = await _displayResult(response);
+
+    if(isOk) {
+        currentPass.value = "";
+        pass1.value = "";
+        pass2.value = "";
+    }
 
 }

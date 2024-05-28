@@ -71,17 +71,14 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    errors = []
     try:
         if (not username) or (not USERNAME_REGEX.match(username)):
-            errors.append('Invalid or missing username.')
+            return jsonify(message='Invalid or missing username.'), 400
         if (not password) or (not PASSWORD_REGEX.match(password)):
-            errors.append('Invalid or missing password.')
+            return jsonify(message='Invalid or missing password.'), 400
     except Exception as e:
-        errors.append(str(e))
-
-    if errors:
-        return jsonify({'message': errors}), 400
+        print(f"An unknown error occurred while checking username={username} or password={password} on login: {str(e)}")
+        return jsonify(message='An unexpected error occurred while trying to log you in. Please try again later'), 400
 
     from models import User
     user: User | None = User.get_user_by_creds(username=username, email=None)
