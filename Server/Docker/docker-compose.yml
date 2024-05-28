@@ -23,7 +23,7 @@ services:
     image: mariadb:latest
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: luca1234
+      MARIADB_ROOT_PASSWORD: lulu1234
       MARIADB_DATABASE: spacelegends
     ports:
       - 3306:3306
