@@ -10,7 +10,8 @@ services:
     environment:
       FLASK_ENV: development
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
 
   adminer:
     image: adminer
@@ -28,6 +29,11 @@ services:
       - 3306:3306
     volumes:
       - dbdata:/var/lib/mysql
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      timeout: 30s
 
 volumes:
   dbdata:
