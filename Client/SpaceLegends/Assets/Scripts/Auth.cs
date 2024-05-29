@@ -4,18 +4,27 @@ using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class Auth : MonoBehaviour
 {
 
     public static Auth Instance { get; private set; }
 
-    static Auth()
+    public void Awake()
     {
-        Instance = new Auth();
+        if(Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    private static string BaseUrl = "https://space-legends.luca-dc.ch/";
+    private static string BaseUrl = "https://space-legends.luca-dc.ch";
 
     private static Func<string, string, string> BuildURL = (sub, endpoint) =>
     {
@@ -38,6 +47,23 @@ public class Auth : MonoBehaviour
     public enum AuthType
     { 
         NONE, ACCESS, REFRESH
+    }
+
+    public void SetUser(JObject data)
+    {
+        PlayerPrefs.SetString("c", data.Value<string>("name"));
+        PlayerPrefs.SetString("d", data.Value<string>("displayname"));
+        PlayerPrefs.Save();
+    }
+
+    public String GetUsername()
+    {
+        return PlayerPrefs.GetString("c", "");
+    }
+
+    public String GetDisplayname()
+    {
+        return PlayerPrefs.GetString("d", "");
     }
 
     private string getAccessToken()
@@ -79,14 +105,28 @@ public class Auth : MonoBehaviour
     {
         PlayerPrefs.DeleteKey("a");
         PlayerPrefs.DeleteKey("b");
+        PlayerPrefs.DeleteKey("c");
+        PlayerPrefs.DeleteKey("d");
     }
 
-    public void Logout()
+    private void _logout()
     {
-        MakeRequest(GetAuthURL("logout"), UnityWebRequest.kHttpVerbDELETE, new JObject { { "refresh", getRefreshToken() } }, AuthType.ACCESS, (ok, status, jrep) =>
+        ClearTokens();
+        if(SceneManager.GetActiveScene().name != "Login")
         {
-            ClearTokens();
-            //TODO Login Scene
+            LevelChanger manager = FindObjectOfType<LevelChanger>();
+            if(manager != null)
+            {
+                manager.FadeToLevel("Login");
+            }
+        }
+    }
+
+    public IEnumerator Logout()
+    {
+        yield return MakeRequest(GetAuthURL("logout"), UnityWebRequest.kHttpVerbDELETE, new JObject { { "refresh", getRefreshToken() } }, AuthType.ACCESS, (ok, status, jrep) =>
+        {
+            _logout();
         });
     }
 
@@ -100,10 +140,6 @@ public class Auth : MonoBehaviour
                 tok = jrep.Value<string>("access_token");
                 setAccessToken(tok);
             }
-            else
-            {
-                ClearTokens();
-            }
             RefreshCallback(tok);
         });
     }
@@ -114,7 +150,7 @@ public class Auth : MonoBehaviour
         {
             if(authentification == AuthType.ACCESS && status == 401)
             {
-                StartCoroutine(RefreshToken((new_access) =>
+                OnRefresh onRefreshed = (new_access) =>
                 {
                     if (!string.IsNullOrEmpty(new_access))
                     {
@@ -122,10 +158,11 @@ public class Auth : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("Logged out");
-                        //TODO Login Scene
+                        //The refresh failed, therefore the player needs to log him in again on the login page.
+                        _logout();
                     }
-                }));
+                };
+                StartCoroutine(RefreshToken(onRefreshed));
             }
             else
             {
@@ -137,30 +174,37 @@ public class Auth : MonoBehaviour
     private IEnumerator _MakeRequest(string url, string method, JObject body, AuthType authentification, OnResponse onResponse)
     {
 
+        //If one of those method returns an empty string then It means the player is not logged in, avoid doing useless requests.
+        if((authentification == AuthType.ACCESS && getAccessToken() == "") || (authentification == AuthType.REFRESH && getRefreshToken() == ""))
+        {
+            _logout(); //The player is already logged out but nevermind, the redirection to login scene is done inside _logout();
+            yield break;
+        }
+
         UnityWebRequest request = null;
-        switch (method)
+        switch (method) //Pretty useless as I can just do "new UnityWebRequest(url, method);", but its just a verification if the method is wrong the method will quit.
         {
             case UnityWebRequest.kHttpVerbGET:
                 request = UnityWebRequest.Get(url);
                 break;
             case UnityWebRequest.kHttpVerbPOST:
                 request = new UnityWebRequest(url, "POST");
-                if(body != null)
-                {
-                    byte[] bodyRaw = Encoding.UTF8.GetBytes(body.ToString());
-                    request.SetRequestHeader("Content-Type", "application/json");
-                    request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                }
                 break;
             case UnityWebRequest.kHttpVerbDELETE:
                 request = UnityWebRequest.Delete(url);
                 break;
-
         }
 
         if(request == null || string.IsNullOrEmpty(request.url))
         {
             yield break;
+        }
+
+        if (body != null)
+        {
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(body.ToString());
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.SetRequestHeader("Content-Type", "application/json");
         }
 
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -177,31 +221,38 @@ public class Auth : MonoBehaviour
 
         yield return request.SendWebRequest();
 
-        if (request.result == UnityWebRequest.Result.ConnectionError)
+        bool isOk = false;
+        long status = -1;
+        JObject jrep = null;
+
+        //If the user is not connected to the network or the remote server is not reachable, the callback will get -1 as status
+        //Otherwise I do more work (in this condition)
+        if (request.result != UnityWebRequest.Result.ConnectionError)
         {
-            onResponse(false, -1, null);
-        }
-        else
-        {
-            bool isOk = UnityWebRequest.Result.Success == request.result;
-            long status = request.responseCode;
+            isOk = UnityWebRequest.Result.Success == request.result;
+            status = request.responseCode;
             if (request.GetResponseHeader("Content-Type").Equals("application/json"))
             {
                 try
                 {
-                    JObject jrep = JObject.Parse(request.downloadHandler.text);
-                    onResponse(isOk, status, jrep);
+                    jrep = JObject.Parse(request.downloadHandler.text);
                 }
                 catch (Exception e)
                 {
                     Debug.LogError("Error while parsing MakeRequest response. Error: " + e.Message);
-                    onResponse(isOk, status, new JObject{{ "message", "An unexepted error occurred while parsing the response." }});
+                    jrep = new JObject { { "message", "An unexepted error occurred while parsing the JSON response." } };
                 }
             }
-            else
-            {
-                onResponse(isOk, status, null);
-            }
+        }
+
+        try
+        {
+            onResponse(isOk, status, jrep);
+        }
+        catch(Exception e)
+        {
+            Debug.LogError("Something went wrong with a callback (From request at " + url + "). The status code was " + status.ToString() + ". Error;");
+            Debug.LogException(e);
         }
 
     }

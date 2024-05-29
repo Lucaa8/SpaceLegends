@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
+using UnityEngine.UI;
 
 public class Login : MonoBehaviour
 {
@@ -10,30 +11,64 @@ public class Login : MonoBehaviour
     [SerializeField] TMP_InputField username;
     [SerializeField] TMP_InputField password;
     [SerializeField] TMP_Text error;
+    [SerializeField] Button BtnLogin;
+    [SerializeField] Button BtnQuit;
+    [SerializeField] Button BtnContinue;
+    [SerializeField] Button BtnLogout;
+    [SerializeField] CanvasGroup LoginForm;
+    [SerializeField] CanvasGroup LoggedInForm;
+    [SerializeField] TMP_Text LoggedInAs;
 
 
     public void Start()
     {
-        Auth.OnResponse Callback = (ok, status, jrep) =>
-        {
-            Debug.Log("UWUWUWUWUWUWUWUWUW " + status.ToString());
-            if (ok)
-            {
-                Debug.Log("Hello " + jrep.Value<string>("displayname") + "!");
-                //TODO Menu Scene
-            }
-        };
-        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetAuthURL("user"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, Callback));
+        BtnLogin.onClick.AddListener(LoginClick);
+        BtnQuit.onClick.AddListener(QuitClick);
+        BtnContinue.onClick.AddListener(ContinueClick);
+        BtnLogout.onClick.AddListener(LogoutClick);
+        GetUser(false);
     }
 
-    public void quit()
+    public void QuitClick()
     {
         Application.Quit();
     }
 
-    public void login()
+    public void LoginClick()
     {
         StartCoroutine(LoginCoroutine());
+    }
+
+    public void ContinueClick()
+    {
+        FindObjectOfType<LevelChanger>().FadeToLevel("Menu");
+    }
+
+    public void LogoutClick()
+    {
+        StartCoroutine(Auth.Instance.Logout());
+        StartCoroutine(FadeForm(true));
+    }
+
+    public IEnumerator FadeForm(bool showLoginForm)
+    {
+        float duration = 0.5f; // seconds
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = elapsedTime / duration;
+            LoggedInForm.alpha = showLoginForm ? 1f - alpha : alpha;
+            LoginForm.alpha = showLoginForm ? alpha : 1f - alpha;
+            yield return null;
+        }
+        LoggedInForm.alpha = showLoginForm ? 0f : 1f;
+        LoginForm.alpha = showLoginForm ? 1f : 0f;
+        LoggedInForm.blocksRaycasts = !showLoginForm;
+        LoginForm.blocksRaycasts = showLoginForm;
+        Navigation navigation = BtnQuit.navigation;
+        navigation.selectOnDown = showLoginForm ? username : BtnContinue;
+        BtnQuit.navigation = navigation;
     }
 
     private IEnumerator LoginCoroutine()
@@ -57,7 +92,6 @@ public class Login : MonoBehaviour
             {              
                 if(www.GetResponseHeader("Content-Type") == "application/json")
                 {
-                    //todo fonctionne pas si le mot-de-passe est invalide (le backend retourne jarray au lieu de string
                     error.text = JObject.Parse(www.downloadHandler.text).Value<string>("message");
                 }
                 else
@@ -68,16 +102,35 @@ public class Login : MonoBehaviour
             }
             else
             {
-                HandleLoginResponse(JObject.Parse(www.downloadHandler.text));
+                JObject jrep = JObject.Parse(www.downloadHandler.text);
+                if(jrep != null)
+                {
+                    Auth.Instance.UpdateTokens(jrep);
+                }
+                GetUser(true);
             }
         }
     }
 
-    private void HandleLoginResponse(JObject response)
+    private void GetUser(bool Direct)
     {
-        Auth.Instance.UpdateTokens(response);
-        Debug.Log(PlayerPrefs.GetString("a"));
-        //TODO Menu Scene
+        Auth.OnResponse Callback = (ok, status, jrep) =>
+        {
+            if (ok)
+            {
+                Auth.Instance.SetUser(jrep);
+                if(!Direct)
+                {
+                    LoggedInAs.text = "You are logged in as " + Auth.Instance.GetUsername();
+                    StartCoroutine(FadeForm(false));
+                }
+                else
+                {
+                    ContinueClick();
+                }
+            }
+        };
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetAuthURL("user"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, Callback));
     }
 
 }
