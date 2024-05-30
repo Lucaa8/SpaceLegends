@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,8 +8,7 @@ public class ChangeInput : MonoBehaviour
     EventSystem System;
     [SerializeField] Selectable firstInput;
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnEnable() //Called each time a gameobject associated with this script is setActive(true)
     {
         System = EventSystem.current;
         firstInput.Select();
@@ -33,11 +30,17 @@ public class ChangeInput : MonoBehaviour
         }
         if (tabPressed)
         {
-            Selectable next = System.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
-            Debug.Log(next.name);
-            if (next != null)
+            if(System.currentSelectedGameObject == null)
             {
-                next.Select();
+                firstInput.Select();
+            }
+            else
+            {
+                Selectable next = System.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+                if (next != null)
+                {
+                    next.Select();
+                }
             }
             tabPressed = false;
         } 

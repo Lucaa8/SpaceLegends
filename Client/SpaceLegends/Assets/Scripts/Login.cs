@@ -64,8 +64,8 @@ public class Login : MonoBehaviour
         }
         LoggedInForm.alpha = showLoginForm ? 0f : 1f;
         LoginForm.alpha = showLoginForm ? 1f : 0f;
-        LoggedInForm.blocksRaycasts = !showLoginForm;
-        LoginForm.blocksRaycasts = showLoginForm;
+        LoggedInForm.gameObject.SetActive(!showLoginForm);
+        LoginForm.gameObject.SetActive(showLoginForm);
         Navigation navigation = BtnQuit.navigation;
         navigation.selectOnDown = showLoginForm ? username : BtnContinue;
         BtnQuit.navigation = navigation;
