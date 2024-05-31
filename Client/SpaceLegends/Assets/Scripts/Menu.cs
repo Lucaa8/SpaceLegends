@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,8 +11,11 @@ public class Menu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        BtnLogout.onClick.AddListener(() => StartCoroutine(Auth.Instance.Logout()));
-        TxtUser.text = "Welcome back " + Auth.Instance.GetDisplayname();
+        if (Auth.Instance != null)
+        {
+            BtnLogout.onClick.AddListener(() => StartCoroutine(Auth.Instance.Logout()));
+            TxtUser.text = "Welcome back " + Auth.Instance.GetDisplayname();
+        }
     }
 
     // Update is called once per frame
@@ -22,4 +23,5 @@ public class Menu : MonoBehaviour
     {
         
     }
+
 }
