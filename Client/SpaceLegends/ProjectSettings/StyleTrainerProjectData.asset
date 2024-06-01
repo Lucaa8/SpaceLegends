@@ -26,59 +26,503 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7812307818302406738
-      type: {class: StyleTrainerData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
-      data:
-        m_Guid: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
-        m_State: 1
-        m_Disposing: 0
-        m_Styles: []
-        m_Version: 202231001
-    - rid: 7812307818302406739
-      type: {class: StyleTrainerData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
-      data:
-        m_Guid: 11000000-0000-0000-0000-000000000011
-        m_State: 1
-        m_Disposing: 0
-        m_Styles:
-        - rid: 7812307818302406838
-        m_Version: 202231001
-    - rid: 7812307818302406837
+    - rid: 193091871493062656
       type: {class: StyleData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
       data:
-        m_Guid: 00000000-0000-0000-0000-000000000000
-        m_State: 1
+        m_Guid: d94b1b9c-383c-4c2a-9c89-f42bc3c1adb2
+        m_State: 0
         m_Disposing: 0
-        m_IsFallback: 1
+        m_IsFallback: 0
         m_Thumbnail:
-          rid: -2
-        m_Visible: 0
-        selectedCheckPointGUID: 00000000-0000-0000-0000-000000000000
-        m_FavoriteCheckPointGUID: active
+          rid: 193091871493062658
+        m_Visible: 1
+        selectedCheckPointGUID: 26f0d7ae-9233-4b26-b8fb-34a77f554586
+        m_FavoriteCheckPointGUID: 00000000-0000-0000-0000-000000000000
         parentID: 00000000-0000-0000-0000-000000000000
-        m_ProjectID: 00000000-0000-0000-0000-000000000000
+        m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
         m_TrainingSteps: 2000
         m_CheckPoints:
-        - m_Guid: 00000000-0000-0000-0000-000000000000
+        - m_Guid: 0a6e98af-5ad9-4ac0-b3b8-7d5dc57252b6
           m_State: 1
           m_Disposing: 0
-          m_ProjectID: 00000000-0000-0000-0000-000000000000
-          m_Name: Default
-          m_Description: Default style.
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
           parent_id: 00000000-0000-0000-0000-000000000000
           m_TrainingSetData:
-            m_Guid: 
-            m_State: 0
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
             m_Disposing: 0
             m_TrainingSet: []
-            m_ProjectID: 
-          m_ValidationImagesData: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: b2f616b3-44c2-4bce-b0c1-e0ca66ceb0ba
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: b2f616b3-44c2-4bce-b0c1-e0ca66ceb0ba
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: cf2649ff-e3d6-4cbe-bc82-9a418b2dfec6
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: cf2649ff-e3d6-4cbe-bc82-9a418b2dfec6
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 98c15a5c-c136-4bc7-a40d-8ff1cea627f2
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 98c15a5c-c136-4bc7-a40d-8ff1cea627f2
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 200
+        - m_Guid: cb3c01a0-3f50-49eb-b70e-fae333a12155
+          m_State: 1
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: 203c4f1d-e62d-40ef-85e9-f28aaa4ca255
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 203c4f1d-e62d-40ef-85e9-f28aaa4ca255
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: eeb1d915-00ad-4749-a7db-bf3a609b990b
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: eeb1d915-00ad-4749-a7db-bf3a609b990b
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: bd387fc5-920e-483c-909e-496f84e3b984
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: bd387fc5-920e-483c-909e-496f84e3b984
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 400
+        - m_Guid: faacf8f4-9437-4d3f-8a4c-edbb3994a110
+          m_State: 1
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: 2d729139-224f-4567-9aca-b10b2b8b553d
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 2d729139-224f-4567-9aca-b10b2b8b553d
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: ee445685-9797-42e5-abe2-c4f211561266
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: ee445685-9797-42e5-abe2-c4f211561266
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 5a5d5638-9ece-45db-a001-77867c8736a1
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 5a5d5638-9ece-45db-a001-77867c8736a1
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 600
+        - m_Guid: 99b16181-81f7-41c8-9e56-8e6c61e01194
+          m_State: 1
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: d2cec47d-38e6-4051-856e-6c7d2f3dea58
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: d2cec47d-38e6-4051-856e-6c7d2f3dea58
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 5c3f7e61-58f3-410f-b37f-db174c217c77
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 5c3f7e61-58f3-410f-b37f-db174c217c77
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 32763ec1-3f23-4cc5-ab1c-bd1eb8341761
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 32763ec1-3f23-4cc5-ab1c-bd1eb8341761
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 800
+        - m_Guid: 1de63a7d-c6e8-477e-a75e-9f46095b1245
+          m_State: 1
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: bdf9f9f8-3289-4807-9c3e-10919dcd3bb1
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: bdf9f9f8-3289-4807-9c3e-10919dcd3bb1
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 4ac877af-53c6-48b5-a04c-bfd265d0f32c
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 4ac877af-53c6-48b5-a04c-bfd265d0f32c
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: fe9b62e5-5f61-49d9-9144-12a0a8fba710
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: fe9b62e5-5f61-49d9-9144-12a0a8fba710
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 1000
+        - m_Guid: 2343ac07-99da-4c3e-b538-f05bfff8e95d
+          m_State: 1
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: cb5e7f6e-52be-4332-8065-86ab9bbfa448
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: cb5e7f6e-52be-4332-8065-86ab9bbfa448
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 807fe5b7-a089-4037-86fc-898eca800c16
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 807fe5b7-a089-4037-86fc-898eca800c16
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 9bbdaf14-b409-45ac-8f5e-2e4a716601af
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 9bbdaf14-b409-45ac-8f5e-2e4a716601af
+              m_State: 1
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 1200
+        - m_Guid: 76b16d0e-ef21-45e3-994c-35a812430472
+          m_State: 0
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
           m_TrainingSteps: 2000
-        m_SampleOutputPrompts: []
-        m_TrainingSetData: []
-        m_Name: Default
-        m_Description: Default style.
-    - rid: 7812307818302406838
+        - m_Guid: 75e61fa8-7c74-4364-97d5-2449b0c2bb49
+          m_State: 0
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 2000
+        - m_Guid: f0b0a911-99c4-475e-a101-7c58df5b93eb
+          m_State: 0
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 2000
+        - m_Guid: 26f0d7ae-9233-4b26-b8fb-34a77f554586
+          m_State: 0
+          m_Disposing: 0
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_Name: UI
+          m_Description: Set a description here to help you remember what this style
+            is for.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+            m_State: 5
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+          m_ValidationImagesData:
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: some gui icons 2d for combat statistics like sword, armor,
+              speed modifier, etc..n
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: small icon for 2d gui to display combat statistics like damage
+              (sword), armor, speed modifier, etc...
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 5
+            m_Disposing: 0
+            m_ImageArtifact:
+              m_Guid: 00000000-0000-0000-0000-000000000000
+              m_State: 5
+              m_Disposing: 0
+            m_Prompt: gui icon 2d statistic damage, shield, armor, speed, jump
+          m_TrainingSteps: 2000
+        m_SampleOutputPrompts:
+        - Some GUI icons 2d for combat statistics like sword, armor, speed modifier,
+          etc..n
+        - Small icon for 2D gui to display combat statistics like damage (sword),
+          armor, speed modifier, etc...
+        - GUI icon 2d statistic damage, shield, armor, speed, jump
+        m_TrainingSetData:
+        - m_Guid: 10a1ed0a-5d60-453d-8539-c11a1e0ca30d
+          m_State: 5
+          m_Disposing: 0
+          m_TrainingSet:
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062659
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062660
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062661
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062662
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062663
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062664
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062665
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062666
+          - m_Guid: 00000000-0000-0000-0000-000000000000
+            m_State: 3
+            m_Disposing: 0
+            m_ImageArtifact:
+              rid: 193091871493062667
+          m_ProjectID: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+        m_Name: UI
+        m_Description: Set a description here to help you remember what this style
+          is for.
+    - rid: 193091871493062657
       type: {class: StyleData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
       data:
         m_Guid: 5cc104e0-423a-473e-8034-b9d346cb2357
@@ -163,3 +607,116 @@ MonoBehaviour:
           m_ProjectID: 11000000-0000-0000-0000-000000000011
         m_Name: Default
         m_Description: Default Style
+    - rid: 193091871493062658
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: 00000000-0000-0000-0000-000000000000
+        m_State: 3
+        m_Disposing: 0
+    - rid: 193091871493062659
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-333b72f6-1d31-4b5c-842c-55903872d0ea
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062660
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-03711fa8-02c9-403a-81ae-a6e996bfebe7
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062661
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-bba50a0a-527e-47a9-a522-e676166b99e8
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062662
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-785eba9a-de6e-44a6-8560-54a1ec33b3df
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062663
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-a2aec019-f4ba-4e89-b2c4-888fcb527bbc
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062664
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-b2568fd1-b425-4734-b1fe-b3548f377277
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062665
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-93c6c4f2-e9c7-4fb9-83fb-67d5b5de2630
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062666
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-07a82aee-cb9d-454f-bca9-2cf015581413
+        m_State: 3
+        m_Disposing: 1
+    - rid: 193091871493062667
+      type: {class: ImageArtifact, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: StyleTrainerTempGUID-afaa3773-acba-404c-a6ff-1fc4763b0db2
+        m_State: 3
+        m_Disposing: 1
+    - rid: 7812307818302406738
+      type: {class: StyleTrainerData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: b83cbeef-49b5-4d15-862a-81ad1bedb0ae
+        m_State: 1
+        m_Disposing: 0
+        m_Styles:
+        - rid: 193091871493062656
+        m_Version: 202231001
+    - rid: 7812307818302406739
+      type: {class: StyleTrainerData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: 11000000-0000-0000-0000-000000000011
+        m_State: 1
+        m_Disposing: 0
+        m_Styles:
+        - rid: 193091871493062657
+        m_Version: 202231001
+    - rid: 7812307818302406837
+      type: {class: StyleData, ns: Unity.Muse.StyleTrainer, asm: Unity.Muse.StyleTrainer}
+      data:
+        m_Guid: 00000000-0000-0000-0000-000000000000
+        m_State: 1
+        m_Disposing: 0
+        m_IsFallback: 1
+        m_Thumbnail:
+          rid: -2
+        m_Visible: 0
+        selectedCheckPointGUID: 00000000-0000-0000-0000-000000000000
+        m_FavoriteCheckPointGUID: active
+        parentID: 00000000-0000-0000-0000-000000000000
+        m_ProjectID: 00000000-0000-0000-0000-000000000000
+        m_TrainingSteps: 2000
+        m_CheckPoints:
+        - m_Guid: 00000000-0000-0000-0000-000000000000
+          m_State: 1
+          m_Disposing: 0
+          m_ProjectID: 00000000-0000-0000-0000-000000000000
+          m_Name: Default
+          m_Description: Default style.
+          parent_id: 00000000-0000-0000-0000-000000000000
+          m_TrainingSetData:
+            m_Guid: 
+            m_State: 0
+            m_Disposing: 0
+            m_TrainingSet: []
+            m_ProjectID: 
+          m_ValidationImagesData: []
+          m_TrainingSteps: 2000
+        m_SampleOutputPrompts: []
+        m_TrainingSetData: []
+        m_Name: Default
+        m_Description: Default style.
