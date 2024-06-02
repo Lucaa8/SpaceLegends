@@ -29,6 +29,11 @@ public class Profile : MonoBehaviour
         
     }
 
+    public void EditProfile()
+    {
+        Application.OpenURL(Auth.BaseUrl+"/profile");
+    }
+
     public void CloseProfile()
     {
         StartCoroutine(ShowProfile(false)); //For the cross inside the settings window

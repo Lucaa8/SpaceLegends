@@ -15,6 +15,7 @@ public class Auth : MonoBehaviour
     {
         if(Instance == null)
         {
+            BaseUrl = "https://space-legends.luca-dc.ch";
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -24,7 +25,7 @@ public class Auth : MonoBehaviour
         }
     }
 
-    private static string BaseUrl = "https://space-legends.luca-dc.ch";
+    public static string BaseUrl { get; private set; }
 
     private static Func<string, string, string> BuildURL = (sub, endpoint) =>
     {
