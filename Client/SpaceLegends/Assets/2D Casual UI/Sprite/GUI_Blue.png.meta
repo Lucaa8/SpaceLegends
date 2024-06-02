@@ -619,11 +619,11 @@ TextureImporter:
         serializedVersion: 2
         x: 2599
         y: 1480
-        width: 284
+        width: 314
         height: 54
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 28, y: 0, z: 0, w: 0}
+      border: {x: 28, y: 0, z: 30, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -680,13 +680,13 @@ TextureImporter:
       name: GUI_Blue_29
       rect:
         serializedVersion: 2
-        x: 751
+        x: 752
         y: 536
         width: 1389
         height: 920
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 43, y: 88, z: 45, w: 80}
       outline: []
       physicsShape: []
       tessellationDetail: 0

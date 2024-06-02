@@ -109,6 +109,10 @@ public class Menu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!SettingsObject.activeInHierarchy)
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             isESCPressed = true;
@@ -117,7 +121,7 @@ public class Menu : MonoBehaviour
         {
             isESCPressed = false;
         }
-        if(isESCPressed && SettingsObject.activeInHierarchy && !areSettingsAnimated)
+        if(isESCPressed && !areSettingsAnimated)
         {
             CloseSettings();
             isESCPressed = false;
