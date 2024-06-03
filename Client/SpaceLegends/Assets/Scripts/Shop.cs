@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Sentis;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,11 @@ public class Shop : MonoBehaviour
 
     [SerializeField] GameObject ShopObject;
     [SerializeField] Button ShopButton;
+    [SerializeField] GameObject HelpObject;
+    [SerializeField] Button HelpButton;
 
+
+    private bool isHelpDisplay = false;
     private bool isShopAnimated = false;
 
     // Start is called before the first frame update
@@ -18,19 +23,33 @@ public class Shop : MonoBehaviour
         {
             if (!isShopAnimated)
             {
+                if(isHelpDisplay)
+                {
+                    Help();
+                }
                 StartCoroutine(ShowShop(!ShopObject.activeInHierarchy));
             }
         });
+        HelpButton.onClick.AddListener(Help);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+    }
+
+    public void Help()
+    {
+        isHelpDisplay = !isHelpDisplay;
+        HelpObject.SetActive(isHelpDisplay);
     }
 
     public void CloseShop()
     {
+        if (isHelpDisplay)
+        {
+            Help();
+        }
         StartCoroutine(ShowShop(false)); //For the cross inside the shop window
     }
 
