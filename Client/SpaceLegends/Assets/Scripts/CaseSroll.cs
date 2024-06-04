@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CaseSroll : MonoBehaviour
@@ -11,8 +7,7 @@ public class CaseSroll : MonoBehaviour
 
     [SerializeField] GameObject Prefab;
 
-    [SerializeField] int Max = 150;
-    [SerializeField] int DropLocation = 120;
+    [SerializeField] int Max;
 
     [SerializeField] float speed;
     private float currentSpeed;
@@ -28,6 +23,12 @@ public class CaseSroll : MonoBehaviour
     private float widthScroll;
     private int spacing;
 
+    private int DropLocation;
+    private float ToDropLocation;
+
+    [SerializeField] GameObject InterrogationPointsFake;
+    [SerializeField] Image WinWindow;
+
     public void Scroll()
     {
         if (isScrolling)
@@ -35,7 +36,9 @@ public class CaseSroll : MonoBehaviour
             return;
         }
 
-        if(cells.Count != 0)
+        InterrogationPointsFake.SetActive(false);
+
+        if (cells.Count != 0)
         {
             cells.ForEach(c=>Destroy(c.transform.parent.gameObject));
             cells.Clear();
@@ -61,12 +64,15 @@ public class CaseSroll : MonoBehaviour
         widthScroll = GetComponent<RectTransform>().rect.width;
         spacing = (int)GetComponent<HorizontalLayoutGroup>().spacing;
 
+        ToDropLocation = -1 * ((DropLocation * widthImg) + (DropLocation * spacing) + Random.Range(-widthImg/2, widthImg/2));
+
     }
 
     // Start is called before the first frame update
     void Start()
     {
         initialPosition = new Vector3(transform.localPosition.x, transform.localPosition.y);
+        DropLocation = Max - 10;
     }
 
 
@@ -81,22 +87,17 @@ public class CaseSroll : MonoBehaviour
 
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, transform.localPosition + Vector3.left * 100, currentSpeed * Time.deltaTime * 700);
 
-        float drop = -1 * ((DropLocation * widthImg) + (DropLocation * spacing));
-
-        if (transform.localPosition.x <= drop)
+        if (transform.localPosition.x <= ToDropLocation)
         {
             isScrolling = false;
+            WinWindow.sprite = resultSprite;
+            WinWindow.transform.parent.gameObject.SetActive(true);
             return;
         }
 
-        float distanceToDrop = Mathf.Abs(transform.localPosition.x - drop);
-
-        // Utiliser une interpolation linéaire pour réduire la vitesse en fonction de la distance restante
-        float t = Mathf.Clamp01(distanceToDrop / 10000f); // Diviseur ajustable pour contrôler la vitesse de ralentissement
-        Debug.Log(t);
-        currentSpeed = Mathf.Lerp(0, speed, t); // Réduire progressivement la vitesse
-
-        Debug.Log("Distance to drop: " + distanceToDrop + ", Current Speed: " + currentSpeed);
+        float distanceToDrop = Mathf.Abs(transform.localPosition.x - ToDropLocation);
+        float t = Mathf.Clamp01(distanceToDrop / 2200f);
+        currentSpeed = Mathf.Max(Mathf.Lerp(0, speed, t), 0.1f);
 
     }
 }
