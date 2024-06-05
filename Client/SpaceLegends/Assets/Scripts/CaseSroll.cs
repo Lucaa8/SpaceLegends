@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CaseCell;
 
 public class CaseSroll : MonoBehaviour
 {
@@ -13,11 +15,9 @@ public class CaseSroll : MonoBehaviour
     private float currentSpeed;
     private Vector3 initialPosition;
     private bool isScrolling;
+    public static bool canScroll { get; private set; } = true;
 
     private List<CaseCell> cells = new List<CaseCell>();
-
-    [SerializeField] Sprite resultSprite;
-    [SerializeField] Color resultColor;
 
     private float widthImg;
     private float widthScroll;
@@ -26,15 +26,28 @@ public class CaseSroll : MonoBehaviour
     private int DropLocation;
     private float ToDropLocation;
 
+    public NFT nftResult;
     [SerializeField] GameObject InterrogationPointsFake;
     [SerializeField] Image WinWindow;
+    [SerializeField] TMP_Text WinTitle;
+    [SerializeField] TMP_Text WinRarity;
+
+    public static Dictionary<Rarity, Color> colors = new Dictionary<Rarity, Color>
+    {
+        { Rarity.COMMON,    new Color(0f / 255f, 128f / 255f, 0f / 255f, 1f) },
+        { Rarity.RARE,      new Color(16f / 255f, 35f / 255f, 174f / 255f, 1f) },
+        { Rarity.EPIC,      new Color(133f / 255f, 8f / 255f, 255f / 255f, 1f) },
+        { Rarity.LEGENDARY, new Color(255f / 255f, 255f / 255f, 0f / 255f, 1f) }
+    };
 
     public void Scroll()
     {
-        if (isScrolling)
+        if (isScrolling || !canScroll)
         {
             return;
         }
+
+        canScroll = false;
 
         InterrogationPointsFake.SetActive(false);
 
@@ -54,7 +67,7 @@ public class CaseSroll : MonoBehaviour
             cells.Add(cell);
             if(i == DropLocation)
             {
-                cell.Setup(resultSprite, resultColor);
+                cell.Setup(nftResult.sprite, colors[nftResult.rarity]);
                 continue;
             }
             cell.Setup(null, Color.black /* unused */);
@@ -66,6 +79,16 @@ public class CaseSroll : MonoBehaviour
 
         ToDropLocation = -1 * ((DropLocation * widthImg) + (DropLocation * spacing) + Random.Range(-widthImg/2, widthImg/2));
 
+    }
+
+
+    public void CloseWin()
+    {
+        WinWindow.transform.parent.gameObject.SetActive(false);
+        InterrogationPointsFake.SetActive(true);
+        cells.ForEach(c => Destroy(c.transform.parent.gameObject));
+        cells.Clear();
+        canScroll = true;
     }
 
     // Start is called before the first frame update
@@ -90,7 +113,10 @@ public class CaseSroll : MonoBehaviour
         if (transform.localPosition.x <= ToDropLocation)
         {
             isScrolling = false;
-            WinWindow.sprite = resultSprite;
+            WinWindow.sprite = nftResult.sprite;
+            WinTitle.text = nftResult.name;
+            WinRarity.text = nftResult.rarity.ToString();
+            WinRarity.color = colors[nftResult.rarity];
             WinWindow.transform.parent.gameObject.SetActive(true);
             return;
         }

@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Sentis;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +10,8 @@ public class Shop : MonoBehaviour
     [SerializeField] GameObject HelpObject;
     [SerializeField] Button HelpButton;
 
+    [SerializeField] CaseSroll earthScroll;
+    [SerializeField] CaseSroll marsScroll;
 
     private bool isHelpDisplay = false;
     private bool isShopAnimated = false;
@@ -80,6 +80,32 @@ public class Shop : MonoBehaviour
         }
 
         isShopAnimated = false;
+    }
+
+    public void WantToOpenEarthRelic()
+    {
+        int count = 3;
+        if (count > 0 && CaseSroll.canScroll)
+        {
+            earthScroll.nftResult = new CaseCell.NFT();
+            earthScroll.nftResult.name = "Earth 3 (Row 1 | Col 3)";
+            earthScroll.nftResult.rarity = CaseCell.Rarity.EPIC;
+            earthScroll.nftResult.sprite = Resources.Load<Sprite>("00_Earth_r01c03");
+            earthScroll.Scroll();
+        }
+    }
+
+    public void WantToOpenMarsRelic()
+    {
+        int count = 1;
+        if (count > 0 && CaseSroll.canScroll)
+        {
+            marsScroll.nftResult = new CaseCell.NFT();
+            marsScroll.nftResult.name = "Mars 8 (Row 3 | Col 2)";
+            marsScroll.nftResult.rarity = CaseCell.Rarity.RARE;
+            marsScroll.nftResult.sprite = Resources.Load<Sprite>("01_Mars_r03c02");
+            marsScroll.Scroll();
+        }
     }
 
 }

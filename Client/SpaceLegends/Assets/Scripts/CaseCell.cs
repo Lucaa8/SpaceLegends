@@ -1,22 +1,48 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class CaseCell : MonoBehaviour
 {
 
-    [System.Serializable]
-    private class ListOfSprites
+    public enum Rarity
     {
-        public List<Sprite> _sprites;
+        COMMON, RARE, EPIC, LEGENDARY
     }
 
-    [SerializeField] List<ListOfSprites> sprites;
+    [System.Serializable]
+    public enum RelicType
+    {
+        EARTH, MARS
+    }
 
-    [SerializeField] int[] chances;
+    [System.Serializable]
+    public class NFT
+    {
+        public Sprite sprite;
+        public Rarity rarity;
+        public string name;
+    }
 
-    [SerializeField] Color[] _colors;
+    [SerializeField] List<NFT> sprites = new List<NFT>();
+
+    private Dictionary<Rarity, float> chances = new Dictionary<Rarity, float>();
+
+    [SerializeField] RelicType type;
+
+    void Awake()
+    {
+        if(type == RelicType.EARTH)
+        {
+            chances = new Dictionary<Rarity, float> { { Rarity.COMMON, .7f }, { Rarity.RARE, .25f }, { Rarity.EPIC, .05f }, { Rarity.LEGENDARY, 0f } };
+        }
+        else
+        {
+            chances = new Dictionary<Rarity, float> { { Rarity.COMMON, .7f }, { Rarity.RARE, .25f }, { Rarity.EPIC, .04f }, { Rarity.LEGENDARY, 0.01f } };
+        }
+    }
 
     // Start is called before the first frame update
     public void Setup(Sprite result, Color color)
@@ -29,27 +55,36 @@ public class CaseCell : MonoBehaviour
             return;
         }
 
-        int index = Randomize();
+        NFT nft = GetRandomDrop();
 
-        List<Sprite> slist = sprites[index]._sprites;
-        GetComponent<Image>().sprite = slist[Random.Range(0, slist.Count)];
-        transform.parent.GetComponent<Image>().color = _colors[index];
+        transform.parent.GetComponent<Image>().color = CaseSroll.colors[nft.rarity];
+        GetComponent<Image>().sprite = nft.sprite;
 
     }
 
-    private int Randomize()
+    private NFT GetRandomDrop()
     {
-        int index = 0;
-        for(int i = 0; i < chances.Length; i++)
+        float randomValue = UnityEngine.Random.Range(0f, 1f);
+        float cumulativeProbability = 0f;
+
+        foreach (var rarity in chances)
         {
-            int rand = Random.Range(0, 100);
-            if(rand > chances[i])
+            cumulativeProbability += rarity.Value;
+
+            if (randomValue <= cumulativeProbability)
             {
-                return i;
+                return GetRandomByRarity(rarity.Key);
             }
-            index++;
         }
-        return index;
+
+        return null; // Not going to happen if everything is configured nicely
+    }
+
+    private NFT GetRandomByRarity(Rarity rarity)
+    {
+        List<NFT> skinsByRarity = sprites.Where(s => s.rarity == rarity).ToList();
+        int randomIndex = UnityEngine.Random.Range(0, skinsByRarity.Count);
+        return skinsByRarity[randomIndex];
     }
 
     // Update is called once per frame

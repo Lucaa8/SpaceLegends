@@ -89,23 +89,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sprites:
-  - _sprites:
-    - {fileID: 21300000, guid: 00e17cb6afc132f4d934de8d2f959dfc, type: 3}
-    - {fileID: 21300000, guid: f9c9654b4d4f94245bf65d92ff10d23d, type: 3}
-    - {fileID: 21300000, guid: dcaecd36fb1009b4f83fdf6fd24a5f3d, type: 3}
-    - {fileID: 21300000, guid: 418525929073a5e43963aa43a46faf01, type: 3}
-    - {fileID: 21300000, guid: 734ebbbdb05b4324f8c1c58bf87633ec, type: 3}
-  - _sprites:
-    - {fileID: 21300000, guid: 28928661891eccf46b3177a3b5c39bf6, type: 3}
-    - {fileID: 21300000, guid: 28928661891eccf46b3177a3b5c39bf6, type: 3}
-    - {fileID: 21300000, guid: 82509bf7d09a5584d99e16b6843133ea, type: 3}
-  - _sprites:
-    - {fileID: 21300000, guid: 63c4948b4c7dc4e409e95997a204accf, type: 3}
-  chances: 1400000010000000
-  _colors:
-  - {r: 0, g: 0.5019608, b: 0, a: 1}
-  - {r: 0.0627451, g: 0.13725491, b: 0.68235296, a: 1}
-  - {r: 0.5019608, g: 0, b: 0.5019608, a: 1}
+  - sprite: {fileID: 21300000, guid: 00e17cb6afc132f4d934de8d2f959dfc, type: 3}
+    rarity: 0
+  - sprite: {fileID: 21300000, guid: f9c9654b4d4f94245bf65d92ff10d23d, type: 3}
+    rarity: 0
+  - sprite: {fileID: 21300000, guid: 63c4948b4c7dc4e409e95997a204accf, type: 3}
+    rarity: 2
+  - sprite: {fileID: 21300000, guid: a8c24dadb82ed50419da1447f843438a, type: 3}
+    rarity: 1
+  - sprite: {fileID: 21300000, guid: 28928661891eccf46b3177a3b5c39bf6, type: 3}
+    rarity: 1
+  - sprite: {fileID: 21300000, guid: 82509bf7d09a5584d99e16b6843133ea, type: 3}
+    rarity: 1
+  - sprite: {fileID: 21300000, guid: dcaecd36fb1009b4f83fdf6fd24a5f3d, type: 3}
+    rarity: 0
+  - sprite: {fileID: 21300000, guid: 418525929073a5e43963aa43a46faf01, type: 3}
+    rarity: 0
+  - sprite: {fileID: 21300000, guid: 734ebbbdb05b4324f8c1c58bf87633ec, type: 3}
+    rarity: 0
+  type: 0
 --- !u!1 &4660103683620928623
 GameObject:
   m_ObjectHideFlags: 0
