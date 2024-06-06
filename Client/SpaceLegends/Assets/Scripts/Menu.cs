@@ -15,6 +15,7 @@ public class Menu : MonoBehaviour
     [SerializeField] TMP_Dropdown Settings_CbxScreenMode;
     [SerializeField] Button Settings_BtnLogout;
     [SerializeField] Button Settings_BtnQuit;
+    [SerializeField] GameObject PlayMenu;
 
     private bool areSettingsAnimated = false;
 
@@ -139,6 +140,7 @@ public class Menu : MonoBehaviour
 
         if (show) //Cannot do SettingsObject.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
         {
+            PlayMenu.SetActive(false);
             SettingsObject.SetActive(true);
         }
         
@@ -157,6 +159,7 @@ public class Menu : MonoBehaviour
         if(!show) 
         {
             SettingsObject.SetActive(false);
+            PlayMenu.SetActive(true);
         }
 
         areSettingsAnimated = false;
