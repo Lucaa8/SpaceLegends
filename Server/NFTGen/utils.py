@@ -4,8 +4,12 @@ import hashlib
 import secrets
 import string
 import random
+import base64
 from flask import session, redirect, url_for
 from functools import wraps
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from eth_account import Account
 
 
 USERNAME_REGEX = re.compile(r'^[a-z0-9_]{3,16}$')
@@ -107,6 +111,25 @@ def delete_profile_pic(user_id) -> bool:
     return False
 
 
+def create_new_wallet() -> tuple[str, bytes]:
+    new_account = Account.create()
+    private_key = new_account.key.hex()
+    address = new_account.address
+    return address, encrypt_wallet_key(private_key)
 
 
+def encrypt_wallet_key(private_key: str) -> bytes:
+    iv = os.urandom(16)
+    cipher = Cipher(algorithms.AES(base64.b64decode(os.getenv('AES_ENCRYPTION_KEY'))), modes.CFB(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+    encrypted_key = encryptor.update(private_key.encode()) + encryptor.finalize()
+    return iv + encrypted_key
 
+
+def decrypt_wallet_key(encrypted_key: bytes) -> str:
+    iv = encrypted_key[:16]
+    encrypted_key = encrypted_key[16:]
+    cipher = Cipher(algorithms.AES(base64.b64decode(os.getenv('AES_ENCRYPTION_KEY'))), modes.CFB(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+    private_key = decryptor.update(encrypted_key) + decryptor.finalize()
+    return private_key.decode()

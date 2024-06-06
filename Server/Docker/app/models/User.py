@@ -2,6 +2,7 @@ import sqlalchemy.exc
 from sqlalchemy import select, func
 from database import db
 from level_system import level_system
+from datetime import datetime
 
 
 class User(db.Model):
@@ -18,22 +19,24 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     salt = db.Column(db.String(32), nullable=False)
     wallet_address = db.Column(db.String(42), nullable=False)
-    wallet_verified = db.Column(db.Boolean, nullable=False, default=False, comment='If the user has proven that this is his wallet')
+    wallet_key = db.Column(db.BLOB, nullable=False) # Encrypted private key
     level_xp = db.Column(db.Integer, nullable=False, default=0)
     money_sdt = db.Column(db.Integer, nullable=False, default=2)
 
     # Relationship to nfts
-    nfts = db.relationship('NFT', backref='user', lazy=True)
+    nfts = db.relationship('NFT', backref='owner', lazy=True)
+    # Relationship to perk rental
+    rentals = db.relationship('PerkRental', backref='rent_user', lazy=True)
 
     def __repr__(self):
         return (
-            f"User(id={self.id}, username={self.username}, email={self.email} (Verified: {'Yes' if self.email_verified else 'No'}), display_name={self.display_name}, wallet_address={self.wallet_address} (Verified: {'Yes' if self.wallet_verified else 'No'}))"
+            f"User(id={self.id}, username={self.username}, email={self.email} (Verified: {'Yes' if self.email_verified else 'No'}), display_name={self.display_name}, wallet_address={self.wallet_address}, money_sdt={self.money_sdt}, level_xp={self.get_level_info()})"
         )
 
     @staticmethod
-    def create_user(username: str, email: str, email_code: str, display_name: str | None, password: str, salt: str, wallet: str) -> 'User':
+    def create_user(username: str, email: str, email_code: str, display_name: str | None, password: str, salt: str, wallet: tuple[str, bytes]) -> 'User':
         try:
-            user = User(username=username, email=email, email_verification_code=email_code, display_name=display_name, password=password, salt=salt, wallet_address=wallet)
+            user = User(username=username, email=email, email_verification_code=email_code, display_name=display_name, password=password, salt=salt, wallet_address=wallet[0], wallet_key=wallet[1])
             db.session.add(user)
             db.session.commit()
             return user
@@ -119,3 +122,16 @@ class User(db.Model):
 
     def get_level_info(self) -> tuple[int, int, int, float]:
         return level_system.for_user(self)
+
+    def get_active_perks(self):
+        current_time = datetime.utcnow()
+        active_rentals = [rental for rental in self.rentals if rental.end_time > current_time]
+        perks = []
+        for rental in active_rentals:
+            time_remaining = rental.end_time - current_time
+            perks.append({
+                "type": rental.perk.type,
+                "value": rental.perk.value,
+                "time_remaining": str(time_remaining)
+            })
+        return perks

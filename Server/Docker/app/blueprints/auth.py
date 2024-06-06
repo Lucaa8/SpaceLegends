@@ -1,7 +1,7 @@
 from flask.blueprints import Blueprint
 from flask import request, jsonify, url_for, session
 
-from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code, generate_password
+from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code, generate_password, create_new_wallet
 from authentification import create_refresh, create_access
 from flask_jwt_extended import jwt_required, current_user, get_jwt, decode_token
 
@@ -15,7 +15,6 @@ def register():
     email = request.form.get('email')
     password = request.form.get('pass1')
     confirm_password = request.form.get('pass2')
-    wallet_address = request.form.get('walletAddress')
 
     errors = []
     try:
@@ -29,9 +28,6 @@ def register():
             errors.append('Password must be at least 8 characters long.')
         if password != confirm_password:
             errors.append('Passwords do not match.')
-        from chain import cosmic # cosmic still to None when auth.py is loaded into memory. Cannot import it at the start of this file.
-        if (not wallet_address) or (not cosmic.check_address(wallet_address)):
-            errors.append('Invalid or missing wallet address.')
     except Exception as e:
         errors.append(str(e))
 
@@ -44,6 +40,7 @@ def register():
     # DB register
     hashed_password, salt = hash_password(password)
     email_code: str = generate_confirmation_code()
+    wallet: tuple[str, bytes] = create_new_wallet()
     try:
         from models import User
         user = User.create_user(
@@ -53,7 +50,7 @@ def register():
             display_name=display_name,
             password=hashed_password,
             salt=salt,
-            wallet=wallet_address
+            wallet=wallet
         ) # Tries to register the new user in the database
         print(f"Registered {user}")
         verification_url = f"https://space-legends.luca-dc.ch{url_for('api.verification', code=email_code)}"
