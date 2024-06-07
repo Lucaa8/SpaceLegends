@@ -8,6 +8,19 @@ from flask_jwt_extended import jwt_required, current_user, get_jwt, decode_token
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
 
+@auth_bp.route('test')
+def test():
+    # omg... je dois vraiment arreter de faire n importe quoi et perdre du temps putain
+    # trouver un moyen d'insérer les clés privées des comptes existants sous format BLOB ......................
+    from utils import encrypt_wallet_key, decrypt_wallet_key
+    from models.User import User
+    user = User.get_user_by_id(1)
+    user.wallet_key = encrypt_wallet_key("0xe6673906355d79ceb718bc5a7a302b1babbaf84ae08f42b5c126437a6555c163")
+    from database import db
+    db.session.commit()
+    return decrypt_wallet_key(user.wallet_key), 200
+
+
 @auth_bp.route('register', methods=['POST'])
 def register():
     username = request.form.get('username')

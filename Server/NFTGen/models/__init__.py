@@ -1,4 +1,5 @@
 from models.NFT import NFT
+from models.Offer import Offer
 from models.Perk import Perk
 from models.User import User
 from models.PerkRental import PerkRental

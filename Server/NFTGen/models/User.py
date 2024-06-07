@@ -20,8 +20,9 @@ class User(db.Model):
     salt = db.Column(db.String(32), nullable=False)
     wallet_address = db.Column(db.String(42), nullable=False)
     wallet_key = db.Column(db.BLOB, nullable=False) # Encrypted private key
-    level_xp = db.Column(db.Integer, nullable=False, default=0)
-    money_sdt = db.Column(db.Integer, nullable=False, default=2)
+    level_xp = db.Column(db.Integer, nullable=False, server_default=0)
+    money_sdt = db.Column(db.Integer, nullable=False, server_default=2)
+    money_heart = db.Column(db.Integer, nullable=False, server_default=3)
 
     # Relationship to nfts
     nfts = db.relationship('NFT', backref='owner', lazy=True)
