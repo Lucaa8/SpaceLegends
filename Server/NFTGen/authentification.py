@@ -63,7 +63,7 @@ def check_if_token_valid(jwt_header, jwt_payload: dict) -> bool:
     from models.TokenRevoked import TokenRevoked
     jti = jwt_payload.get("jti")
     token = TokenRevoked.get_by_jti(jti=jti)
-    if token is None: # Token was revoked (logout)
+    if token is not None: # Token was revoked (logout)
         return True
     from models.User import User
     user_id = jwt_payload.get('sub') # A little bit of copy paste from the check_if_user_banned. But in some case user_id is not in the session and some /api call can be still done. We need to recheck here.
@@ -82,6 +82,7 @@ def check_if_user_banned():
         if u is not None and u.banned == 1:
             session.pop('user_id', None)
             return jsonify(message="Your account has been banned."), 401
+    pass
 
 
 def create_refresh(user):

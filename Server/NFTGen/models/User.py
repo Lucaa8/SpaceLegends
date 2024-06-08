@@ -19,7 +19,7 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     salt = db.Column(db.String(32), nullable=False)
     wallet_address = db.Column(db.String(42), nullable=False)
-    wallet_key = db.Column(db.String(255), nullable=False) # Encrypted private key in base64
+    wallet_key = db.Column(db.String(255), nullable=False) # Encrypted private key in base64 (TODO update database, still blob wtf?)
     banned = db.Column(db.Integer, nullable=False, server_default='0') # 0 = not banned, 1 = banned
     level_xp = db.Column(db.Integer, nullable=False, server_default='0')
     money_sdt = db.Column(db.Integer, nullable=False, server_default='2')
