@@ -12,6 +12,7 @@ class NFT(db.Model):
     # server_default means that the database server which handles the default field. So even if I add manually an entry from Adminer, this default field would be filled for me.
     created_at = db.Column(db.DateTime, server_default=func.now())
     is_minted = db.Column(db.Boolean, default=False, comment='Whether the NFT is already minted on the blockchain or not')
+    dropped_by_level_id = db.Column(db.Integer, db.ForeignKey('game_level.id'), nullable=True) # if null then it has been received by offer or whatever and default probabilities are used
 
     def as_complete_nft(self):
         from collection import get_item

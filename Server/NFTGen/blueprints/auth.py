@@ -1,24 +1,12 @@
 from flask.blueprints import Blueprint
 from flask import request, jsonify, url_for, session
+from sqlalchemy.sql.functions import user
 
 from utils import USERNAME_REGEX, DISPLAYNAME_REGEX, PASSWORD_REGEX, EMAIL_REGEX, hash_password, verify_password, generate_confirmation_code, generate_password, create_new_wallet
 from authentification import create_refresh, create_access
 from flask_jwt_extended import jwt_required, current_user, get_jwt, decode_token
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
-
-
-@auth_bp.route('test')
-def test():
-    # omg... je dois vraiment arreter de faire n importe quoi et perdre du temps putain
-    # trouver un moyen d'insérer les clés privées des comptes existants sous format BLOB ......................
-    from utils import encrypt_wallet_key, decrypt_wallet_key
-    from models.User import User
-    user = User.get_user_by_id(1)
-    user.wallet_key = encrypt_wallet_key("0xe6673906355d79ceb718bc5a7a302b1babbaf84ae08f42b5c126437a6555c163")
-    from database import db
-    db.session.commit()
-    return decrypt_wallet_key(user.wallet_key), 200
 
 
 @auth_bp.route('register', methods=['POST'])
@@ -53,7 +41,7 @@ def register():
     # DB register
     hashed_password, salt = hash_password(password)
     email_code: str = generate_confirmation_code()
-    wallet: tuple[str, bytes] = create_new_wallet()
+    wallet: tuple[str, str] = create_new_wallet()
     try:
         from models import User
         user = User.create_user(
@@ -96,6 +84,8 @@ def login():
     if user:
         try:
             if verify_password(password, user.password, user.salt):
+                if user.banned == 1:
+                    return jsonify(message='Your account has been banned.'), 401
                 session['user_id'] = str(user.id)
                 return jsonify(refresh_token=create_refresh(user), access_token=create_access(user)), 200
         except Exception as e:

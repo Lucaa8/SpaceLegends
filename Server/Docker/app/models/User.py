@@ -19,9 +19,11 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     salt = db.Column(db.String(32), nullable=False)
     wallet_address = db.Column(db.String(42), nullable=False)
-    wallet_key = db.Column(db.BLOB, nullable=False) # Encrypted private key
-    level_xp = db.Column(db.Integer, nullable=False, default=0)
-    money_sdt = db.Column(db.Integer, nullable=False, default=2)
+    wallet_key = db.Column(db.String(255), nullable=False) # Encrypted private key in base64
+    banned = db.Column(db.Integer, nullable=False, server_default='0') # 0 = not banned, 1 = banned
+    level_xp = db.Column(db.Integer, nullable=False, server_default='0')
+    money_sdt = db.Column(db.Integer, nullable=False, server_default='2')
+    money_heart = db.Column(db.Integer, nullable=False, server_default='3')
 
     # Relationship to nfts
     nfts = db.relationship('NFT', backref='owner', lazy=True)
@@ -34,7 +36,7 @@ class User(db.Model):
         )
 
     @staticmethod
-    def create_user(username: str, email: str, email_code: str, display_name: str | None, password: str, salt: str, wallet: tuple[str, bytes]) -> 'User':
+    def create_user(username: str, email: str, email_code: str, display_name: str | None, password: str, salt: str, wallet: tuple[str, str]) -> 'User':
         try:
             user = User(username=username, email=email, email_verification_code=email_code, display_name=display_name, password=password, salt=salt, wallet_address=wallet[0], wallet_key=wallet[1])
             db.session.add(user)

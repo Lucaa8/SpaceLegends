@@ -111,22 +111,23 @@ def delete_profile_pic(user_id) -> bool:
     return False
 
 
-def create_new_wallet() -> tuple[str, bytes]:
+def create_new_wallet() -> tuple[str, str]:
     new_account = Account.create()
     private_key = new_account.key.hex()
     address = new_account.address
     return address, encrypt_wallet_key(private_key)
 
 
-def encrypt_wallet_key(private_key: str) -> bytes:
+def encrypt_wallet_key(private_key: str) -> str:
     iv = os.urandom(16)
     cipher = Cipher(algorithms.AES(base64.b64decode(os.getenv('AES_ENCRYPTION_KEY'))), modes.CFB(iv), backend=default_backend())
     encryptor = cipher.encryptor()
     encrypted_key = encryptor.update(private_key.encode()) + encryptor.finalize()
-    return iv + encrypted_key
+    return base64.b64encode(iv + encrypted_key).decode()
 
 
-def decrypt_wallet_key(encrypted_key: bytes) -> str:
+def decrypt_wallet_key(encrypted_key: str) -> str:
+    encrypted_key = base64.b64decode(encrypted_key)
     iv = encrypted_key[:16]
     encrypted_key = encrypted_key[16:]
     cipher = Cipher(algorithms.AES(base64.b64decode(os.getenv('AES_ENCRYPTION_KEY'))), modes.CFB(iv), backend=default_backend())
