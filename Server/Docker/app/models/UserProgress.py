@@ -1,4 +1,5 @@
 from database import db
+from models.GameLevel import GameLevel
 
 
 class UserProgress(db.Model):
@@ -13,4 +14,22 @@ class UserProgress(db.Model):
     relics_found = db.Column(db.Integer, nullable=False, server_default='0')
 
     __table_args__ = (db.UniqueConstraint('user_id', 'game_level_id', name='unique_player_level'),)
+
+    def get_level(self):
+        return db.session.query(GameLevel).filter(GameLevel.id == self.game_level_id).first()
+
+    def as_json(self):
+        return {
+            'stars': str(self.stars_collected),
+            'kills': str(self.kills),
+            'deaths': str(self.deaths),
+            'completions': str(self.completions)
+        }
+
+    @staticmethod
+    def get_progress(user_id, game_id):
+        return db.session.query(UserProgress).filter(
+            UserProgress.user_id == user_id,
+            UserProgress.game_level_id == game_id
+        ).first()
     

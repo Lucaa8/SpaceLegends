@@ -10,3 +10,6 @@ class CRELPropability(db.Model):
     epic = db.Column(db.Float, nullable=False)
     legendary = db.Column(db.Float, nullable=False)
 
+    def as_json(self):
+        return [self.common, self.rare, self.epic, self.legendary]
+

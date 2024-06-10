@@ -1,7 +1,7 @@
 from flask import jsonify, redirect, url_for, request
 from flask.blueprints import Blueprint
 from flask_jwt_extended import jwt_required, current_user
-from collection import Item, get_item
+from collection import Item, get_item, collections
 import chain
 from utils import save_profile_pic, delete_profile_pic
 
@@ -12,6 +12,9 @@ api_bp = Blueprint('api', __name__, template_folder='templates')
 def get_metadata(token_id):
     if not chain.cosmic.is_valid():
         return jsonify({'error': 'API not initialized.'}), 500
+    from models.NFT import NFT
+    if not NFT.is_token_minted(token_id):
+        return jsonify({'error': 'Item not found'}), 404
     try:
         item_id = chain.cosmic.get_token_type(token_id)
         ownership_history = chain.cosmic.get_ownership_history(token_id)
@@ -77,3 +80,43 @@ def delete_picture():
     except Exception as e:
         print(f'An unknown error occurred while deleting the profile picture of user.id=={current_user.id}: {str(e)}')
     return jsonify(message="Something went wrong while deleting your profile picture please retry later."), 400
+
+
+@api_bp.route('/user', methods=['GET'])
+@jwt_required()
+def get_resources():
+    from models.User import User
+    from models.NFT import NFT
+    from models.GameLevel import GameLevel
+    from models.UserProgress import UserProgress
+    user: User = current_user
+
+    progression = {}
+    for level in GameLevel.get_levels():
+        level_json = level.as_json()
+        progress = UserProgress.get_progress(user.id, level.id)
+        if progress is not None:
+            level_json['progress'] = progress.as_json()
+        progression[level.id] = level_json
+
+    completed_collections = {}
+    for collection in collections:
+        completed_collections[collection.collection_id] = NFT.is_collection_complete(user.id, collection.collection_id)
+
+    result = {
+        'username': user.username,
+        'display_name': user.display_name,
+        'experience': user.get_level_info(),
+        'nft': {nft_type: count for nft_type, count in NFT.get_nft_count_by_type(user.id)},
+        'relics': NFT.get_unminted_nft_by_collections(user.id),
+        'completed_collections': completed_collections,
+        'resources': {
+            'sdt': user.money_sdt,
+            'heart': user.money_heart,
+            'eth': chain.cosmic.get_balance_eth(user.wallet_address),
+            'perks': user.get_active_perks()
+        },
+        'levels': progression
+    }
+
+    return jsonify(result), 200

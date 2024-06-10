@@ -25,3 +25,46 @@ class NFT(db.Model):
             data[attr['trait_type']] = nft.format_rarity() if attr['trait_type'] == 'Rarity' else attr['value']
         del data['attributes']
         return data
+
+    @staticmethod
+    def get_nft_count_by_type(user_id):
+        results = db.session.query(
+            NFT.type,
+            func.count(NFT.type).label('count')
+        ).filter(
+            NFT.user_id == user_id,
+            NFT.is_minted == 1
+        ).group_by(
+            NFT.type
+        ).all()
+        return results
+
+    @staticmethod
+    def get_unminted_nft_by_collections(user_id):
+        from collection import _decode_token_type
+        results = db.session.query(NFT.type, NFT.dropped_by_level_id).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
+        collec = {}
+        for nft in results:
+            c = _decode_token_type(nft[0])[0]
+            # Adds the level which dropped the relic in the collection section.
+            # With those I can target the correct collection section in the Unity interface
+            # And update the correct probabilities for a drop in the Unity roulette
+            collec.setdefault(c, []).append(nft[1])
+
+        return collec
+
+    @staticmethod
+    def is_collection_complete(user_id, collection_id):
+        from collection import _decode_token_type
+        results = db.session.query(NFT.type).filter(NFT.user_id == user_id, NFT.is_minted == 1).all()
+        unique_nft = set()
+        for nft in results:
+            c = _decode_token_type(nft[0])[0]
+            if c == collection_id:
+                unique_nft.add(nft[0])
+        return len(unique_nft) == 9
+
+    @staticmethod
+    def is_token_minted(token_id):
+        result = db.session.query(NFT.is_minted).filter(NFT.id == token_id).first()
+        return result is not None and result[0]

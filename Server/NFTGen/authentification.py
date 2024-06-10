@@ -44,6 +44,8 @@ def user_lookup_callback(_jwt_header, jwt_data):
 
 
 def jwt_generic_error(error):
+    if "user_id" in session:
+        session.pop('user_id', None)
     return jsonify({"msg": "Access Denied"}), 401
 
 
@@ -52,10 +54,14 @@ def jwt_route_needs_fresh_token(jwt_header, jwt_data):
 
 
 def jwt_token_expired(jwt_header, jwt_data):
+    if "user_id" in session:
+        session.pop('user_id', None)
     return jsonify({"msg": "This token has expired"}), 401
 
 
 def jwt_token_revoked(jwt_header, jwt_data):
+    if "user_id" in session:
+        session.pop('user_id', None)
     return jsonify({"msg": "This token has expired"}), 401
 
 
@@ -64,6 +70,8 @@ def check_if_token_valid(jwt_header, jwt_payload: dict) -> bool:
     jti = jwt_payload.get("jti")
     token = TokenRevoked.get_by_jti(jti=jti)
     if token is not None: # Token was revoked (logout)
+        if "user_id" in session:
+            session.pop('user_id', None)
         return True
     from models.User import User
     user_id = jwt_payload.get('sub') # A little bit of copy paste from the check_if_user_banned. But in some case user_id is not in the session and some /api call can be still done. We need to recheck here.

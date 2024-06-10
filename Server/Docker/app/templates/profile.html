@@ -93,12 +93,13 @@
                 </div>
             </div>
             <hr/>
-            <h1 style="text-align: center">Total NFTs collection ({{ displayed_user.nfts|length }})</h1>
+            {% set nfts = displayed_user.get_minted_nfts() %}
+            <h1 style="text-align: center">Total NFTs collection ({{ nfts|length }})</h1>
             <div class="d-flex flex-wrap justify-content-center" style="margin: 50px">
-                {% if displayed_user.nfts|length==0 %}
+                {% if nfts|length==0 %}
                     <p style="margin-top: 100px">Nothing to show here...</p>
                 {% endif %}
-                {% for item in displayed_user.nfts %}
+                {% for item in nfts %}
                     {% set nft = item.as_complete_nft() %}
                     <div class="flip-card">
                         <div class="flip-card-inner">

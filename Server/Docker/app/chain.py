@@ -34,6 +34,12 @@ class CosmicRelic:
     def check_address(self, address: str) -> bool:
         return self.w3.is_address(address) and self.w3.is_checksum_address(address)
 
+    def get_balance_eth(self, address: str) -> float:
+        if not self.check_address(address):
+            return -1
+        wei = self.w3.eth.get_balance(self.w3.to_checksum_address(address))
+        return self.w3.from_wei(wei, 'ether')
+
     def is_valid(self):
         return self.crel is not None
 

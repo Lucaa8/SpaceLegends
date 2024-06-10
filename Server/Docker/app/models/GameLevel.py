@@ -1,5 +1,4 @@
 from database import db
-from sqlalchemy.orm import joinedload
 
 
 class GameLevel(db.Model):
@@ -11,17 +10,17 @@ class GameLevel(db.Model):
     difficulty = db.Column(db.String(6), nullable=False) # EASY, NORMAL, HARD (Determines the loot pool of this level)
 
     probabilities = db.relationship('CRELPropability', backref='probs', lazy=True)
-    user_progress = db.relationship('UserProgress', backref='game_level', lazy=True)
 
+    @staticmethod
+    def get_levels():
+        return db.session.query(GameLevel).all()
 
-def get_game_level_with_player_progress(game_level_id: int, user_id: int):
-    from models.UserProgress import UserProgress
-    result = db.session.query(GameLevel).join(UserProgress).filter(
-        GameLevel.id == game_level_id,
-        UserProgress.user_id == user_id
-    ).options(
-        joinedload(GameLevel.player_progress)
-    ).first()
-
-    return result
-
+    def as_json(self):
+        return {
+            'id': str(self.id),
+            'collection': self.collection,
+            'level': str(self.level),
+            'unlock_requirements': str(self.unlock_requirements),
+            'difficulty': self.difficulty,
+            'probabilities': self.probabilities[0].as_json()
+        }
