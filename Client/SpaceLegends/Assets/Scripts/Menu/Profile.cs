@@ -9,7 +9,9 @@ public class Profile : MonoBehaviour
     [SerializeField] GameObject ProfileObject;
     [SerializeField] Button ProfileButton;
 
-    private bool isProfileAnimated = false;
+    [SerializeField] Menu _menu;
+
+    public bool isProfileAnimated = false;
 
     // Start is called before the first frame update
     void Start()
@@ -41,11 +43,18 @@ public class Profile : MonoBehaviour
 
     public IEnumerator ShowProfile(bool show)
     {
+
+        if ((show && _menu.openedWindow != -1) || (!show && _menu.openedWindow != 1))
+        {
+            yield break;
+        }
+
         isProfileAnimated = true;
 
         if (show) //Cannot do ProfileObject.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
         {
             ProfileObject.SetActive(true);
+            _menu.openedWindow = 1;
         }
 
         float duration = 0.3f; // seconds
@@ -63,6 +72,7 @@ public class Profile : MonoBehaviour
         if (!show)
         {
             ProfileObject.SetActive(false);
+            _menu.openedWindow = -1;
         }
 
         isProfileAnimated = false;

@@ -4638,6 +4638,7 @@ GameObject:
   - component: {fileID: 189402824}
   - component: {fileID: 189402823}
   - component: {fileID: 189402827}
+  - component: {fileID: 189402830}
   - component: {fileID: 189402828}
   - component: {fileID: 189402829}
   m_Layer: 5
@@ -4751,13 +4752,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a9d7542c0fa544ba1b3da892b49dee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  openedWindow: -1
+  _settings: {fileID: 189402830}
+  _profile: {fileID: 189402828}
+  _shop: {fileID: 189402829}
   TxtUser: {fileID: 1757065403}
-  SettingsObject: {fileID: 2095595645}
-  SettingsButton: {fileID: 1840139652}
-  Settings_CbxResolution: {fileID: 265369651}
-  Settings_CbxScreenMode: {fileID: 1042362512}
-  Settings_BtnLogout: {fileID: 807490472}
-  Settings_BtnQuit: {fileID: 1542175737}
   PlayMenu: {fileID: 1507293390}
 --- !u!114 &189402828
 MonoBehaviour:
@@ -4773,6 +4772,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProfileObject: {fileID: 1206028899}
   ProfileButton: {fileID: 544071446}
+  _menu: {fileID: 189402827}
+  isProfileAnimated: 0
 --- !u!114 &189402829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4789,8 +4790,30 @@ MonoBehaviour:
   ShopButton: {fileID: 500940823}
   HelpObject: {fileID: 285821952}
   HelpButton: {fileID: 1628398014}
+  _menu: {fileID: 189402827}
   earthScroll: {fileID: 1343320451}
   marsScroll: {fileID: 1583557323}
+  isShopAnimated: 0
+--- !u!114 &189402830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189402822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f83801e4f6d9744fb73e55527d05037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SettingsObject: {fileID: 2095595645}
+  SettingsButton: {fileID: 1840139652}
+  Settings_CbxResolution: {fileID: 265369651}
+  Settings_CbxScreenMode: {fileID: 1042362512}
+  Settings_BtnLogout: {fileID: 807490472}
+  Settings_BtnQuit: {fileID: 1542175737}
+  _menu: {fileID: 189402827}
+  areSettingsAnimated: 0
 --- !u!1 &189632852
 GameObject:
   m_ObjectHideFlags: 0
@@ -12267,8 +12290,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 189402827}
-        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+      - m_Target: {fileID: 189402830}
+        m_TargetAssemblyTypeName: Settings, Assembly-CSharp
         m_MethodName: CloseSettings
         m_Mode: 1
         m_Arguments:

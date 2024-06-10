@@ -5,19 +5,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Menu : MonoBehaviour
+public class Settings : MonoBehaviour
 {
 
-    [SerializeField] TMP_Text TxtUser;
     [SerializeField] GameObject SettingsObject;
     [SerializeField] Button SettingsButton;
     [SerializeField] TMP_Dropdown Settings_CbxResolution;
     [SerializeField] TMP_Dropdown Settings_CbxScreenMode;
     [SerializeField] Button Settings_BtnLogout;
     [SerializeField] Button Settings_BtnQuit;
-    [SerializeField] GameObject PlayMenu;
 
-    private bool areSettingsAnimated = false;
+    [SerializeField] Menu _menu;
+
+    public bool areSettingsAnimated = false;
 
     private void InitResolutionSettings()
     {
@@ -66,7 +66,7 @@ public class Menu : MonoBehaviour
     {
         Settings_CbxScreenMode.options.Add(new TMP_Dropdown.OptionData("Fullscreen"));
         Settings_CbxScreenMode.options.Add(new TMP_Dropdown.OptionData("Windowed"));
-        if(!Screen.fullScreen)
+        if (!Screen.fullScreen)
         {
             Settings_CbxScreenMode.value = 1;
         }
@@ -82,7 +82,6 @@ public class Menu : MonoBehaviour
 
     }
 
-    // Start is called before the first frame update
     void Start()
     {
 
@@ -91,59 +90,41 @@ public class Menu : MonoBehaviour
 
         SettingsButton.onClick.AddListener(() =>
         {
-            if(!areSettingsAnimated)
+            if (!areSettingsAnimated)
             {
-                StartCoroutine(Settings(!SettingsObject.activeInHierarchy));
+                StartCoroutine(ShowSettings(!SettingsObject.activeInHierarchy));
             }
         });
         Settings_BtnQuit.onClick.AddListener(() => Application.Quit());
 
         if (Auth.Instance != null)
         {
-            Settings_BtnLogout.onClick.AddListener(() => StartCoroutine(Auth.Instance.Logout()));
-            TxtUser.text = "Welcome back " + Auth.Instance.GetDisplayname();
-        }
-    }
-
-    private bool isESCPressed = false;
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(!SettingsObject.activeInHierarchy)
-        {
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            isESCPressed = true;
-        }
-        if (Input.GetKeyUp(KeyCode.Escape))
-        {
-            isESCPressed = false;
-        }
-        if(isESCPressed && !areSettingsAnimated)
-        {
-            CloseSettings();
-            isESCPressed = false;
+            Settings_BtnLogout.onClick.AddListener(() => StartCoroutine(Auth.Instance.Logout()));        
         }
     }
 
     public void CloseSettings()
     {
-        StartCoroutine(Settings(false)); //For the cross inside the settings window
+        StartCoroutine(ShowSettings(false)); //For the cross inside the settings window
     }
 
-    public IEnumerator Settings(bool show)
+    public IEnumerator ShowSettings(bool show)
     {
+
+        if((show && _menu.openedWindow != -1) || (!show && _menu.openedWindow != 0))
+        {
+            yield break;
+        }
+
         areSettingsAnimated = true;
 
         if (show) //Cannot do SettingsObject.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
         {
-            PlayMenu.SetActive(false);
+            _menu.openedWindow = 0;
+            _menu.PlayMenu.SetActive(false);
             SettingsObject.SetActive(true);
         }
-        
+
         float duration = 0.3f; // seconds
         float elapsedTime = 0f;
         CanvasGroup group = SettingsObject.GetComponent<CanvasGroup>();
@@ -156,10 +137,11 @@ public class Menu : MonoBehaviour
         }
         group.alpha = show ? 1f : 0f;
 
-        if(!show) 
+        if (!show)
         {
             SettingsObject.SetActive(false);
-            PlayMenu.SetActive(true);
+            _menu.PlayMenu.SetActive(true);
+            _menu.openedWindow = -1;
         }
 
         areSettingsAnimated = false;

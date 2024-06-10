@@ -10,11 +10,13 @@ public class Shop : MonoBehaviour
     [SerializeField] GameObject HelpObject;
     [SerializeField] Button HelpButton;
 
+    [SerializeField] Menu _menu;
+
     [SerializeField] CaseSroll earthScroll;
     [SerializeField] CaseSroll marsScroll;
 
     private bool isHelpDisplay = false;
-    private bool isShopAnimated = false;
+    public bool isShopAnimated = false;
 
     // Start is called before the first frame update
     void Start()
@@ -55,10 +57,17 @@ public class Shop : MonoBehaviour
 
     public IEnumerator ShowShop(bool show)
     {
+
+        if ((show && _menu.openedWindow != -1) || (!show && _menu.openedWindow != 2))
+        {
+            yield break;
+        }
+
         isShopAnimated = true;
 
         if (show) //Cannot do ShopObject.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
         {
+            _menu.openedWindow = 2;
             ShopObject.SetActive(true);
         }
 
@@ -76,6 +85,7 @@ public class Shop : MonoBehaviour
 
         if (!show)
         {
+            _menu.openedWindow = -1;
             ShopObject.SetActive(false);
         }
 
