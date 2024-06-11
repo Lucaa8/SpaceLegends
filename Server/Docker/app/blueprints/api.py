@@ -99,6 +99,8 @@ def get_resources():
             level_json['progress'] = progress.as_json()
         progression[level.id] = level_json
 
+    # This name is misleading as the dict will contain how many piece this user got on the given collection
+    # Just check if completed_collections[collection] == 9 to tell if is_collection_complete
     completed_collections = {}
     for collection in collections:
         completed_collections[collection.collection_id] = NFT.is_collection_complete(user.id, collection.collection_id)

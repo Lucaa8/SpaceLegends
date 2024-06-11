@@ -53,8 +53,9 @@ class NFT(db.Model):
 
         return collec
 
+    # Misleading name as the function returns the number of relics found (you can test if complete if is_collection_complete(user_id, collection_id) == 9
     @staticmethod
-    def is_collection_complete(user_id, collection_id):
+    def is_collection_complete(user_id, collection_id) -> int:
         from collection import _decode_token_type
         results = db.session.query(NFT.type).filter(NFT.user_id == user_id, NFT.is_minted == 1).all()
         unique_nft = set()
@@ -62,7 +63,7 @@ class NFT(db.Model):
             c = _decode_token_type(nft[0])[0]
             if c == collection_id:
                 unique_nft.add(nft[0])
-        return len(unique_nft) == 9
+        return len(unique_nft)
 
     @staticmethod
     def is_token_minted(token_id):

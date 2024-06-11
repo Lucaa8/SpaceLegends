@@ -17,10 +17,10 @@ class GameLevel(db.Model):
 
     def as_json(self):
         return {
-            'id': str(self.id),
+            'id': self.id,
             'collection': self.collection,
-            'level': str(self.level),
-            'unlock_requirements': str(self.unlock_requirements),
+            'level': self.level,
+            'unlock_requirements': self.unlock_requirements,
             'difficulty': self.difficulty,
             'probabilities': self.probabilities[0].as_json()
         }

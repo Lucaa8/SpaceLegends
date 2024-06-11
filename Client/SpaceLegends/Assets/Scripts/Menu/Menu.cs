@@ -21,7 +21,6 @@ public class Menu : MonoBehaviour
         }
     }
 
-
     private bool isESCPressed = false;
 
     // Close current opened window
@@ -58,6 +57,10 @@ public class Menu : MonoBehaviour
         isESCPressed = false;
     }
 
+    public void UpdateSETH()
+    {
+
+    }
 
 
 }

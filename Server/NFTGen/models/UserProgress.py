@@ -20,10 +20,10 @@ class UserProgress(db.Model):
 
     def as_json(self):
         return {
-            'stars': str(self.stars_collected),
-            'kills': str(self.kills),
-            'deaths': str(self.deaths),
-            'completions': str(self.completions)
+            'stars': self.stars_collected,
+            'kills': self.kills,
+            'deaths': self.deaths,
+            'completions': self.completions
         }
 
     @staticmethod

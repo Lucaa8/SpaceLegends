@@ -22,7 +22,7 @@ class User(db.Model):
     wallet_key = db.Column(db.String(128), nullable=False) # Encrypted private key in base64
     banned = db.Column(db.Integer, nullable=False, server_default='0') # 0 = not banned, 1 = banned
     level_xp = db.Column(db.Integer, nullable=False, server_default='0')
-    money_sdt = db.Column(db.Integer, nullable=False, server_default='2')
+    money_sdt = db.Column(db.Float, nullable=False, server_default='2')
     money_heart = db.Column(db.Integer, nullable=False, server_default='3')
 
     # Relationship to nfts
@@ -128,29 +128,14 @@ class User(db.Model):
     def get_level_info(self) -> tuple[int, int, int, float]:
         return level_system.for_user(self)
 
-    @staticmethod
-    def _format_time_delta(delta):
-        days = delta.days
-        hours, remainder = divmod(delta.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-        txt_hours = f"{hours:02}h" if hours > 0 else ''
-        txt_min = f"{minutes:02}m" if minutes > 0 else ''
-        if days > 0:
-            txt_days = f"{days:02}d"
-            return f"{txt_days} {txt_hours} {txt_min}".strip()
-        txt_secs = f"{seconds:02}s" if seconds > 0 else ''
-        return f"{txt_hours} {txt_min} {txt_secs}".strip()
-
     def get_active_perks(self):
         current_time = datetime.utcnow()
         active_rentals = [rental for rental in self.rentals if rental.end_time > current_time]
         perks = []
         for rental in active_rentals:
-            time_remaining = rental.end_time - current_time
             perks.append({
                 "type": rental.perk.type,
                 "value": rental.perk.value,
-                "end_time": rental.end_time, # Just to create a timer task on Unity to update the UI
-                "time_remaining": User._format_time_delta(time_remaining)
+                "end_time": int(rental.end_time.timestamp())
             })
         return perks
