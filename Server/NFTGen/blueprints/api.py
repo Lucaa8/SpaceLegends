@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, current_user
 from collection import Item, get_item, collections
 import chain
 from utils import save_profile_pic, delete_profile_pic
+from threading import Thread
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
 
@@ -88,13 +89,16 @@ def open_relic(collection: int):
     from models.NFT import NFT
     from collection import get_item
     from models.CRELProbabilty import CRELPropability
-    nft = NFT.get_first_unminted_nft(current_user.id, collection)
+    nft: NFT = NFT.get_first_unminted_nft(current_user.id, collection)
     if nft is not None:
-        item = get_item(nft[0])
+        wallet = current_user.wallet_address
+        username = current_user.username
+        Thread(target=nft.mint, args=(wallet, username,)).start()
+        item = get_item(nft.type)
         return jsonify(name=f"{item.name} (Row {item.row} | Col {item.col})",
                        type=item.item_id,
                        # Send the level probabilities where the relic was dropped. If the relic was received by offer or whatever, no custom probabilities and the client handle the default ones
-                       probabilities=(CRELPropability.get_probabilities(nft[1]).as_json() if nft[1] is not None else []),
+                       probabilities=(CRELPropability.get_probabilities(nft.dropped_by_level_id).as_json() if nft.dropped_by_level_id is not None else []),
                        rarity=item.rarity,
                        image=f"{item.collection.get_collection_id()}_{item.collection.name}_r{str(item.row).zfill(2)}c{str(item.col).zfill(2)}"), 200
     return jsonify(message="No valid relics to open"), 400
