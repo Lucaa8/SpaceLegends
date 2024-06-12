@@ -28,12 +28,14 @@ public class CaseCell : MonoBehaviour
 
     [SerializeField] List<NFT> sprites = new List<NFT>();
 
-    private Dictionary<Rarity, float> chances = new Dictionary<Rarity, float>();
+    public static Dictionary<Rarity, float> chances = null;
 
     [SerializeField] RelicType type;
 
     void Awake()
     {
+        if (chances != null)
+            return;
         if(type == RelicType.EARTH)
         {
             chances = new Dictionary<Rarity, float> { { Rarity.COMMON, .7f }, { Rarity.RARE, .25f }, { Rarity.EPIC, .05f }, { Rarity.LEGENDARY, 0f } };

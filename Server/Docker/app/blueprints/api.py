@@ -82,6 +82,24 @@ def delete_picture():
     return jsonify(message="Something went wrong while deleting your profile picture please retry later."), 400
 
 
+@api_bp.route('/open-relic/<int:collection>', methods=['POST'])
+@jwt_required()
+def open_relic(collection: int):
+    from models.NFT import NFT
+    from collection import get_item
+    from models.CRELProbabilty import CRELPropability
+    nft = NFT.get_first_unminted_nft(current_user.id, collection)
+    if nft is not None:
+        item = get_item(nft[0])
+        return jsonify(name=f"{item.name} (Row {item.row} | Col {item.col})",
+                       type=item.item_id,
+                       # Send the level probabilities where the relic was dropped. If the relic was received by offer or whatever, no custom probabilities and the client handle the default ones
+                       probabilities=(CRELPropability.get_probabilities(nft[1]).as_json() if nft[1] is not None else []),
+                       rarity=item.rarity,
+                       image=f"{item.collection.get_collection_id()}_{item.collection.name}_r{str(item.row).zfill(2)}c{str(item.col).zfill(2)}"), 200
+    return jsonify(message="No valid relics to open"), 400
+
+
 @api_bp.route('/user', methods=['GET'])
 @jwt_required()
 def get_resources():

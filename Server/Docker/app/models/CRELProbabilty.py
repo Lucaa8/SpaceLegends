@@ -13,3 +13,7 @@ class CRELPropability(db.Model):
     def as_json(self):
         return [self.common, self.rare, self.epic, self.legendary]
 
+    @staticmethod
+    def get_probabilities(level_id):
+        return db.session.query(CRELPropability).filter(CRELPropability.level_id == level_id).first()
+

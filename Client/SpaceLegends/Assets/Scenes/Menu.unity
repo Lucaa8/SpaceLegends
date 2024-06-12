@@ -678,7 +678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2034615556430399783, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_Name
-      value: Level
+      value: Level (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4083644262802213085, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_AnchorMax.y
@@ -4794,6 +4794,7 @@ MonoBehaviour:
   _menu: {fileID: 189402827}
   earthScroll: {fileID: 1343320451}
   marsScroll: {fileID: 1583557323}
+  userInfo: {fileID: 189402831}
   isShopAnimated: 0
 --- !u!114 &189402830
 MonoBehaviour:
@@ -8446,7 +8447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2034615556430399783, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_Name
-      value: Level (1)
+      value: Level (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4083644262802213085, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12825,7 +12826,7 @@ GameObject:
   - component: {fileID: 482638032}
   - component: {fileID: 482638031}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12870,7 +12871,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You have 3 relics to open
+  m_text: You have 0 relics to open
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 434719bb8f0b9bd45ac96ef9ad2206cf, type: 2}
   m_sharedMaterial: {fileID: -6892576690105395314, guid: 434719bb8f0b9bd45ac96ef9ad2206cf, type: 2}
@@ -19796,7 +19797,7 @@ GameObject:
   - component: {fileID: 783927970}
   - component: {fileID: 783927969}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23665,7 +23666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2034615556430399783, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_Name
-      value: Level (2)
+      value: Level (3)
       objectReference: {fileID: 0}
     - target: {fileID: 4083644262802213085, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_AnchorMax.y
@@ -32493,7 +32494,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1354606426}
   m_OnClick:
     m_PersistentCalls:
@@ -35059,7 +35060,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1427418399}
   m_OnClick:
     m_PersistentCalls:
@@ -35700,7 +35701,7 @@ GameObject:
   - component: {fileID: 1462917359}
   - component: {fileID: 1462917358}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35745,7 +35746,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You have 1 relic to open
+  m_text: You have 0 relic to open
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 434719bb8f0b9bd45ac96ef9ad2206cf, type: 2}
   m_sharedMaterial: {fileID: -6892576690105395314, guid: 434719bb8f0b9bd45ac96ef9ad2206cf, type: 2}
@@ -43011,9 +43012,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1855726617}
     m_Modifications:
+    - target: {fileID: 1299022588126437749, guid: 94e138e01249037488a57e8322f7b145, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1299022588126437749, guid: 94e138e01249037488a57e8322f7b145, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -11.700001
+      objectReference: {fileID: 0}
     - target: {fileID: 2034615556430399783, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_Name
-      value: Level (3)
+      value: Level (4)
       objectReference: {fileID: 0}
     - target: {fileID: 2152249725625711884, guid: 94e138e01249037488a57e8322f7b145, type: 3}
       propertyPath: m_AnchorMin.y
@@ -43167,6 +43176,7 @@ PrefabInstance:
     - {fileID: 1795523845276598539, guid: 94e138e01249037488a57e8322f7b145, type: 3}
     - {fileID: 1239093904364787401, guid: 94e138e01249037488a57e8322f7b145, type: 3}
     - {fileID: 1966073094794010606, guid: 94e138e01249037488a57e8322f7b145, type: 3}
+    - {fileID: 5912529330036930340, guid: 94e138e01249037488a57e8322f7b145, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94e138e01249037488a57e8322f7b145, type: 3}
@@ -48809,7 +48819,7 @@ GameObject:
   - component: {fileID: 2096502912}
   - component: {fileID: 2096502911}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

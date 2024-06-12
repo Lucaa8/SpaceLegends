@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System;
+using UnityEditor;
 
 public class GameLevel
 {
@@ -36,7 +37,7 @@ public class GameLevel
 
 	public int Level { get; private set; }
 
-	public int[] Probabilities { get; private set; }
+	public float[] Probabilities { get; private set; }
 	
 	public int[] Progression { get; private set; }
 
@@ -48,20 +49,25 @@ public class GameLevel
 		LevelDifficulty = difficulty;
 		Level = json.Value<int>("level");
 		UnlockRequirements = json.Value<int>("unlock_requirements");
-		JObject progress = json.Value<JObject>("progress");
-		Progression = new int[] { progress.Value<int>("completions"), progress.Value<int>("kills"), progress.Value<int>("deaths"), progress.Value<int>("stars") };
-		JArray proba = json.Value<JArray>("probabilities");
-		Probabilities = new int[] { proba[0].Value<int>(), proba[1].Value<int>(), proba[2].Value<int>(), proba[3].Value<int>() };
-    }
-
-	public int Games
-	{ 
-		get
+		if(json.ContainsKey("progress"))
 		{
-			return Progression[0];
-		}
-	}
-
+            JObject progress = json.Value<JObject>("progress");
+            Progression = new int[] { progress.Value<int>("completions"), progress.Value<int>("kills"), progress.Value<int>("deaths"), progress.Value<int>("stars") };
+        }
+        else
+        {
+            Progression = new int[] { 0, 0, 0, 0 };
+        }
+        JArray proba = json.Value<JArray>("probabilities");
+        Probabilities = new float[] { proba[0].Value<float>(), proba[1].Value<float>(), proba[2].Value<float>(), proba[3].Value<float>() };
+    }
+    public int Games
+    {
+        get
+        {
+            return Progression[0];
+        }
+    }
     public int Kills
     {
         get

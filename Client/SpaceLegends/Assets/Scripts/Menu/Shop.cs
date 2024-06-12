@@ -1,5 +1,7 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
@@ -14,6 +16,8 @@ public class Shop : MonoBehaviour
 
     [SerializeField] CaseSroll earthScroll;
     [SerializeField] CaseSroll marsScroll;
+
+    [SerializeField] UserInfo userInfo; //Needed to get relics counts and probabilities
 
     private bool isHelpDisplay = false;
     public bool isShopAnimated = false;
@@ -92,29 +96,64 @@ public class Shop : MonoBehaviour
         isShopAnimated = false;
     }
 
+    public void UpdateOpenRelicButton(int collec)
+    {
+        Button button = transform.Find("Shop/Scroll View/Viewport/Content/Relics/CREL/CREL" + UserInfo.Collections[collec] + "/Open").GetComponent<Button>();
+        button.interactable = userInfo.CountRelic(collec) > 0;
+    }
+
+    private void OpenRelic(int collec, CaseSroll scroll)
+    {
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("open-relic/"+collec.ToString()), UnityWebRequest.kHttpVerbPOST, null, Auth.AuthType.ACCESS, (isOk, status, jrep) =>
+        {
+            if (isOk)
+            {
+                JArray proba = jrep.Value<JArray>("probabilities");
+                if (proba.Count > 0)
+                {
+                    userInfo.RemoveRelic(collec);
+                    UpdateOpenRelicButton(collec);
+                    CaseCell.chances = new System.Collections.Generic.Dictionary<CaseCell.Rarity, float>
+                        {
+                            {
+                                CaseCell.Rarity.COMMON, proba[0].Value<float>()
+                            },
+                            {
+                                CaseCell.Rarity.RARE, proba[1].Value<float>()
+                            },
+                            {
+                                CaseCell.Rarity.EPIC, proba[2].Value<float>()
+                            },
+                            {
+                                CaseCell.Rarity.LEGENDARY, proba[3].Value<float>()
+                            }
+                        };
+                }
+                scroll.nftResult = new CaseCell.NFT();
+                scroll.nftResult.name = jrep.Value<string>("name");
+                scroll.nftResult.rarity = (CaseCell.Rarity)(jrep.Value<int>("rarity") - 1);
+                scroll.nftResult.sprite = Resources.Load<Sprite>(jrep.Value<string>("image"));
+                scroll.Scroll();
+                CaseCell.chances = null;
+                long type = jrep.Value<long>("type");
+                userInfo.SetNFTCount(type, userInfo.GetNFTCount(type) + 1);
+            }
+        }));
+    }
+
     public void WantToOpenEarthRelic()
     {
-        int count = 3;
-        if (count > 0 && CaseSroll.canScroll)
+        if (userInfo.NFTCountEarth > 0 && CaseSroll.canScroll)
         {
-            earthScroll.nftResult = new CaseCell.NFT();
-            earthScroll.nftResult.name = "Earth 3 (Row 1 | Col 3)";
-            earthScroll.nftResult.rarity = CaseCell.Rarity.EPIC;
-            earthScroll.nftResult.sprite = Resources.Load<Sprite>("00_Earth_r01c03");
-            earthScroll.Scroll();
+            OpenRelic(0, earthScroll);
         }
     }
 
     public void WantToOpenMarsRelic()
     {
-        int count = 1;
-        if (count > 0 && CaseSroll.canScroll)
+        if (userInfo.NFTCountMars > 0 && CaseSroll.canScroll)
         {
-            marsScroll.nftResult = new CaseCell.NFT();
-            marsScroll.nftResult.name = "Mars 8 (Row 3 | Col 2)";
-            marsScroll.nftResult.rarity = CaseCell.Rarity.RARE;
-            marsScroll.nftResult.sprite = Resources.Load<Sprite>("01_Mars_r03c02");
-            marsScroll.Scroll();
+            OpenRelic(1, marsScroll);
         }
     }
 

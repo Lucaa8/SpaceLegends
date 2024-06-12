@@ -42,16 +42,23 @@ class NFT(db.Model):
     @staticmethod
     def get_unminted_nft_by_collections(user_id):
         from collection import _decode_token_type
-        results = db.session.query(NFT.type, NFT.dropped_by_level_id).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
+        results = db.session.query(NFT.type).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
         collec = {}
         for nft in results:
             c = _decode_token_type(nft[0])[0]
-            # Adds the level which dropped the relic in the collection section.
-            # With those I can target the correct collection section in the Unity interface
-            # And update the correct probabilities for a drop in the Unity roulette
-            collec.setdefault(c, []).append(nft[1])
+            collec[c] = collec.get(c, 0) + 1
 
         return collec
+
+    @staticmethod
+    def get_first_unminted_nft(user_id, collec_id):
+        from collection import _decode_token_type
+        results = db.session.query(NFT.type, NFT.dropped_by_level_id).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
+        for nft in results:
+            c = _decode_token_type(nft[0])[0]
+            if c == collec_id:
+                return nft
+        return None
 
     # Misleading name as the function returns the number of relics found (you can test if complete if is_collection_complete(user_id, collection_id) == 9
     @staticmethod

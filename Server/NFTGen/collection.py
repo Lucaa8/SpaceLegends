@@ -88,8 +88,28 @@ class Item:
     def item_id(self):
         return self._item_id
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def row(self):
+        return self._row
+
+    @property
+    def col(self):
+        return self._col
+
+    @property
+    def rarity(self):
+        return self._rarity
+
+    @property
+    def collection(self):
+        return self._collection
+
     def get_image(self):
-        return f"{self._collection.get_image_base_url()}r{str(self._row).zfill(2)}c{str(self._col).zfill(2)}.png"
+        return f"{self._collection.get_image_base_url()}r{str(self.row).zfill(2)}c{str(self.col).zfill(2)}.png"
 
     def format_rarity(self):
         return rarity_to_str(self._rarity)

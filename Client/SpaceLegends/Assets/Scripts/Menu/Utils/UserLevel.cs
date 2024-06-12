@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +10,11 @@ public class UserLevel
     public int Current { get; private set; }
     public int Max { get; private set; }
 
-    public UserLevel(int[] info)
+    public UserLevel(JArray json)
     {
-        this.Level = info[0];
-        this.Current = info[1];
-        this.Max = info[2];
+        this.Level = json[0].Value<int>();
+        this.Current = json[1].Value<int>();
+        this.Max = json[2].Value<int>();
     }
 
     public float getRatio()

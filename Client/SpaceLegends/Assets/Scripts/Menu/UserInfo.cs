@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+using Newtonsoft.Json.Linq;
+using static CaseCell;
 
 public class UserInfo : MonoBehaviour
 {
@@ -34,7 +37,7 @@ public class UserInfo : MonoBehaviour
     private string _displayname;
     private float _sETH;
     private float _SDT;
-    private int _stars;
+    private int _stars = 0;
     private int _hearts;
     private int _totalDamage = 0;
     private int _perkDamage = 0;
@@ -46,13 +49,14 @@ public class UserInfo : MonoBehaviour
     private int _perkSpeed = 0;
     private long _perkSpeedEnd = -1;
     private UserLevel _level;
-    private int[] _statsGames;
-    private int[] _statsKills;
-    private int[] _statsDeaths;
+    private int[] _statsGames = new int[] {0, 0};
+    private int[] _statsKills = new int[] { 0, 0 };
+    private int[] _statsDeaths = new int[] { 0, 0 };
     private Dictionary<long, int> _nft = new Dictionary<long, int>();
     private int _nftCountMars;
     private int _nftCountEarth;
     private Dictionary<int, GameLevel> _levels = new Dictionary<int, GameLevel>();
+    private Dictionary<int, int> _relics = new Dictionary<int, int>();
 
     public string Username
     {
@@ -307,7 +311,7 @@ public class UserInfo : MonoBehaviour
 
     public int GetNFTCount(long type)
     {
-        return _nft[type];
+        return _nft.GetValueOrDefault(type, 0);
     }
 
     public void SetNFTCount(long type, int count)
@@ -336,36 +340,103 @@ public class UserInfo : MonoBehaviour
         }
     }
 
+    public void SetRelicsCount(int collec, int count)
+    {
+        _relics[collec] = count;
+        Shop.transform.Find("Scroll View/Viewport/Content/Relics/CREL/CREL" + Collections[collec] + "/Value").GetComponent<TMP_Text>().text = "You have " + count.ToString() + " relics to open";
+    }
+
+    public void AddRelic(int collec)
+    {
+        SetRelicsCount(collec, CountRelic(collec) + 1);
+    }
+
+    public void RemoveRelic(int collec)
+    {
+        SetRelicsCount(collec, CountRelic(collec) - 1);
+    }
+
+    public int CountRelic(int collec)
+    {
+        return _relics.GetValueOrDefault(collec, 0);
+    }
+
 
     // Start is called before the first frame update
     void Start()
     {
 
-        Username = "lucaa_8";
-        Displayname = "luluuu";
-        SETH = 18.892891F;
-        SDT = 1421.238291F;
-        Stars = 14;
-        Hearts = 332;
-        TotalDamage = 13;
-        PerkDamage = 9;
-        PerkDamageEnd = 1718128200L;
-        TotalArmor = 14;
-        PerkArmor = 8;
-        PerkArmorEnd = 1718128215L;
-        TotalSpeed = 12;
-        PerkSpeed = 82;
-        PerkSpeedEnd = 1718128230L;
-        Level = new UserLevel(new int[] { 35, 28765, 126000 });
-        Games = new int[] { 872, 4 };
-        Kills = new int[] { 1372, 1 };
-        Deaths = new int[] { 262, 400 };
-        NFTCountEarth = 1;
-        NFTCountMars = 2;
-        SetNFTCount(4106, 2);
-        SetNFTCount(134219801, 4);
-        SetNFTCount(134221833, 5);
-        SetNFTCount(134219801, 5);
+        Auth.OnResponse Update = (ok, status, j) =>
+        {
+            if(ok)
+            {
+                Username = j.Value<string>("username");
+                Displayname = j.Value<string>("display_name");
+                Level = new UserLevel(j.Value<JArray>("experience"));
+                JObject resources = j.Value<JObject>("resources");
+                SETH = resources.Value<float>("eth");
+                SDT = resources.Value<float>("sdt");
+                Hearts = resources.Value<int>("heart");              
+                NFTCountEarth = j.Value<JObject>("completed_collections").Value<int>("0");
+                if(NFTCountEarth == 9)
+                {
+                    TotalDamage += 18;
+                }
+                NFTCountMars = j.Value<JObject>("completed_collections").Value<int>("1");
+                if (NFTCountMars == 9)
+                {
+                    TotalArmor += 21;
+                }
+                foreach (var property in j.Value<JObject>("nft").Properties())
+                {
+                    long.TryParse(property.Name, out long type);
+                    int value = (int)property.Value;
+                    SetNFTCount(type, value);
+                }
+                foreach(var property in resources.Value<JArray>("perks"))
+                {
+                    JObject perk = (JObject)property;
+                    string type = perk.Value<string>("type");
+                    int value = perk.Value<int>("value");
+                    long end_time = perk.Value<long>("end_time");
+                    if (type == "damage")
+                    {
+                        PerkDamage = value;
+                        TotalDamage += value;
+                        PerkDamageEnd = end_time;
+                    }
+                    if (type == "armor")
+                    {
+                        PerkArmor = value;
+                        TotalArmor += value;
+                        PerkArmorEnd = end_time;
+                    }
+                    if (type == "speed")
+                    {
+                        PerkSpeed = value;
+                        TotalSpeed += value;
+                        PerkSpeedEnd = end_time;
+                    }
+                }
+                foreach(var property in j.Value<JObject>("levels").Properties())
+                {
+                    GameLevel level = new GameLevel((JObject)property.Value);
+                    AddGameLevel(level);
+                    Stars += level.Stars;
+                    Kills = new int[] { Kills[0] + level.Kills, 0 };
+                    Deaths = new int[] { Deaths[0] + level.Deaths, 0 };
+                    Games = new int[] { Games[0] + level.Games, 0 };
+                }
+                foreach (var property in j.Value<JObject>("relics").Properties())
+                {
+                    int.TryParse(property.Name, out int collec);
+                    SetRelicsCount(collec, (int)property.Value);
+                    transform.GetComponent<Shop>().UpdateOpenRelicButton(collec);
+                }
+            }
+        };
+
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("user"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, Update));
 
     }
 
