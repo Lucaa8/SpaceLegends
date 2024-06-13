@@ -29,7 +29,20 @@ class NFT(db.Model):
     def mint(self, wallet, username):
         if self.is_minted:
             return
-        chain.cosmic.mint_nft(wallet, username, self.id-1, self.type)
+
+        def on_mint(receipt):
+            res = chain.cosmic.get_token_type(self.id)  # check if on chain as receipt returns status=0 even if the NFT has been minted ??
+            if res is not None:
+                from database import flask_app
+                with flask_app.app_context():
+                    nft = db.session.query(NFT).filter(NFT.id == self.id).first()
+                    nft.is_minted = True
+                    db.session.commit()
+            else:
+                print(f"Failed to mint NFT with id {self.id}!")
+                print(receipt)
+
+        chain.cosmic.mint_nft(wallet, username, self.id, self.type, on_mint)
 
     @staticmethod
     def get_nft_count_by_type(user_id):

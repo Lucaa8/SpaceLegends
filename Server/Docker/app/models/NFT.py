@@ -1,6 +1,6 @@
 from database import db
-from datetime import datetime
 from sqlalchemy import func
+import chain
 
 
 class NFT(db.Model):
@@ -25,6 +25,24 @@ class NFT(db.Model):
             data[attr['trait_type']] = nft.format_rarity() if attr['trait_type'] == 'Rarity' else attr['value']
         del data['attributes']
         return data
+
+    def mint(self, wallet, username):
+        if self.is_minted:
+            return
+
+        def on_mint(receipt):
+            res = chain.cosmic.get_token_type(self.id)  # check if on chain as receipt returns status=0 even if the NFT has been minted ??
+            if res is not None:
+                from database import flask_app
+                with flask_app.app_context():
+                    nft = db.session.query(NFT).filter(NFT.id == self.id).first()
+                    nft.is_minted = True
+                    db.session.commit()
+            else:
+                print(f"Failed to mint NFT with id {self.id}!")
+                print(receipt)
+
+        chain.cosmic.mint_nft(wallet, username, self.id, self.type, on_mint)
 
     @staticmethod
     def get_nft_count_by_type(user_id):
@@ -53,9 +71,9 @@ class NFT(db.Model):
     @staticmethod
     def get_first_unminted_nft(user_id, collec_id):
         from collection import _decode_token_type
-        results = db.session.query(NFT.type, NFT.dropped_by_level_id).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
+        results = db.session.query(NFT).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
         for nft in results:
-            c = _decode_token_type(nft[0])[0]
+            c = _decode_token_type(nft.type)[0]
             if c == collec_id:
                 return nft
         return None

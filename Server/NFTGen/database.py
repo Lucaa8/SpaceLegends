@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 db = None
+flask_app = None # Needed to get back the app context in some async cases of db modifications
 
 
 def load(app):
@@ -13,4 +14,5 @@ def load(app):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # TBD
     global db
     db = SQLAlchemy(app)
-
+    global flask_app
+    flask_app = app
