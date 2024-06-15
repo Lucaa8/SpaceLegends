@@ -44,14 +44,19 @@ public class PlayerController : MonoBehaviour
 
     // The player
     private Rigidbody2D player;
-
     private Animator animator;
+
+    public bool isFacingRight = true;
+
+    [SerializeField] GameObject _cameraFollowGO;
+    private CameraFollowObject _cameraFollowObject;
 
     void Start()
     {
         player = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         gravityScale = player.gravityScale;
+        _cameraFollowObject = _cameraFollowGO.GetComponent<CameraFollowObject>();
     }
 
     void Update()
@@ -120,6 +125,7 @@ public class PlayerController : MonoBehaviour
         }
 
         animator.SetBool("OnGround", isGrounded);
+        animator.SetFloat("VelY", player.velocity.y);
 
     }
 
@@ -127,6 +133,18 @@ public class PlayerController : MonoBehaviour
     {
         // Left and right movement
         direction = Input.GetAxisRaw("Horizontal"); //Either -1 if left key is pressed, 0 if none and 1 if right key is pressed
+        if (direction > 0f && !isFacingRight)
+        {
+            isFacingRight = true;
+            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0f, transform.rotation.z));
+            _cameraFollowObject.CallTurn();
+        }
+        else if(direction < 0f && isFacingRight)
+        {
+            isFacingRight = false;
+            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 180f, transform.rotation.z));
+            _cameraFollowObject.CallTurn();
+        }
         float targetSpeed = direction * speed;
         float speedDif = targetSpeed - player.velocity.x;
         float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deccelleration;
