@@ -57,9 +57,10 @@ public class Menu : MonoBehaviour
         isESCPressed = false;
     }
 
-    public void UpdateSETH()
-    {
 
+    public void StartLevel()
+    {
+        FindObjectOfType<LevelChanger>().FadeToLevel("Level0");
     }
 
 

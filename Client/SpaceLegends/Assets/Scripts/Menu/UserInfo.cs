@@ -436,7 +436,10 @@ public class UserInfo : MonoBehaviour
             }
         };
 
-        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("user"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, Update));
+        if(Auth.Instance != null)
+        {
+            StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("user"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, Update));
+        }
 
     }
 

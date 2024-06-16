@@ -30,6 +30,10 @@ public class PlayerController : MonoBehaviour
     // Increase gravity at peak y position during jump
     private float gravityScale; // You must set this value in the RigidBody2D of your player (to work with those other values in this script, must be 7 with the default -9.81 gravity in the Physics 2D of the project)
     public float fallGravityMultiplier = 1.4f;
+    //Trigger Fall particle 
+    public float fallThreshold = 1.8f; //This is a 1.8f y difference on the player transform. i.e. Fall particle are played only if the player falls more than 1.8f y
+    private bool isFalling = false;
+    private float startFallY;
 
     // Left/Right movements section
     // This section will use the FixedUpdate and AddForce to handle smooth movement (e.g. If the player is going right full speed, it'll have a very small timing in which he wont go full speed to the left if he suddently change the directionnal key)
@@ -44,6 +48,7 @@ public class PlayerController : MonoBehaviour
 
     // The player
     private Rigidbody2D player;
+    private ParticleController particles;
     private Animator animator;
 
     public bool isFacingRight = true;
@@ -51,12 +56,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject _cameraFollowGO;
     private CameraFollowObject _cameraFollowObject;
 
+    public bool IsOnGround
+    {
+        get { return isGrounded; }
+    }
+
     void Start()
     {
         player = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         gravityScale = player.gravityScale;
         _cameraFollowObject = _cameraFollowGO.GetComponent<CameraFollowObject>();
+        particles = transform.Find("Particles").GetComponent<ParticleController>();
     }
 
     void Update()
@@ -152,5 +163,26 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Speed", Mathf.Abs(player.velocity.x));
         // Vector right to prevent affecting up/down velocity (which is alreary handled by jump)
         player.AddForce(movement * Vector2.right);
+
+
+        // Check if the player starts falling
+        if (!isGrounded && !isFalling && player.velocity.y < 0)
+        {
+            isFalling = true;
+            startFallY = transform.position.y;
+        }
+
+        // Check if the player lands and play fall particle if needed
+        if (isFalling && Mathf.Abs(player.velocity.y) < 0.01f)
+        {
+            float fallDistance = startFallY - transform.position.y;
+            if (fallDistance >= fallThreshold)
+            {
+                particles.PlayFall();
+            }
+            isFalling = false;
+        }
+
     }
+
 }
