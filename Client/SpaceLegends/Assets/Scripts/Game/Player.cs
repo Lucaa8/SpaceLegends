@@ -4,11 +4,19 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    [SerializeField] GameObject PlayerGO;
     private Rigidbody2D player;
     private SpriteRenderer sprite;
+    private Animator animator;
+    private Vector3 initialScale;
 
-    private bool isAlive = true;
+    [SerializeField] GameObject StartPoint;
+    [SerializeField] GameObject EndPoint;
+    private float levelLength;
+
+    [SerializeField] CheckpointController checkpointController;
+    private Vector3 lastCheckpoint;
+
+    public bool IsAlive { get; private set; } = true;
     [SerializeField] float MaxHealth;
     private float currentHealth;
     [SerializeField] float Damage;
@@ -22,14 +30,55 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        player = GetComponent<Rigidbody2D>();
+        player = transform.GetComponent<Rigidbody2D>();
+        transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
+        animator = transform.GetComponent<Animator>();    
+        initialScale = transform.localScale;
         currentHealth = MaxHealth;
+        lastCheckpoint = transform.position;
+        levelLength = Mathf.Abs(EndPoint.transform.position.x - StartPoint.transform.position.x);
     }
 
     private void Update()
     {
+        if (!IsAlive)
+        {
+            return;
+        }
+        if (currentHealth <= 0f)
+        {
+            Die(true);
+        }
         TakeDamage();
+        float playerPosition = player.position.x - StartPoint.transform.position.x;
+        checkpointController.PositionPlayer(playerPosition / levelLength);
+    }
+
+    public void Die(bool animate)
+    {
+        IsAlive = false;
+        if (animate)
+        {
+            animator.SetBool("IsDead", true);
+        }
+        else
+        {
+            //Display death ui here and same at the end of dead animation
+            Respawn();
+        }
+        
+    }
+
+    //Called by the end of death sprite animation
+    public void Respawn()
+    {
+
+        currentHealth = MaxHealth;
+        player.velocity = Vector3.zero;
+        transform.position = lastCheckpoint;
+        IsAlive = true;
+        animator.SetBool("IsDead", false);
     }
 
     private void TakeDamage()
@@ -65,14 +114,27 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(isPassiveDamage(collision.gameObject) && !isTakingPassiveDamage)
+        GameObject g = collision.gameObject;
+        if(isPassiveDamage(g) && !isTakingPassiveDamage)
         {
             isTakingPassiveDamage = true;
         }
-        else if(collision.gameObject.CompareTag("Star"))
+        else if(g.CompareTag("Star"))
         {
-            collision.gameObject.GetComponent<Animator>().SetBool("Pick", true);
+            g.GetComponent<Animator>().SetBool("Pick", true);
             Debug.Log("New star!!");
+        }
+        else if(g.CompareTag("Checkpoint"))
+        {
+            CheckpointAnimations anim = g.GetComponent<CheckpointAnimations>();
+            anim.Touch();
+            collision.enabled = false;
+            lastCheckpoint = collision.transform.position;
+            checkpointController.PositionCheckpoint();
+        }
+        else if(g.CompareTag("DeadLine"))
+        {
+            Die(false);
         }
     }
 

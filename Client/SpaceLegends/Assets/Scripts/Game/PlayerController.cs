@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D player;
     private ParticleController particles;
     private Animator animator;
+    private Player _player; //General player information. Needed to check if player is alive. If not, disallow controls and jump.
 
     public bool isFacingRight = true;
 
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
     {
         player = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        _player = GetComponent<Player>();
         gravityScale = player.gravityScale;
         _cameraFollowObject = _cameraFollowGO.GetComponent<CameraFollowObject>();
         particles = transform.Find("Particles").GetComponent<ParticleController>();
@@ -90,7 +92,7 @@ public class PlayerController : MonoBehaviour
 
         // If the player hits jump, can still jump (grounded or coyote) and is allowed to (he wont be allowed next to this for the jumpBufferCounter seconds)
         // Replace Input.GetButton("Jump") by Input.GetButtonDown("Jump") if you want to obligate the player to release and repress the jump button to jump again
-        if (Input.GetButton("Jump") && coyoteTimeCounter > 0f && jumpBufferCounter <= 0f)
+        if (Input.GetButton("Jump") && coyoteTimeCounter > 0f && jumpBufferCounter <= 0f && _player.IsAlive)
         {
             player.velocity = new Vector2(player.velocity.x, jumpForce);
             coyoteTimeCounter = 0f;
@@ -101,7 +103,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Jump cut (The player can hold space to jump higher)
-        if(Input.GetButton("Jump") && !isSpaceReleased)
+        if(Input.GetButton("Jump") && !isSpaceReleased && _player.IsAlive)
         {
             if (jumpTimeCounter > 0f)
             {
@@ -144,7 +146,11 @@ public class PlayerController : MonoBehaviour
     {
         // Left and right movement
         direction = Input.GetAxisRaw("Horizontal"); //Either -1 if left key is pressed, 0 if none and 1 if right key is pressed
-        if (direction > 0f && !isFacingRight)
+        if(!_player.IsAlive)
+        {
+            direction = 0f; //Cancel any new acceleration if the player is dead but do not return. His corpse will keep a little bit of momentum like this and wont stop immediatly
+        }
+        else if (direction > 0f && !isFacingRight)
         {
             isFacingRight = true;
             transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0f, transform.rotation.z));
