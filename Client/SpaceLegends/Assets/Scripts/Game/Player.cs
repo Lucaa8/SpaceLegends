@@ -1,5 +1,8 @@
 using System.Collections;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -16,9 +19,14 @@ public class Player : MonoBehaviour
     [SerializeField] CheckpointController checkpointController;
     private Vector3 lastCheckpoint;
 
+    [SerializeField] GameObject DeathScreen;
+    [SerializeField] TMP_Text DeathScreenRemaining;
+    [SerializeField] CanvasGroup RespawnButton;
+
     public bool IsAlive { get; private set; } = true;
     [SerializeField] float MaxHealth;
     private float currentHealth;
+    [SerializeField] Image ImageHealth;
     [SerializeField] float Damage;
     [SerializeField] float Armor;
 
@@ -38,6 +46,7 @@ public class Player : MonoBehaviour
         currentHealth = MaxHealth;
         lastCheckpoint = transform.position;
         levelLength = Mathf.Abs(EndPoint.transform.position.x - StartPoint.transform.position.x);
+        UpdateHealth();
     }
 
     private void Update()
@@ -64,17 +73,27 @@ public class Player : MonoBehaviour
         }
         else
         {
-            //Display death ui here and same at the end of dead animation
-            Respawn();
+            transform.position = lastCheckpoint; //Reset position of the player to avoid him to see unwanted background transitions
+            ShowDeathScreen();
         }
-        
+    }
+
+    public void ShowDeathScreen()
+    {
+        //int livesLeft = PlayerPrefs.GetInt("Lives");
+        int livesLeft = 3;
+        DeathScreenRemaining.text = "You have " + livesLeft.ToString();
+        RespawnButton.alpha = livesLeft <= 0 ? 0.5f : 1f;
+        RespawnButton.interactable = livesLeft > 0;
+        StartCoroutine(ShowDeathScreen(true));
     }
 
     //Called by the end of death sprite animation
     public void Respawn()
     {
-
+        StartCoroutine(ShowDeathScreen(false));
         currentHealth = MaxHealth;
+        UpdateHealth();
         player.velocity = Vector3.zero;
         transform.position = lastCheckpoint;
         IsAlive = true;
@@ -89,15 +108,27 @@ public class Player : MonoBehaviour
 
             if (timeSinceLastDamage >= damageInterval)
             {
-                currentHealth -= PassiveDamageAmount;
+                TakeDamage(PassiveDamageAmount);
                 timeSinceLastDamage = 0f;
-                StartCoroutine(ShowDamage(damageInterval / 2));
             }
         }
         else
         {
             timeSinceLastDamage = damageInterval;
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        UpdateHealth();
+        StartCoroutine(ShowDamage(damageInterval / 2));
+    }
+
+    private void UpdateHealth()
+    {
+        float ratio = currentHealth / MaxHealth;
+        ImageHealth.transform.localScale = new Vector2(ratio < 0f ? 0f : ratio, ImageHealth.transform.localScale.y);
     }
 
     private IEnumerator ShowDamage(float seconds)
@@ -159,6 +190,31 @@ public class Player : MonoBehaviour
         if (isPassiveDamage(collision.gameObject) && isTakingPassiveDamage)
         {
             isTakingPassiveDamage = false;
+        }
+    }
+
+    private IEnumerator ShowDeathScreen(bool show)
+    {
+        if (show) //Cannot do DeathScreen.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
+        {
+            DeathScreen.SetActive(true);
+        }
+
+        float duration = 0.3f; // seconds
+        float elapsedTime = 0f;
+        CanvasGroup group = DeathScreen.GetComponent<CanvasGroup>();
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = elapsedTime / duration;
+            group.alpha = show ? alpha : 1f - alpha;
+            yield return null;
+        }
+        group.alpha = show ? 1f : 0f;
+
+        if (!show)
+        {
+            DeathScreen.SetActive(false);
         }
     }
 
