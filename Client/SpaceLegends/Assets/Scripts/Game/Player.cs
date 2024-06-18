@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
 
+    private Connection connection;
     private Rigidbody2D player;
     private SpriteRenderer sprite;
     private Animator animator;
@@ -35,9 +36,14 @@ public class Player : MonoBehaviour
     private float timeSinceLastDamage;
     private bool isTakingPassiveDamage = false;
 
+    private int kills;
+    private int deaths;
+    private int stars;
+    private int livesLeft = 0;
 
     private void Start()
     {
+        connection = transform.GetComponent<Connection>();
         player = transform.GetComponent<Rigidbody2D>();
         transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
@@ -47,6 +53,11 @@ public class Player : MonoBehaviour
         lastCheckpoint = transform.position;
         levelLength = Mathf.Abs(EndPoint.transform.position.x - StartPoint.transform.position.x);
         UpdateHealth();
+        connection.GetLives((j) =>
+        {
+            livesLeft = j.Value<int>("count");
+            Debug.Log(livesLeft);
+        });
     }
 
     private void Update()
@@ -67,6 +78,7 @@ public class Player : MonoBehaviour
     public void Die(bool animate)
     {
         IsAlive = false;
+        connection.AddDeath();
         if (animate)
         {
             animator.SetBool("IsDead", true);
@@ -80,18 +92,28 @@ public class Player : MonoBehaviour
 
     public void ShowDeathScreen()
     {
-        //int livesLeft = PlayerPrefs.GetInt("Lives");
-        int livesLeft = 3;
         DeathScreenRemaining.text = "You have " + livesLeft.ToString();
         RespawnButton.alpha = livesLeft <= 0 ? 0.5f : 1f;
         RespawnButton.interactable = livesLeft > 0;
-        StartCoroutine(ShowDeathScreen(true));
+        StartCoroutine(SetDeathScreen(true));
     }
 
     //Called by the end of death sprite animation
-    public void Respawn()
+    public void TryRespawn()
     {
-        StartCoroutine(ShowDeathScreen(false));
+        connection.DecreaseLives((j) =>
+        {
+            if(j.Value<bool>("status"))
+            {
+                Respawn();
+            }
+        });
+        livesLeft--;
+    }
+
+    private void Respawn()
+    {
+        StartCoroutine(SetDeathScreen(false));
         currentHealth = MaxHealth;
         UpdateHealth();
         player.velocity = Vector3.zero;
@@ -153,7 +175,8 @@ public class Player : MonoBehaviour
         else if(g.CompareTag("Star"))
         {
             g.GetComponent<Animator>().SetBool("Pick", true);
-            Debug.Log("New star!!");
+            stars++;
+            connection.AddStar();
         }
         else if(g.CompareTag("Checkpoint"))
         {
@@ -193,7 +216,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private IEnumerator ShowDeathScreen(bool show)
+    private IEnumerator SetDeathScreen(bool show)
     {
         if (show) //Cannot do DeathScreen.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
         {

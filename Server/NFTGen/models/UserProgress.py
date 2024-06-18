@@ -10,7 +10,8 @@ class UserProgress(db.Model):
     stars_collected = db.Column(db.Integer, nullable=False, server_default='0')
     kills = db.Column(db.Integer, nullable=False, server_default='0')
     deaths = db.Column(db.Integer, nullable=False, server_default='0')
-    completions = db.Column(db.Integer, nullable=False, server_default='0')
+    total_games = db.Column(db.Integer, nullable=False, server_default='0')
+    total_completions = db.Column(db.Integer, nullable=False, server_default='0')
     relics_found = db.Column(db.Integer, nullable=False, server_default='0')
 
     __table_args__ = (db.UniqueConstraint('user_id', 'game_level_id', name='unique_player_level'),)
@@ -23,7 +24,8 @@ class UserProgress(db.Model):
             'stars': self.stars_collected,
             'kills': self.kills,
             'deaths': self.deaths,
-            'completions': self.completions
+            'games': self.total_games,
+            'completions': self.total_completions
         }
 
     @staticmethod

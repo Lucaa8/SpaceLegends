@@ -49,6 +49,7 @@ public class UserInfo : MonoBehaviour
     private int _perkSpeed = 0;
     private long _perkSpeedEnd = -1;
     private UserLevel _level;
+    // Misleading name as this attribute holds the number of levels COMPLETED (Total completions) and not total games ran
     private int[] _statsGames = new int[] {0, 0};
     private int[] _statsKills = new int[] { 0, 0 };
     private int[] _statsDeaths = new int[] { 0, 0 };
@@ -425,7 +426,7 @@ public class UserInfo : MonoBehaviour
                     Stars += level.Stars;
                     Kills = new int[] { Kills[0] + level.Kills, 0 };
                     Deaths = new int[] { Deaths[0] + level.Deaths, 0 };
-                    Games = new int[] { Games[0] + level.Games, 0 };
+                    Games = new int[] { Games[0] + level.Completions, 0 };
                 }
                 foreach (var property in j.Value<JObject>("relics").Properties())
                 {

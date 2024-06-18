@@ -52,11 +52,17 @@ public class GameLevel
 		if(json.ContainsKey("progress"))
 		{
             JObject progress = json.Value<JObject>("progress");
-            Progression = new int[] { progress.Value<int>("completions"), progress.Value<int>("kills"), progress.Value<int>("deaths"), progress.Value<int>("stars") };
+            Progression = new int[] 
+            { 
+                progress.Value<int>("total_games"),
+                progress.Value<int>("total_completions"),
+                progress.Value<int>("kills"),
+                progress.Value<int>("deaths"),
+                progress.Value<int>("stars") };
         }
         else
         {
-            Progression = new int[] { 0, 0, 0, 0 };
+            Progression = new int[] { 0, 0, 0, 0, 0 };
         }
         JArray proba = json.Value<JArray>("probabilities");
         Probabilities = new float[] { proba[0].Value<float>(), proba[1].Value<float>(), proba[2].Value<float>(), proba[3].Value<float>() };
@@ -68,7 +74,8 @@ public class GameLevel
             return Progression[0];
         }
     }
-    public int Kills
+
+    public int Completions
     {
         get
         {
@@ -76,7 +83,7 @@ public class GameLevel
         }
     }
 
-    public int Deaths
+    public int Kills
     {
         get
         {
@@ -84,11 +91,19 @@ public class GameLevel
         }
     }
 
-    public int Stars
+    public int Deaths
     {
         get
         {
             return Progression[3];
+        }
+    }
+
+    public int Stars
+    {
+        get
+        {
+            return Progression[4];
         }
     }
 

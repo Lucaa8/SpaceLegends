@@ -104,6 +104,29 @@ def open_relic(collection: int):
     return jsonify(message="No valid relics to open"), 400
 
 
+@api_bp.route('/lives', methods=['GET', 'POST'])
+@jwt_required()
+def user_lives():
+    from models.User import User
+    user: User = current_user
+    # GET LIVES
+    if request.method == 'GET':
+        return jsonify(count=user.money_heart), 200
+    # DECREASE LIVES (POST)
+    if user.money_heart == 0:
+        return jsonify(message="No money heart"), 403
+    if not ("count" in request.json):
+        return jsonify(message="You must provide the value"), 400
+    try:
+        count = int(request.json["count"])
+        new_value: int = user.decrease_lives_count(count)
+        if new_value >= 0:
+            return '', 204
+        return jsonify(message="An unknown error occurred."), 500
+    except ValueError:
+        return jsonify(message="The value must be integer"), 400
+
+
 @api_bp.route('/user', methods=['GET'])
 @jwt_required()
 def get_resources():
