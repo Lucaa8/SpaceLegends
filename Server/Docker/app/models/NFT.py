@@ -1,6 +1,7 @@
 from database import db
 from sqlalchemy import func
 import chain
+from collection import Item
 
 
 class NFT(db.Model):
@@ -13,6 +14,12 @@ class NFT(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())
     is_minted = db.Column(db.Boolean, default=False, comment='Whether the NFT is already minted on the blockchain or not')
     dropped_by_level_id = db.Column(db.Integer, db.ForeignKey('game_level.id'), nullable=True) # if null then it has been received by offer or whatever and default probabilities are used
+
+    @staticmethod
+    def create(item: Item, user_id: int, dropped_by_level_id: int):
+        nft = NFT(type=item.item_id, user_id=user_id, dropped_by_level_id=dropped_by_level_id)
+        db.session.add(nft)
+        db.session.commit()
 
     def as_complete_nft(self):
         from collection import get_item

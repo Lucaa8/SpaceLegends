@@ -194,6 +194,9 @@ public class Auth : MonoBehaviour
             case UnityWebRequest.kHttpVerbDELETE:
                 request = UnityWebRequest.Delete(url);
                 break;
+            case UnityWebRequest.kHttpVerbPUT:
+                request = new UnityWebRequest(url, "PUT");
+                break;
         }
 
         if(request == null || string.IsNullOrEmpty(request.url))

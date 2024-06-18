@@ -39,7 +39,28 @@ public class GameLevel
 
 	public float[] Probabilities { get; private set; }
 	
-	public int[] Progression { get; private set; }
+	public int Kills { get; private set; }
+
+    public int Deaths { get; private set; }
+
+    public int Games { get; private set; }
+
+    public int Completions { get; private set; }
+
+    public bool[] Stars { get; private set; }
+
+	public int StarsCount
+	{
+		get
+		{
+			int count = 0;
+            foreach (bool item in Stars)
+            {
+				if (item) count++;
+            }
+			return count;
+        }
+	}
 
 	public GameLevel(JObject json)
 	{
@@ -52,59 +73,23 @@ public class GameLevel
 		if(json.ContainsKey("progress"))
 		{
             JObject progress = json.Value<JObject>("progress");
-            Progression = new int[] 
-            { 
-                progress.Value<int>("total_games"),
-                progress.Value<int>("total_completions"),
-                progress.Value<int>("kills"),
-                progress.Value<int>("deaths"),
-                progress.Value<int>("stars") };
+            Games = progress.Value<int>("total_games");
+            Completions = progress.Value<int>("total_completions");
+			Kills = progress.Value<int>("kills");
+			Deaths = progress.Value<int>("deaths");
+			JObject stars = progress.Value<JObject>("stars");
+			Stars = new bool[] { stars.Value<bool>("star_1"), stars.Value<bool>("star_2"), stars.Value<bool>("star_3") };
         }
         else
         {
-            Progression = new int[] { 0, 0, 0, 0, 0 };
+			Games = 0;
+			Completions = 0;
+			Kills = 0;
+			Deaths = 0;
+			Stars = new bool[] { false, false, false };
         }
         JArray proba = json.Value<JArray>("probabilities");
         Probabilities = new float[] { proba[0].Value<float>(), proba[1].Value<float>(), proba[2].Value<float>(), proba[3].Value<float>() };
-    }
-    public int Games
-    {
-        get
-        {
-            return Progression[0];
-        }
-    }
-
-    public int Completions
-    {
-        get
-        {
-            return Progression[1];
-        }
-    }
-
-    public int Kills
-    {
-        get
-        {
-            return Progression[2];
-        }
-    }
-
-    public int Deaths
-    {
-        get
-        {
-            return Progression[3];
-        }
-    }
-
-    public int Stars
-    {
-        get
-        {
-            return Progression[4];
-        }
     }
 
 }

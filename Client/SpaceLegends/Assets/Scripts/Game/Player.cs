@@ -56,7 +56,6 @@ public class Player : MonoBehaviour
         connection.GetLives((j) =>
         {
             livesLeft = j.Value<int>("count");
-            Debug.Log(livesLeft);
         });
     }
 

@@ -127,6 +127,49 @@ def user_lives():
         return jsonify(message="The value must be integer"), 400
 
 
+@api_bp.route('/start-level/<int:level_id>', methods=['PUT'])
+@jwt_required()
+def start_level(level_id: int):
+    from models.LiveGame import LiveGame
+    code: str = LiveGame.start(current_user, level_id)
+    return jsonify(code=code), 200
+
+
+@api_bp.route('/stop-level', methods=['DELETE'])
+@jwt_required()
+def stop_level():
+    if not ("code" in request.json) or not ("completed" in request.json):
+        return jsonify(message="Invalid request"), 400
+
+    from models.LiveGame import LiveGame
+    game: LiveGame = LiveGame.get(request.json["code"])
+    if game.has_ended():
+        return jsonify(message="This game has already ended"), 400
+
+    if not game.finish(request.json["completed"]):
+        return jsonify(message="Something went wrong while validating your session"), 500
+
+    if not game.completed: # Used left the level without ending it
+        return '', 204
+
+    from models.GameLevel import GameLevel
+    level: GameLevel = GameLevel.get(game.level_id)
+    reward = level.generate_reward()
+
+    if reward[0] == 'RELIC':
+        from models.NFT import NFT
+        NFT.create(reward[1], current_user.id, level.id)
+        return jsonify(reward={'type': 'RELIC', 'collection': reward[1].collection.collection_id}), 200
+
+    return jsonify(reward={'type': reward[0], 'value': reward[1]}), 200
+
+
+@api_bp.route('/kills', methods=['GET'])
+@jwt_required()
+def increment_kills():
+    return '', 204
+
+
 @api_bp.route('/user', methods=['GET'])
 @jwt_required()
 def get_resources():

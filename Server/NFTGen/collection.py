@@ -1,4 +1,5 @@
 import json
+import random
 
 
 def _encode_token_type(collection: int, row: int, col: int, rarity: int) -> int:
@@ -169,6 +170,13 @@ def get_collection(collection_id: int) -> Collection | None:
     return None
 
 
+def get_random_nft(collection_name: str, rarity: int) -> Item:
+    collection_id = get_collection(int(collection_name.split('_')[0])).collection_id
+    shuffled_items = items[:]
+    random.shuffle(shuffled_items)
+    return [item for item in shuffled_items if item.collection.collection_id == collection_id and item.rarity == rarity][0]
+
+
 def get_item(item_id: int) -> Item | None:
     for item in items:
         if item.item_id == item_id:
@@ -182,4 +190,3 @@ def load(file: str) -> None:
         collections.append(Collection.from_file(data["collection"]))
         for item in data["items"]:
             items.append(Item.from_file(item))
-

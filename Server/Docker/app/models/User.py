@@ -129,7 +129,7 @@ class User(db.Model):
 
     def decrease_lives_count(self, count: int) -> int:
         new_count = max(0, self.money_heart-count)
-        if self.set_lives_count(new_count):
+        if self.set_heart_money(new_count):
             return self.money_heart
         return -1
 

@@ -7,3 +7,4 @@ from models.UserProgress import UserProgress
 from models.User import User
 from models.PerkRental import PerkRental
 from models.TokenRevoked import TokenRevoked
+from models.LiveGame import LiveGame

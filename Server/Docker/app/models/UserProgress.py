@@ -7,7 +7,9 @@ class UserProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     game_level_id = db.Column(db.Integer, db.ForeignKey('game_level.id'), nullable=False)
-    stars_collected = db.Column(db.Integer, nullable=False, server_default='0')
+    star_1 = db.Column(db.Boolean, nullable=False, server_default='0')
+    star_2 = db.Column(db.Boolean, nullable=False, server_default='0')
+    star_3 = db.Column(db.Boolean, nullable=False, server_default='0')
     kills = db.Column(db.Integer, nullable=False, server_default='0')
     deaths = db.Column(db.Integer, nullable=False, server_default='0')
     total_games = db.Column(db.Integer, nullable=False, server_default='0')
@@ -21,7 +23,11 @@ class UserProgress(db.Model):
 
     def as_json(self):
         return {
-            'stars': self.stars_collected,
+            'stars': {
+                'star_1': self.star_1,
+                'star_2': self.star_2,
+                'star_3': self.star_3
+            },
             'kills': self.kills,
             'deaths': self.deaths,
             'games': self.total_games,

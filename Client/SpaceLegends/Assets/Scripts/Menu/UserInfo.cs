@@ -334,10 +334,10 @@ public class UserInfo : MonoBehaviour
         levelObj.Find("BgLocked").gameObject.SetActive(!unlocked);
         levelObj.Find("Locked").gameObject.SetActive(!unlocked);
         levelObj.Find("Locked/Image/UnlockRequirement").GetComponent<TMP_Text>().text = level.UnlockRequirements.ToString();
-        for(int i=0;i<=3;i++)
+        GameObject starsObj = levelObj.Find("Stars").gameObject;
+        for (int i=0;i<=2;i++)
         {
-            GameObject starObj = levelObj.Find("Stars"+i.ToString()).gameObject;
-            starObj.SetActive(i == level.Stars);
+            starsObj.transform.Find("Star" + i.ToString()).Find("On").gameObject.SetActive(level.Stars[i]);
         }
     }
 
@@ -419,11 +419,18 @@ public class UserInfo : MonoBehaviour
                         PerkSpeedEnd = end_time;
                     }
                 }
-                foreach(var property in j.Value<JObject>("levels").Properties())
+                JObject jLevels = j.Value<JObject>("levels");
+                GameLevel[] tmpLevels = new GameLevel[jLevels.Count];
+                int i = 0;
+                foreach (var property in j.Value<JObject>("levels").Properties())
                 {
                     GameLevel level = new GameLevel((JObject)property.Value);
+                    Stars += level.StarsCount; //Need to count every star before adding game levels to UI because of the Lock requirement images.
+                    tmpLevels[i++] = level;
+                }
+                foreach(GameLevel level in tmpLevels)
+                {
                     AddGameLevel(level);
-                    Stars += level.Stars;
                     Kills = new int[] { Kills[0] + level.Kills, 0 };
                     Deaths = new int[] { Deaths[0] + level.Deaths, 0 };
                     Games = new int[] { Games[0] + level.Completions, 0 };
