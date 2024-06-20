@@ -24,6 +24,8 @@ public class Player : MonoBehaviour
     [SerializeField] TMP_Text DeathScreenRemaining;
     [SerializeField] CanvasGroup RespawnButton;
 
+    [SerializeField] GameObject Stars;
+
     public bool IsAlive { get; private set; } = true;
     [SerializeField] float MaxHealth;
     private float currentHealth;
@@ -36,14 +38,24 @@ public class Player : MonoBehaviour
     private float timeSinceLastDamage;
     private bool isTakingPassiveDamage = false;
 
-    private int kills;
-    private int deaths;
-    private int stars;
-    private int livesLeft = 0;
-
     private void Start()
     {
         connection = transform.GetComponent<Connection>();
+        connection.OnStart(() =>
+        {
+            // Decrease opacity of already picked stars
+            foreach (Transform starTransform in Stars.GetComponentsInChildren<Transform>())
+            {
+                if (starTransform == Stars.transform) continue;
+                PickStar state = starTransform.GetComponent<PickStar>();
+                if (connection.getStar(state.StarNumber))
+                {
+                    state.Enabled = false;
+                    starTransform.GetComponent<SpriteRenderer>().color = new Color(89f/255f, 87f/255f, 69f/255f, 0.5f);
+                }
+            }
+            player.simulated = true;
+        });
         player = transform.GetComponent<Rigidbody2D>();
         transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
@@ -53,10 +65,6 @@ public class Player : MonoBehaviour
         lastCheckpoint = transform.position;
         levelLength = Mathf.Abs(EndPoint.transform.position.x - StartPoint.transform.position.x);
         UpdateHealth();
-        connection.GetLives((j) =>
-        {
-            livesLeft = j.Value<int>("count");
-        });
     }
 
     private void Update()
@@ -91,9 +99,9 @@ public class Player : MonoBehaviour
 
     public void ShowDeathScreen()
     {
-        DeathScreenRemaining.text = "You have " + livesLeft.ToString();
-        RespawnButton.alpha = livesLeft <= 0 ? 0.5f : 1f;
-        RespawnButton.interactable = livesLeft > 0;
+        DeathScreenRemaining.text = "You have " + connection.Lives.ToString();
+        RespawnButton.alpha = connection.Lives <= 0 ? 0.5f : 1f;
+        RespawnButton.interactable = connection.Lives > 0;
         StartCoroutine(SetDeathScreen(true));
     }
 
@@ -107,7 +115,6 @@ public class Player : MonoBehaviour
                 Respawn();
             }
         });
-        livesLeft--;
     }
 
     private void Respawn()
@@ -174,8 +181,11 @@ public class Player : MonoBehaviour
         else if(g.CompareTag("Star"))
         {
             g.GetComponent<Animator>().SetBool("Pick", true);
-            stars++;
-            connection.AddStar();
+            PickStar state = g.GetComponent<PickStar>();
+            if(state.Enabled) // Avoid adding already picked star
+            {
+                connection.setStar(state.StarNumber);
+            }     
         }
         else if(g.CompareTag("Checkpoint"))
         {

@@ -1,4 +1,7 @@
-from flask import jsonify, redirect, url_for, request
+from typing import Tuple
+
+import flask
+from flask import jsonify, redirect, url_for, request, Response
 from flask.blueprints import Blueprint
 from flask_jwt_extended import jwt_required, current_user
 from collection import Item, get_item, collections
@@ -131,8 +134,21 @@ def user_lives():
 @jwt_required()
 def start_level(level_id: int):
     from models.LiveGame import LiveGame
+    from models.UserProgress import UserProgress
     code: str = LiveGame.start(current_user, level_id)
-    return jsonify(code=code), 200
+    try:
+        progress: UserProgress = UserProgress.get_progress(current_user.id, level_id, create=True)
+        stars = progress.as_json()["stars"]
+        progress.total_games += 1
+        UserProgress.update()
+    except Exception as e:
+        print(f"Something went wrong while getting stars in user progress of user.id=={current_user.id} and level_id=={level_id}: {str(e)}")
+        stars = {
+            'star_1': False,
+            'star_2': False,
+            'star_3': False
+        }
+    return jsonify(code=code, lives=current_user.money_heart, stars=stars), 200
 
 
 @api_bp.route('/stop-level', methods=['DELETE'])
@@ -143,14 +159,24 @@ def stop_level():
 
     from models.LiveGame import LiveGame
     game: LiveGame = LiveGame.get(request.json["code"])
-    if game.has_ended():
-        return jsonify(message="This game has already ended"), 400
+    if game is None or game.has_ended():
+        return jsonify(message="This game is invalid or has already ended"), 400
 
     if not game.finish(request.json["completed"]):
         return jsonify(message="Something went wrong while validating your session"), 500
 
     if not game.completed: # Used left the level without ending it
         return '', 204
+
+    from models.UserProgress import UserProgress
+    progress: UserProgress = UserProgress.get_progress(current_user.id, game.level_id)
+    progress.total_completions += 1
+
+    # Update Stars only if level has been completed
+    if "stars" in request.json:
+        progress.star_1 = request.json["stars"]["star_1"]
+        progress.star_2 = request.json["stars"]["star_1"]
+        progress.star_3 = request.json["stars"]["star_1"]
 
     from models.GameLevel import GameLevel
     level: GameLevel = GameLevel.get(game.level_id)
@@ -159,15 +185,59 @@ def stop_level():
     if reward[0] == 'RELIC':
         from models.NFT import NFT
         NFT.create(reward[1], current_user.id, level.id)
+        progress.relics_found += 1
         return jsonify(reward={'type': 'RELIC', 'collection': reward[1].collection.collection_id}), 200
+
+    try:
+        UserProgress.update()
+    except Exception as e:
+        print(f"Something went wrong while updating progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
 
     return jsonify(reward={'type': reward[0], 'value': reward[1]}), 200
 
 
-@api_bp.route('/kills', methods=['GET'])
+@api_bp.route('/kills', methods=['POST'])
 @jwt_required()
 def increment_kills():
-    return '', 204
+    if not ("code" in request.json):
+        return jsonify(message="Invalid request"), 400
+
+    from models.LiveGame import LiveGame
+    game: LiveGame = LiveGame.get(request.json["code"])
+    if game is None or game.has_ended():
+        return jsonify(message="This game is invalid or has already ended"), 400
+
+    try:
+        from models.UserProgress import UserProgress
+        progress: UserProgress = UserProgress.get_progress(current_user.id, game.level_id)
+        progress.kills += 1
+        UserProgress.update()
+        return '', 204
+    except Exception as e:
+        print(f"Something went wrong while updating kills in user progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
+        return jsonify(message="Failed to update kills"), 400
+
+
+@api_bp.route('/deaths', methods=['POST'])
+@jwt_required()
+def increment_deaths():
+    if not ("code" in request.json):
+        return jsonify(message="Invalid request"), 400
+
+    from models.LiveGame import LiveGame
+    game: LiveGame = LiveGame.get(request.json["code"])
+    if game is None or game.has_ended():
+        return jsonify(message="This game is invalid or has already ended"), 400
+
+    try:
+        from models.UserProgress import UserProgress
+        progress: UserProgress = UserProgress.get_progress(current_user.id, game.level_id)
+        progress.deaths += 1
+        UserProgress.update()
+        return '', 204
+    except Exception as e:
+        print(f"Something went wrong while updating deaths in user progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
+        return jsonify(message="Failed to deaths kills"), 400
 
 
 @api_bp.route('/user', methods=['GET'])

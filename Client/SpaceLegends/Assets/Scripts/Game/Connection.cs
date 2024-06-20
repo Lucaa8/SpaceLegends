@@ -9,17 +9,29 @@ public class Connection : MonoBehaviour
     private Rigidbody2D player;
 
     public delegate void Get(JObject jresponse);
-    private delegate void Run();
+    public delegate void Run();
 
     private string code;
 
-    void Start()
+    public int Kills { get; private set; }
+    public int Deaths { get; private set; }
+    public int Lives { get; private set; }
+    private bool[] stars = new bool[] { false, false, false };
+    public bool Completed = false;
+
+    public bool getStar(int star)
+    {
+        return stars[star - 1];
+    }
+
+    public void setStar(int star)
+    {
+        stars[star - 1] = true;
+    }
+
+    public void OnStart(Run next)
     {
         player = transform.GetComponent<Rigidbody2D>();
-        Run next = () =>
-        {
-            player.simulated = true;
-        };
         if (Auth.Instance != null)
         {
             FetchLevel(next);
@@ -27,12 +39,13 @@ public class Connection : MonoBehaviour
         //Play offline
         else
         {
+            Lives = 999;
             next();
         }
     }
 
     //Executed when player clicks on the home button of death screen or Next of win screen
-    public void End()
+    public void OnEnd()
     {
         Run next = () =>
         {
@@ -60,6 +73,11 @@ public class Connection : MonoBehaviour
             if(ok)
             {
                 code = jrep.Value<string>("code");
+                Lives = jrep.Value<int>("lives");
+                JObject stars = jrep.Value<JObject>("stars");
+                this.stars[0] = stars.Value<bool>("star_1");
+                this.stars[1] = stars.Value<bool>("star_2");
+                this.stars[2] = stars.Value<bool>("star_3");
                 next();
             }
             else
@@ -89,34 +107,12 @@ public class Connection : MonoBehaviour
         JObject body = new JObject();
         //Needs to be encrypted
         body["code"] = code;
-        body["completed"] = true;
-        StartCoroutine(Auth.Instance.MakeRequest(URL, "DELETE", body, Auth.AuthType.ACCESS, onResponse));
-    }
-
-    public void GetLives(Get result)
-    {
-        JObject jempty = new JObject();
-        if (Auth.Instance == null)
+        body["completed"] = Completed;
+        if(Completed)
         {
-            jempty.Add("count", 999); //Allow respawning in offline mode
-            result(jempty);
-            return;
+            body["stars"] = new JObject { { "star_1", stars[0] }, { "star_2", stars[1] }, { "star_3", stars[2] } };
         }
-        string URL = Auth.GetApiURL("lives");
-        Auth.OnResponse onResponse = (ok, status, jrep) =>
-        {
-            if(!ok)
-            {
-                jempty.Add("count", 0);
-                result(jempty);
-            }
-            else
-            {
-                result(jrep);
-            }
-            
-        };
-        StartCoroutine(Auth.Instance.MakeRequest(URL, "GET", null, Auth.AuthType.ACCESS, onResponse));
+        StartCoroutine(Auth.Instance.MakeRequest(URL, "DELETE", body, Auth.AuthType.ACCESS, onResponse));
     }
 
     public void DecreaseLives(Get result)
@@ -124,6 +120,7 @@ public class Connection : MonoBehaviour
         JObject jobj = new JObject();
         if (Auth.Instance == null)
         {
+            Lives--;
             jobj["status"] = true; //Allow respawning in offline mode;
             result(jobj);
             return;
@@ -133,6 +130,7 @@ public class Connection : MonoBehaviour
         Auth.OnResponse onResponse = (ok, status, jrep) =>
         {
             jobj["status"] = ok;
+            if (ok) Lives--;
             result(jobj);
         };
 
@@ -146,33 +144,24 @@ public class Connection : MonoBehaviour
     {
         if (Auth.Instance == null)
         {
+            Kills++;
             return;
         }
         JObject jobj = new JObject();
         jobj["code"] = code;
-        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("kills"), "POST", jobj, Auth.AuthType.ACCESS, (o, s, j) => { }));
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("kills"), "POST", jobj, Auth.AuthType.ACCESS, (o, s, j) => { if(o) Kills++; }));
     }
 
     public void AddDeath()
     {
         if (Auth.Instance == null)
         {
+            Deaths++;
             return;
         }
         JObject jobj = new JObject();
         jobj["code"] = code;
-        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("deaths"), "POST", jobj, Auth.AuthType.ACCESS, (o, s, j) => { }));
-    }
-
-    public void AddStar()
-    {
-        if (Auth.Instance == null)
-        {
-            return;
-        }
-        JObject jobj = new JObject();
-        jobj["code"] = code;
-        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("stars"), "POST", jobj, Auth.AuthType.ACCESS, (o, s, j) => { }));
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("deaths"), "POST", jobj, Auth.AuthType.ACCESS, (o, s, j) => { if (o) Deaths++; }));
     }
 
 }

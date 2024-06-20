@@ -35,9 +35,20 @@ class UserProgress(db.Model):
         }
 
     @staticmethod
-    def get_progress(user_id, game_id):
-        return db.session.query(UserProgress).filter(
+    def update():
+        db.session.commit()
+
+    @staticmethod
+    def get_progress(user_id, game_id, create=False):
+        progress = db.session.query(UserProgress).filter(
             UserProgress.user_id == user_id,
             UserProgress.game_level_id == game_id
         ).first()
+        if progress is None and create is True:
+            progress = UserProgress(user_id=user_id, game_level_id=game_id)
+            db.session.add(progress)
+            db.session.commit()
+            return progress
+        return progress
+
     
