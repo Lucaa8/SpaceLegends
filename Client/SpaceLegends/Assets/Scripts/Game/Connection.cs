@@ -45,23 +45,16 @@ public class Connection : MonoBehaviour
     }
 
     //Executed when player clicks on the home button of death screen or Next of win screen
-    public void OnEnd()
+    public void OnEnd(Get next)
     {
-        Run next = () =>
-        {
-            LevelChanger manager = FindObjectOfType<LevelChanger>();
-            if (manager != null)
-            {
-                manager.FadeToLevel("Menu");
-            }
-        };
         if (Auth.Instance != null && code != null)
         {
             EndLevel(next);
         }
         else
         {
-            next();
+            JObject fake_rew = new JObject { { "type", "None" } };
+            next(new JObject { { "reward", fake_rew }, { "time", 1 } });
         }
     }
 
@@ -93,16 +86,17 @@ public class Connection : MonoBehaviour
         StartCoroutine(Auth.Instance.MakeRequest(URL, "PUT", null, Auth.AuthType.ACCESS, onResponse));
     }
 
-    private void EndLevel(Run next)
+    private void EndLevel(Get next)
     {
-        string URL = Auth.GetApiURL("stop-level/");
+        string URL = Auth.GetApiURL("stop-level");
         Auth.OnResponse onResponse = (ok, status, jrep) =>
         {
             if(ok)
             {
-                //Reward
+                next(jrep);
             }
-            next();
+            else
+                Player.Next(); //Something went wrong...
         };
         JObject body = new JObject();
         //Needs to be encrypted

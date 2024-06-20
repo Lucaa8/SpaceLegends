@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEditor;
@@ -20,6 +22,9 @@ public class Player : MonoBehaviour
     [SerializeField] CheckpointController checkpointController;
     private Vector3 lastCheckpoint;
 
+    [SerializeField] GameObject WinScreen;
+    [SerializeField] GameObject QuitScreen;
+
     [SerializeField] GameObject DeathScreen;
     [SerializeField] TMP_Text DeathScreenRemaining;
     [SerializeField] CanvasGroup RespawnButton;
@@ -40,6 +45,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        player = transform.GetComponent<Rigidbody2D>();
         connection = transform.GetComponent<Connection>();
         connection.OnStart(() =>
         {
@@ -56,8 +62,7 @@ public class Player : MonoBehaviour
             }
             player.simulated = true;
         });
-        player = transform.GetComponent<Rigidbody2D>();
-        transform.position = StartPoint.transform.position;
+        //transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -69,7 +74,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (!IsAlive)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UpdateQuitScreen();
+        }
+        if (!IsAlive || !player.simulated)
         {
             return;
         }
@@ -80,6 +89,13 @@ public class Player : MonoBehaviour
         TakeDamage();
         float playerPosition = player.position.x - StartPoint.transform.position.x;
         checkpointController.PositionPlayer(playerPosition / levelLength);
+    }
+
+    public void UpdateQuitScreen()
+    {
+        // Disable player movement and hitboxes before updating the active status
+        player.simulated = QuitScreen.activeInHierarchy;
+        StartCoroutine(ShowScreen(!QuitScreen.activeInHierarchy, QuitScreen));
     }
 
     public void Die(bool animate)
@@ -102,7 +118,7 @@ public class Player : MonoBehaviour
         DeathScreenRemaining.text = "You have " + connection.Lives.ToString();
         RespawnButton.alpha = connection.Lives <= 0 ? 0.5f : 1f;
         RespawnButton.interactable = connection.Lives > 0;
-        StartCoroutine(SetDeathScreen(true));
+        StartCoroutine(ShowScreen(true, DeathScreen));
     }
 
     //Called by the end of death sprite animation
@@ -119,7 +135,7 @@ public class Player : MonoBehaviour
 
     private void Respawn()
     {
-        StartCoroutine(SetDeathScreen(false));
+        StartCoroutine(ShowScreen(false, DeathScreen));
         currentHealth = MaxHealth;
         UpdateHealth();
         player.velocity = Vector3.zero;
@@ -199,6 +215,13 @@ public class Player : MonoBehaviour
         {
             Die(false);
         }
+        else if(g.CompareTag("Finish"))
+        {
+            connection.Completed = true;
+            player.simulated = false;
+            StartCoroutine(ShowScreen(true, WinScreen));
+            SetupWinScreen();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -225,16 +248,16 @@ public class Player : MonoBehaviour
         }
     }
 
-    private IEnumerator SetDeathScreen(bool show)
+    private IEnumerator ShowScreen(bool show, GameObject toShow)
     {
-        if (show) //Cannot do DeathScreen.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
+        if (show) //Cannot do toShow.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
         {
-            DeathScreen.SetActive(true);
+            toShow.SetActive(true);
         }
 
         float duration = 0.3f; // seconds
         float elapsedTime = 0f;
-        CanvasGroup group = DeathScreen.GetComponent<CanvasGroup>();
+        CanvasGroup group = toShow.GetComponent<CanvasGroup>();
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
@@ -246,8 +269,73 @@ public class Player : MonoBehaviour
 
         if (!show)
         {
-            DeathScreen.SetActive(false);
+            toShow.SetActive(false);
         }
+    }
+
+    private void SetupWinScreen()
+    {
+        WinScreen.transform.Find("Image/Stats/Kills/Kills").GetComponent<TMP_Text>().text = connection.Kills.ToString();
+        WinScreen.transform.Find("Image/Stats/Deaths/Deaths").GetComponent<TMP_Text>().text = connection.Deaths.ToString();
+        for (int i = 1; i <= 3; i++)
+        {
+            if (connection.getStar(i))
+            {
+                WinScreen.transform.Find("Image/Stars/Star" + i.ToString() + "/Y").GetComponent<Image>().gameObject.SetActive(true);
+            }
+        }
+        connection.OnEnd((jrep) =>
+        {
+
+            WinScreen.transform.Find("Image/Stats/TimeSpent/Time").GetComponent<TMP_Text>().text = FormatTime(jrep.Value<int>("time"));
+
+            JObject reward = jrep.Value<JObject>("reward");
+            string type = reward.Value<string>("type");
+            if(type == "SDT")
+            {
+                Transform sdt = WinScreen.transform.Find("Image/Reward/SDT");
+                sdt.Find("Text").transform.GetComponent<TMP_Text>().text = reward.Value<float>("value").ToString();
+                sdt.gameObject.SetActive(true);
+            }
+            else if (type == "HEART")
+            {
+                Transform hearts = WinScreen.transform.Find("Image/Reward/Hearts");
+                hearts.Find("Text").transform.GetComponent<TMP_Text>().text = reward.Value<int>("value").ToString();
+                hearts.gameObject.SetActive(true);
+            }
+            else if (type == "RELIC")
+            {
+                Transform rel = WinScreen.transform.Find("Image/Reward/Relic");
+                rel.Find("Text").transform.GetComponent<TMP_Text>().text = reward.Value<string>("value");
+                rel.gameObject.SetActive(true);
+            }
+            else
+            {
+                WinScreen.transform.Find("Image/Reward/None").gameObject.SetActive(true);
+            }
+
+            WinScreen.transform.Find("Image/Fetching").gameObject.SetActive(false);
+            WinScreen.transform.Find("Image/Stats").gameObject.SetActive(true);
+            WinScreen.transform.Find("Image/Stars").gameObject.SetActive(true);
+            WinScreen.transform.Find("Image/Next").gameObject.SetActive(true);
+            WinScreen.transform.Find("Image/Reward").gameObject.SetActive(true);
+
+        });
+    }
+
+    public static void Next()
+    {
+        LevelChanger manager = FindObjectOfType<LevelChanger>();
+        if (manager != null)
+        {
+            manager.FadeToLevel("Menu");
+        }
+    }
+
+    private string FormatTime(int seconds)
+    {
+        TimeSpan timeSpan = TimeSpan.FromSeconds(seconds);
+        return string.Format("{0}h {1}m {2}s", (int)timeSpan.TotalHours, timeSpan.Minutes, timeSpan.Seconds);
     }
 
 }

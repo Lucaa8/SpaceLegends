@@ -168,6 +168,8 @@ def stop_level():
     if not game.completed: # Used left the level without ending it
         return '', 204
 
+    time_spent = (game.finished_at - game.started_at).total_seconds()
+
     from models.UserProgress import UserProgress
     progress: UserProgress = UserProgress.get_progress(current_user.id, game.level_id)
     progress.total_completions += 1
@@ -186,14 +188,14 @@ def stop_level():
         from models.NFT import NFT
         NFT.create(reward[1], current_user.id, level.id)
         progress.relics_found += 1
-        return jsonify(reward={'type': 'RELIC', 'collection': reward[1].collection.collection_id}), 200
+        return jsonify(reward={'type': 'RELIC', 'value': reward[1].collection.name}, time=time_spent), 200
 
     try:
         UserProgress.update()
     except Exception as e:
         print(f"Something went wrong while updating progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
 
-    return jsonify(reward={'type': reward[0], 'value': reward[1]}), 200
+    return jsonify(reward={'type': reward[0], 'value': reward[1]}, time=time_spent), 200
 
 
 @api_bp.route('/kills', methods=['POST'])
