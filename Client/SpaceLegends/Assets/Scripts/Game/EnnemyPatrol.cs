@@ -9,6 +9,7 @@ public class EnnemyPatrol : MonoBehaviour
     [SerializeField] Transform Right;
 
     [SerializeField] Transform Ennemy;
+    private Ennemy ennemy;
 
     private Animator anim;
 
@@ -24,17 +25,22 @@ public class EnnemyPatrol : MonoBehaviour
     void Start()
     {
         anim = Ennemy.GetComponent<Animator>();
+        ennemy = Ennemy.GetComponent<Ennemy>();
     }
 
     void OnDisable()
     {
-        anim.SetBool("Moving", false);
+        if(anim != null)
+        {
+            anim.SetBool("Moving", false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (movingLeft)
+
+        if (movingLeft && ennemy.isAlive)
         {
             if(Ennemy.position.x >= Left.position.x)
             {
@@ -44,15 +50,14 @@ public class EnnemyPatrol : MonoBehaviour
                 DirectionChange();
             
         }
-        else
+        else if(!movingLeft && ennemy.isAlive)
         {
             if (Ennemy.position.x <= Right.position.x)
             {
                 MoveInDirection(1);
             }
             else
-                DirectionChange();
-                
+                DirectionChange();  
         }
         
     }

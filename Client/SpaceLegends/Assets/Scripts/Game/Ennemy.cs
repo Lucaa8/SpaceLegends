@@ -1,8 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public class Ennemy : MonoBehaviour
 {
 
+    public bool isAlive { get; private set; } = true;
+    private float currentHealth;
+    [SerializeField] float health;  
     [SerializeField] float attackCooldown;
     [SerializeField] float range;
     [SerializeField] float colliderDistance;
@@ -23,6 +27,7 @@ public class Ennemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         Patrol = GetComponentInParent<EnnemyPatrol>();
+        currentHealth = health;
     }
 
     // Update is called once per frame
@@ -67,6 +72,35 @@ public class Ennemy : MonoBehaviour
         {
             Player.TakeDamage(damage);
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        StartCoroutine(ShowDamage(.25f));
+        if(currentHealth <= 0f)
+        {
+            //Add kill
+            isAlive = false;
+            anim.SetTrigger("Die");
+        }
+    }
+
+    public void Remove()
+    {
+        Destroy(this.gameObject);
+        if (Patrol != null)
+        {
+            Destroy(Patrol.gameObject);
+        }
+    }
+
+    private IEnumerator ShowDamage(float seconds)
+    {
+        SpriteRenderer spriteRenderer = transform.GetComponent<SpriteRenderer>();
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(seconds);
+        spriteRenderer.color = Color.white;
     }
 
     void OnDrawGizmos()
