@@ -140,7 +140,7 @@ def start_level(level_id: int):
         progress: UserProgress = UserProgress.get_progress(current_user.id, level_id, create=True)
         stars = progress.as_json()["stars"]
         progress.total_games += 1
-        UserProgress.update()
+        progress.update()
     except Exception as e:
         print(f"Something went wrong while getting stars in user progress of user.id=={current_user.id} and level_id=={level_id}: {str(e)}")
         stars = {
@@ -177,8 +177,10 @@ def stop_level():
     # Update Stars only if level has been completed
     if "stars" in request.json:
         progress.star_1 = request.json["stars"]["star_1"]
-        progress.star_2 = request.json["stars"]["star_1"]
-        progress.star_3 = request.json["stars"]["star_1"]
+        progress.star_2 = request.json["stars"]["star_2"]
+        progress.star_3 = request.json["stars"]["star_3"]
+
+    progress.update() # As I'm potentially inserting NFTs later on, I cant keep those unchanged fields to wait for relics_found to be changed and then update it.
 
     from models.GameLevel import GameLevel
     level: GameLevel = GameLevel.get(game.level_id)
@@ -188,12 +190,8 @@ def stop_level():
         from models.NFT import NFT
         NFT.create(reward[1], current_user.id, level.id)
         progress.relics_found += 1
+        progress.update()
         return jsonify(reward={'type': 'RELIC', 'value': reward[1].collection.name}, time=time_spent), 200
-
-    try:
-        UserProgress.update()
-    except Exception as e:
-        print(f"Something went wrong while updating progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
 
     return jsonify(reward={'type': reward[0], 'value': reward[1]}, time=time_spent), 200
 
@@ -213,7 +211,7 @@ def increment_kills():
         from models.UserProgress import UserProgress
         progress: UserProgress = UserProgress.get_progress(current_user.id, game.level_id)
         progress.kills += 1
-        UserProgress.update()
+        progress.update()
         return '', 204
     except Exception as e:
         print(f"Something went wrong while updating kills in user progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
@@ -235,7 +233,7 @@ def increment_deaths():
         from models.UserProgress import UserProgress
         progress: UserProgress = UserProgress.get_progress(current_user.id, game.level_id)
         progress.deaths += 1
-        UserProgress.update()
+        progress.update()
         return '', 204
     except Exception as e:
         print(f"Something went wrong while updating deaths in user progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")

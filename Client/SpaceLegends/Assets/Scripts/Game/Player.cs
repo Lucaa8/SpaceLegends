@@ -323,6 +323,16 @@ public class Player : MonoBehaviour
         });
     }
 
+    public void EndAndQuit()
+    {
+        connection.Completed = false;
+        // Waits that the communication ends before unloading the scene
+        connection.OnEnd((jrep) =>
+        {
+            Next(); 
+        });
+    }
+
     public static void Next()
     {
         LevelChanger manager = FindObjectOfType<LevelChanger>();

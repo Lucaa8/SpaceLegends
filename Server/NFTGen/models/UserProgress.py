@@ -34,9 +34,11 @@ class UserProgress(db.Model):
             'completions': self.total_completions
         }
 
-    @staticmethod
-    def update():
-        db.session.commit()
+    def update(self):
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(f"Something went wrong while updating progress of user.id=={self.user_id} and level_id=={self.game_level_id}: {str(e)}")
 
     @staticmethod
     def get_progress(user_id, game_id, create=False):
