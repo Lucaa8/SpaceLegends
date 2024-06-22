@@ -106,6 +106,7 @@ public class Player : MonoBehaviour
     {
         IsAlive = false;
         connection.AddDeath();
+        AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPlayerDie);
         if (animate)
         {
             animator.SetBool("IsDead", true);
@@ -146,6 +147,7 @@ public class Player : MonoBehaviour
         transform.position = lastCheckpoint;
         IsAlive = true;
         animator.SetBool("IsDead", false);
+        AudioManager.Instance.PlayEarthMusic();
     }
 
     private void TakeDamage()
@@ -169,6 +171,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(float damage)
     {
         damage -= damage * ArmorModifier;
+        AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPlayerHurt);
         currentHealth -= damage;
         UpdateHealth();
         StartCoroutine(ShowDamage(damageInterval / 2));
@@ -205,6 +208,7 @@ public class Player : MonoBehaviour
             PickStar state = g.GetComponent<PickStar>();
             if(state.Enabled) // Avoid adding already picked star
             {
+                AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickStar);
                 connection.setStar(state.StarNumber);
             }     
         }
@@ -217,6 +221,7 @@ public class Player : MonoBehaviour
             g.GetComponent<Animator>().SetTrigger("Pick");
             currentHealth = MaxHealth;
             UpdateHealth();
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickItem);
         }
         else if(g.CompareTag("Checkpoint"))
         {
@@ -225,6 +230,7 @@ public class Player : MonoBehaviour
             collision.enabled = false;
             lastCheckpoint = collision.transform.position;
             checkpointController.PositionCheckpoint();
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxCheckpoint);
         }
         else if(g.CompareTag("DeadLine"))
         {
@@ -233,10 +239,11 @@ public class Player : MonoBehaviour
         else if(g.CompareTag("Finish"))
         {
             connection.Completed = true;
+            player.velocity = Vector2.zero;
             player.simulated = false;
             StartCoroutine(ShowScreen(true, WinScreen));
             SetupWinScreen();
-            AudioManager.Instance.PlayWinMusic();
+            AudioManager.Instance.PlayGameState(true);
         }
     }
 
@@ -266,7 +273,15 @@ public class Player : MonoBehaviour
 
     private IEnumerator ShowScreen(bool show, GameObject toShow)
     {
-        if (show) //Cannot do toShow.SetActive(show); because in the false case, the gameobject would be deactivated before the canvas opacity animation played.
+
+        // If the player is dead (I show death screen), wait a little that the dead sound ends and then show death screen + death music
+        if (show && toShow == DeathScreen)
+        {
+            yield return new WaitForSeconds(0.2f);
+            AudioManager.Instance.PlayGameState(false);
+        }
+
+        if (show)
         {
             toShow.SetActive(true);
         }

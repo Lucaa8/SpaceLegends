@@ -3,6 +3,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+    //MOVE LEFT WITH A OR < (LEFT ARROW)
+    //MOVE RIGHT WITH D OR > (RIGHT ARROW)
+    //JUMP WITH SPACE OR ^ (UP ARROW)
+
+
     //Jump section
     /*
      * In order to work nicely, please do not forget to change those settings in your RigidBody2D;
@@ -95,7 +100,7 @@ public class PlayerController : MonoBehaviour
 
         // If the player hits jump, can still jump (grounded or coyote) and is allowed to (he wont be allowed next to this for the jumpBufferCounter seconds)
         // Replace Input.GetButton("Jump") by Input.GetButtonDown("Jump") if you want to obligate the player to release and repress the jump button to jump again
-        if (Input.GetButton("Jump") && coyoteTimeCounter > 0f && jumpBufferCounter <= 0f && _player.IsAlive)
+        if (Input.GetButton("Jump") && coyoteTimeCounter > 0f && jumpBufferCounter <= 0f && _player.IsAlive && player.simulated)
         {
             player.velocity = new Vector2(player.velocity.x, jumpForce);
             coyoteTimeCounter = 0f;
@@ -103,10 +108,12 @@ public class PlayerController : MonoBehaviour
             jumpBufferCounter = jumpBufferTime;
             isSpaceReleased = false;
             jumpTimeCounter = jumpTime;
+            // Can be removed, just the jump sound
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPlayerJump);
         }
 
         // Jump cut (The player can hold space to jump higher)
-        if(Input.GetButton("Jump") && !isSpaceReleased && _player.IsAlive)
+        if(Input.GetButton("Jump") && !isSpaceReleased && _player.IsAlive && player.simulated)
         {
             if (jumpTimeCounter > 0f)
             {

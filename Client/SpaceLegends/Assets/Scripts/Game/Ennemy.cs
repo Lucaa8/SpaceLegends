@@ -82,7 +82,6 @@ public class Ennemy : MonoBehaviour
         StartCoroutine(ShowDamage(.25f));
         if(currentHealth <= 0f)
         {
-            //Add kill
             Player.GetConnection().AddKill();
             isAlive = false;
             anim.SetTrigger("Die");

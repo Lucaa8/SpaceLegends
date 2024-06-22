@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
@@ -19,6 +20,18 @@ public class Menu : MonoBehaviour
         {
             TxtUser.text = "Welcome back " + Auth.Instance.GetDisplayname();
         }
+
+        foreach (Button button in FindObjectsOfType<Button>(true))
+        {
+            AudioClip clip = AudioManager.Instance.sfxButtonClick;
+            // Set a custom click sound for level icons buttons (why not?)
+            if (button.gameObject.name.Contains("BgUnlocked"))
+            {
+                clip = AudioManager.Instance.sfxButtonClickLevel;
+            }
+            button.onClick.AddListener(() => AudioManager.Instance.PlaySound(clip));
+        }
+
     }
 
     private bool isESCPressed = false;

@@ -3,6 +3,9 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
 
+    //ATTACK (SMALL) WITH MOUSE LEFT OR J
+    //ATTACK (HEAVY) WITH MOUSE RIGHT OR L
+
     [SerializeField] float Attack1Cooldown;
     [SerializeField] float Attack2Cooldown;
     [SerializeField] float Damage;
@@ -12,6 +15,8 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] float RangeY;
     [SerializeField] LayerMask EnnemiesMask;
 
+    private Player player;
+    private Rigidbody2D rb;
     private Animator anim;
 
     private float nextAttackIn = 0;
@@ -20,24 +25,31 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        player = GetComponent<Player>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if(nextAttackIn > 0f)
+        if (!player.IsAlive || !rb.simulated)
+        {
+            return; //Avoid attacking while the game is paused or while player is dead
+        }
+
+        if (nextAttackIn > 0f)
         {
             nextAttackIn -= Time.deltaTime;
             return;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.J))
         {
             anim.SetTrigger("Attack1");
             nextAttackIn = Attack1Cooldown;
         }
-        else if (Input.GetMouseButtonDown(1))
+        else if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.L))
         {
             anim.SetTrigger("Attack2");
             nextAttackIn = Attack2Cooldown;

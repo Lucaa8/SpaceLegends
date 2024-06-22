@@ -15,6 +15,9 @@ public class Settings : MonoBehaviour
     [SerializeField] Button Settings_BtnLogout;
     [SerializeField] Button Settings_BtnQuit;
 
+    [SerializeField] Slider Settings_Music;
+    [SerializeField] Slider Settings_SFX;
+
     [SerializeField] Menu _menu;
 
     public bool areSettingsAnimated = false;
@@ -82,11 +85,26 @@ public class Settings : MonoBehaviour
 
     }
 
+
+    public void ChangeMusicVol()
+    {
+        AudioManager.Instance.ChangeVolumeMusic(Settings_Music.value);
+    }
+
+    public void ChangeMusicSFx()
+    {
+        AudioManager.Instance.ChangeVolumeSounds(Settings_SFX.value);
+    }
+
+
     void Start()
     {
 
         InitResolutionSettings();
         InitScreenModeSettings();
+
+        Settings_Music.value = AudioManager.Instance.GetMusicVolume();
+        Settings_SFX.value = AudioManager.Instance.GetSfxVolume();
 
         SettingsButton.onClick.AddListener(() =>
         {

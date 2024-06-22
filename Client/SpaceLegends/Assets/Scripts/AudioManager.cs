@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -32,25 +33,57 @@ public class AudioManager : MonoBehaviour
     [Header("Audio sounds")]
     public AudioClip sfxButtonClick;
     public AudioClip sfxButtonClickLevel;
-    public AudioClip sfxPlayerJump;
-    public AudioClip sfxPlayerDie;
+    public AudioClip sfxPlayerJump;   
     public AudioClip sfxPlayerHit;
-    public AudioClip sfxEnemyDie;
-    public AudioClip sfxHurt;
+    public AudioClip sfxPlayerHurt;
+    public AudioClip sfxPlayerDie;
     public AudioClip sfxCheckpoint;
     public AudioClip sfxPickStar;
     public AudioClip sfxPickItem;
+    public AudioClip sfxWin;
+    public AudioClip sfxLose;
 
     [Header("Other")]
-    [SerializeField] float transitionTime;
+    [SerializeField] float TransitionTime;
+    [SerializeField] AudioClip DefaultClipOnRun;
+
+    private List<AudioClip> mixMusicQueue = new List<AudioClip>();
+    private bool isChangingMusic = false;
+
+    private string musicKey = "MusicVolume";
+    private string sfxKey = "SoundVolume";
+    private float defaultVolume = 0.5f;
+
+    public float GetMusicVolume()
+    {
+        return PlayerPrefs.GetFloat(musicKey, defaultVolume);
+    }
+
+    public float GetSfxVolume()
+    {
+        return PlayerPrefs.GetFloat(sfxKey, defaultVolume);
+    }
 
     private void Start()
     {
-        music.volume = PlayerPrefs.GetFloat("VolumeMusic", 0.5f);
+        music.volume = GetMusicVolume();
         music.loop = true;
-        sfx.volume = PlayerPrefs.GetFloat("SoundVolume", 0.5f);
+        sfx.volume = GetSfxVolume();
         sfx.loop = false;
-        PlayLoginMusic();
+        if(DefaultClipOnRun != null)
+        {
+            mixMusicQueue.Add(DefaultClipOnRun);
+        }
+    }
+
+    private void Update()
+    {
+        if (mixMusicQueue.Count > 0 && !isChangingMusic)
+        {
+            AudioClip play = mixMusicQueue[0];
+            mixMusicQueue.RemoveAt(0);
+            StartCoroutine(MixMusics(play));
+        }
     }
 
     public void ChangeVolumeMusic(float volume)
@@ -74,44 +107,60 @@ public class AudioManager : MonoBehaviour
             music.Play();
             yield break;
         }
+        isChangingMusic = true;
         float volume = music.volume;
         float current = 0f;
         while(music.volume > 0f)
         {
             music.volume = Mathf.Lerp(volume, 0f, current);
-            current += Time.deltaTime / transitionTime;
+            current += Time.deltaTime / TransitionTime;
             yield return null;
         }
         music.Stop();
+        if(next == null)
+        {
+            music.volume = volume; //Reset the volume but do not play anything
+            isChangingMusic = false;
+            yield break;
+        }
         music.clip = next;
         music.Play();
+        float targetVolume = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
         current = 0f;
-        while(music.volume < volume)
+        while (music.volume < targetVolume)
         {
-            music.volume = Mathf.Lerp(0f, volume, current);
-            current += Time.deltaTime / transitionTime;
+            music.volume = Mathf.Lerp(0f, targetVolume, current);
+            current += Time.deltaTime / TransitionTime;
             yield return null;
         }
+        isChangingMusic = false;
     }
     
     public void PlayLoginMusic()
     {
-        StartCoroutine(MixMusics(musicLogin));
+        mixMusicQueue.Add(musicLogin);
     }
 
     public void PlayMenuMusic()
     {
-        StartCoroutine(MixMusics(musicMenu));
+        mixMusicQueue.Add(musicMenu);
     }
 
     public void PlayEarthMusic()
     {
-        StartCoroutine(MixMusics(musicLevelEarth));
+        mixMusicQueue.Add(musicLevelEarth);
     }
 
-    public void PlayWinMusic()
+    public void PlayMarsMusic()
     {
+        mixMusicQueue.Add(musicLevelMars);
+    }
 
+    public void PlayGameState(bool isWin)
+    {
+        mixMusicQueue.Add(null); //Slowly stop the game level's music
+        sfx.Stop(); //Stop any sound currently played
+        PlaySound(isWin ? sfxWin : sfxLose); //Start the win/lose short music
     }
 
     public void PlaySound(AudioClip clip)

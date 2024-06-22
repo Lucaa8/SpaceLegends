@@ -27,6 +27,12 @@ public class Login : MonoBehaviour
         BtnContinue.onClick.AddListener(ContinueClick);
         BtnLogout.onClick.AddListener(LogoutClick);
         GetUser(false);
+
+        foreach (Button button in FindObjectsOfType<Button>(true))
+        {
+            button.onClick.AddListener(() => AudioManager.Instance.PlaySound(AudioManager.Instance.sfxButtonClick));
+        }
+
     }
 
     public void QuitClick()
