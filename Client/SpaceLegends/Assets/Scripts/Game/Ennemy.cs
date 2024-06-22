@@ -15,6 +15,8 @@ public class Ennemy : MonoBehaviour
     [SerializeField] LayerMask playerLayer;
     private float cooldownTimer = Mathf.Infinity;
 
+    [SerializeField] GameObject Potion;
+
     private Animator anim;
 
     private Player Player;
@@ -81,8 +83,14 @@ public class Ennemy : MonoBehaviour
         if(currentHealth <= 0f)
         {
             //Add kill
+            Player.GetConnection().AddKill();
             isAlive = false;
             anim.SetTrigger("Die");
+            if(Potion != null)
+            {
+                GameObject newPotion = Instantiate(Potion, transform.parent.parent);
+                newPotion.transform.position = transform.position;
+            }
         }
     }
 

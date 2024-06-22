@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1021543134943722926}
   - component: {fileID: 5653445053828986231}
   - component: {fileID: 6513198450645476308}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: EnnGobelin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,11 +165,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b974dfb7869ba5a4ea9430718a6a06ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCooldown: 2
-  range: 0.69
-  colliderDistance: 0.7
-  damage: 2
+  health: 5
+  attackCooldown: 0.4
+  range: 1.5
+  colliderDistance: 0.19
+  damage: 3
   boxCollider: {fileID: 1021543134943722926}
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  Objects: {fileID: 0}
+  Potion: {fileID: 8572579823633813730, guid: 6d9f855738b75a144b3462ca2a9bdb1d, type: 3}

@@ -9,6 +9,7 @@ TagManager:
   - Campfire
   - Spikes
   - Checkpoint
+  - Potion
   layers:
   - Default
   - TransparentFX

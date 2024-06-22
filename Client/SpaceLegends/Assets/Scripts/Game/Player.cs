@@ -2,7 +2,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,8 +34,8 @@ public class Player : MonoBehaviour
     [SerializeField] float MaxHealth;
     private float currentHealth;
     [SerializeField] Image ImageHealth;
-    [SerializeField] float Damage;
-    [SerializeField] float Armor;
+
+    public static float ArmorModifier = 0f;
 
     [SerializeField] float PassiveDamageAmount = .25f;
     private float damageInterval = .5f; // Time interval between each passive damage tick
@@ -89,6 +88,11 @@ public class Player : MonoBehaviour
         TakeDamage();
         float playerPosition = player.position.x - StartPoint.transform.position.x;
         checkpointController.PositionPlayer(playerPosition / levelLength);
+    }
+
+    public Connection GetConnection()
+    {
+        return connection;
     }
 
     public void UpdateQuitScreen()
@@ -164,6 +168,7 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        damage -= damage * ArmorModifier;
         currentHealth -= damage;
         UpdateHealth();
         StartCoroutine(ShowDamage(damageInterval / 2));
@@ -203,6 +208,16 @@ public class Player : MonoBehaviour
                 connection.setStar(state.StarNumber);
             }     
         }
+        else if(g.CompareTag("Potion"))
+        {
+            if(currentHealth == MaxHealth)
+            {
+                return;
+            }
+            g.GetComponent<Animator>().SetTrigger("Pick");
+            currentHealth = MaxHealth;
+            UpdateHealth();
+        }
         else if(g.CompareTag("Checkpoint"))
         {
             CheckpointAnimations anim = g.GetComponent<CheckpointAnimations>();
@@ -221,6 +236,7 @@ public class Player : MonoBehaviour
             player.simulated = false;
             StartCoroutine(ShowScreen(true, WinScreen));
             SetupWinScreen();
+            AudioManager.Instance.PlayWinMusic();
         }
     }
 
@@ -339,6 +355,7 @@ public class Player : MonoBehaviour
         if (manager != null)
         {
             manager.FadeToLevel("Menu");
+            AudioManager.Instance.PlayMenuMusic();
         }
     }
 

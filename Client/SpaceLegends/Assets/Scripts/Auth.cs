@@ -119,6 +119,7 @@ public class Auth : MonoBehaviour
             if(manager != null)
             {
                 manager.FadeToLevel("Login");
+                AudioManager.Instance.PlayLoginMusic();
             }
         }
     }

@@ -61,6 +61,7 @@ public class Menu : MonoBehaviour
     public void StartLevel()
     {
         FindObjectOfType<LevelChanger>().FadeToLevel("Level0");
+        AudioManager.Instance.PlayEarthMusic();
     }
 
 

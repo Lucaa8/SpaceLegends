@@ -42,6 +42,7 @@ public class Login : MonoBehaviour
     public void ContinueClick()
     {
         FindObjectOfType<LevelChanger>().FadeToLevel("Menu");
+        AudioManager.Instance.PlayMenuMusic();
     }
 
     public void LogoutClick()

@@ -57,6 +57,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject _cameraFollowGO;
     private CameraFollowObject _cameraFollowObject;
 
+    // Speed boost modifier (0.12 e.g. for 12%), can be deleted but please check FixedUpdate() finalSpeed variable before doing that
+    public static float SpeedModifier = 0f;
+
     public bool IsOnGround
     {
         get { return isGrounded; }
@@ -162,7 +165,8 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 180f, transform.rotation.z));
             _cameraFollowObject.CallTurn();
         }
-        float targetSpeed = direction * speed;
+        float finalSpeed = speed + (speed * SpeedModifier); // SpeedModifier can be i.e 0.12 (for 12% speed boost), this line can be deleted and finalSpeed replaced by "speed" below
+        float targetSpeed = direction * finalSpeed;
         float speedDif = targetSpeed - player.velocity.x;
         float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deccelleration;
         float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
