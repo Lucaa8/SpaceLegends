@@ -27,7 +27,7 @@ public class Menu : MonoBehaviour
             // Set a custom click sound for level icons buttons (why not?)
             if (button.gameObject.name.Contains("BgUnlocked"))
             {
-                clip = AudioManager.Instance.sfxButtonClickLevel;
+                clip = AudioManager.Instance.sfxButtonClickLevel;                
             }
             button.onClick.AddListener(() => AudioManager.Instance.PlaySound(clip));
         }
@@ -69,13 +69,5 @@ public class Menu : MonoBehaviour
         }
         isESCPressed = false;
     }
-
-
-    public void StartLevel()
-    {
-        FindObjectOfType<LevelChanger>().FadeToLevel("Level0");
-        AudioManager.Instance.PlayEarthMusic();
-    }
-
 
 }

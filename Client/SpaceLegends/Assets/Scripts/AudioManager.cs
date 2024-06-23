@@ -146,14 +146,16 @@ public class AudioManager : MonoBehaviour
         mixMusicQueue.Add(musicMenu);
     }
 
-    public void PlayEarthMusic()
+    public void PlayLevelMusic(string level)
     {
-        mixMusicQueue.Add(musicLevelEarth);
-    }
-
-    public void PlayMarsMusic()
-    {
-        mixMusicQueue.Add(musicLevelMars);
+        if(level == "Earth")
+        {
+            mixMusicQueue.Add(musicLevelEarth);
+        }
+        else
+        {
+            mixMusicQueue.Add(musicLevelMars);
+        }
     }
 
     public void PlayGameState(bool isWin)

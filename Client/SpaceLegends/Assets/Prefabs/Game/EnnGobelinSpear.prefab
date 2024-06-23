@@ -119,7 +119,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.26309705, y: -0.036041945}
+  m_Offset: {x: -0.263097, y: -0.03604195}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -130,7 +130,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.2186849, y: 1.5801048}
+  m_Size: {x: 1.218685, y: 1.580105}
   m_EdgeRadius: 0
 --- !u!114 &2050409959496585600
 MonoBehaviour:
@@ -154,6 +154,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   Potion: {fileID: 8572579823633813730, guid: 6d9f855738b75a144b3462ca2a9bdb1d, type: 3}
+  Player: {fileID: 0}
 --- !u!95 &5109462715472477252
 Animator:
   serializedVersion: 5

@@ -339,6 +339,17 @@ public class UserInfo : MonoBehaviour
         {
             starsObj.transform.Find("Star" + i.ToString()).Find("On").gameObject.SetActive(level.Stars[i]);
         }
+        if (!unlocked)
+            return;
+        levelObj.Find("BgUnlocked" + level.CollectionName).GetComponent<Button>().onClick.AddListener(() =>
+        {
+            FindObjectOfType<LevelChanger>().FadeToLevel(level.CollectionName + "_" + level.LevelID);
+            // /100 because in this script, modifiers are at 100% scale like 18% speed bonus. But in the below scripts, it needs to be 0.18, etc..
+            PlayerController.SpeedModifier = this.TotalSpeed * 1.0f / 100f;
+            PlayerAttack.DamageModifier = this.TotalDamage * 1.0f / 100f;
+            Player.ArmorModifier = this.TotalArmor * 1.0f / 100f;
+            AudioManager.Instance.PlayLevelMusic(level.CollectionName);
+        });
     }
 
     public void SetRelicsCount(int collec, int count)

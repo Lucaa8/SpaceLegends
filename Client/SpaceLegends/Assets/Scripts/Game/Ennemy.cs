@@ -19,8 +19,8 @@ public class Ennemy : MonoBehaviour
 
     private Animator anim;
 
-    private Player Player;
-    private Rigidbody2D PlayerRb;
+    private Player player;
+    private Rigidbody2D playerRb;
 
     private EnnemyPatrol Patrol;
 
@@ -30,6 +30,8 @@ public class Ennemy : MonoBehaviour
         anim = GetComponent<Animator>();
         Patrol = GetComponentInParent<EnnemyPatrol>();
         currentHealth = health;
+        player = FindFirstObjectByType<Player>();
+        playerRb = player.gameObject.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -40,7 +42,7 @@ public class Ennemy : MonoBehaviour
 
         bool inSight = IsPlayerInSight();
 
-        if(inSight && Player != null && Player.IsAlive && PlayerRb.simulated)
+        if(inSight && player != null && player.IsAlive && playerRb.simulated)
         {
             if (cooldownTimer >= attackCooldown)
             {
@@ -59,12 +61,6 @@ public class Ennemy : MonoBehaviour
     {
         Vector3 size = new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z);
         RaycastHit2D hit = Physics2D.BoxCast(boxCollider.bounds.center + transform.right * range * colliderDistance, size, 0, Vector2.left, 0, playerLayer);
-        if(Player == null && hit.collider != null)
-        {
-            //Grab the player reference the first time
-            Player = hit.transform.GetComponent<Player>();
-            PlayerRb = Player.transform.GetComponent<Rigidbody2D>();
-        }
         return hit.collider != null;
     }
 
@@ -72,7 +68,7 @@ public class Ennemy : MonoBehaviour
     {
         if (IsPlayerInSight())
         {
-            Player.TakeDamage(damage);
+            player.TakeDamage(damage);
         }
     }
 
@@ -82,7 +78,7 @@ public class Ennemy : MonoBehaviour
         StartCoroutine(ShowDamage(.25f));
         if(currentHealth <= 0f)
         {
-            Player.GetConnection().AddKill();
+            player.GetConnection().AddKill();
             isAlive = false;
             anim.SetTrigger("Die");
             if(Potion != null)

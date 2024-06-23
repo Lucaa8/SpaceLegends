@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -147,7 +148,8 @@ public class Player : MonoBehaviour
         transform.position = lastCheckpoint;
         IsAlive = true;
         animator.SetBool("IsDead", false);
-        AudioManager.Instance.PlayEarthMusic();
+        // Because scene names are following the pattern: CollectionName_LevelID, e.g. Earth_0, Mars_1
+        AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
     }
 
     private void TakeDamage()
