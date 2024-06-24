@@ -348,7 +348,6 @@ public class UserInfo : MonoBehaviour
             PlayerController.SpeedModifier = this.TotalSpeed * 1.0f / 100f;
             PlayerAttack.DamageModifier = this.TotalDamage * 1.0f / 100f;
             Player.ArmorModifier = this.TotalArmor * 1.0f / 100f;
-            AudioManager.Instance.PlayLevelMusic(level.CollectionName);
         });
     }
 

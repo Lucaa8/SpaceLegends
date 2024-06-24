@@ -161,14 +161,14 @@ public class AudioManager : MonoBehaviour
     public void PlayGameState(bool isWin)
     {
         mixMusicQueue.Add(null); //Slowly stop the game level's music
-        sfx.Stop(); //Stop any sound currently played
+        //sfx.Stop(); //Stop any sound currently played (not used with PlayOneShot)
         PlaySound(isWin ? sfxWin : sfxLose); //Start the win/lose short music
     }
 
     public void PlaySound(AudioClip clip)
     {
-        sfx.clip = clip;
-        sfx.Play();
+        //sfx.clip = clip;
+        sfx.PlayOneShot(clip);
     }
 
 }

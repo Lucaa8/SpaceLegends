@@ -45,6 +45,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        // Because scene names are following the pattern: CollectionName_LevelID, e.g. Earth_0, Mars_1
+        AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
         player = transform.GetComponent<Rigidbody2D>();
         connection = transform.GetComponent<Connection>();
         connection.OnStart(() =>
@@ -114,6 +116,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            player.velocity = Vector3.zero;
             transform.position = lastCheckpoint; //Reset position of the player to avoid him to see unwanted background transitions
             ShowDeathScreen();
         }
@@ -148,8 +151,6 @@ public class Player : MonoBehaviour
         transform.position = lastCheckpoint;
         IsAlive = true;
         animator.SetBool("IsDead", false);
-        // Because scene names are following the pattern: CollectionName_LevelID, e.g. Earth_0, Mars_1
-        AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
     }
 
     private void TakeDamage()
@@ -206,7 +207,12 @@ public class Player : MonoBehaviour
         }
         else if(g.CompareTag("Star"))
         {
-            g.GetComponent<Animator>().SetBool("Pick", true);
+            Animator star = g.GetComponent<Animator>();
+            if(star.GetBool("Pick")) //Cancel re-picking the star during the animation
+            {
+                return;
+            }
+            star.SetBool("Pick", true);
             PickStar state = g.GetComponent<PickStar>();
             if(state.Enabled) // Avoid adding already picked star
             {
@@ -276,11 +282,10 @@ public class Player : MonoBehaviour
     private IEnumerator ShowScreen(bool show, GameObject toShow)
     {
 
-        // If the player is dead (I show death screen), wait a little that the dead sound ends and then show death screen + death music
+        // If the player is dead (I show death screen), wait a little that the dead sound ends and then show death screen
         if (show && toShow == DeathScreen)
         {
-            yield return new WaitForSeconds(0.2f);
-            AudioManager.Instance.PlayGameState(false);
+            yield return new WaitForSeconds(0.2f);        
         }
 
         if (show)
@@ -359,6 +364,7 @@ public class Player : MonoBehaviour
     public void EndAndQuit()
     {
         connection.Completed = false;
+        AudioManager.Instance.PlayGameState(false); // Initially the death music but too long. So It will play like a "loose" sounds when the player quits
         // Waits that the communication ends before unloading the scene
         connection.OnEnd((jrep) =>
         {

@@ -7811,14 +7811,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8332408447644295496, guid: f0ba5d80a4cd7f248af88a30791bad19, type: 3}
-      propertyPath: TransitionTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8332408447644295496, guid: f0ba5d80a4cd7f248af88a30791bad19, type: 3}
-      propertyPath: DefaultClipOnRun
-      value: 
-      objectReference: {fileID: 8300000, guid: e992009f283605849a98c2a858346db5, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
