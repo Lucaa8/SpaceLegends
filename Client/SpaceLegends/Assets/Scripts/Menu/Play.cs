@@ -8,6 +8,7 @@ public class Play : MonoBehaviour
 {
 
     [SerializeField] List<GameObject> Sections = new List<GameObject>();
+    [SerializeField] List<GameObject> Backgrounds = new List<GameObject>();
 
     [SerializeField] Button Prev;
     [SerializeField] Button Next;
@@ -34,7 +35,9 @@ public class Play : MonoBehaviour
     private void ShowSection()
     {
         Sections.ForEach(s => s.SetActive(false));
+        Backgrounds.ForEach(s => s.SetActive(false));
         Sections[current].SetActive(true);
+        Backgrounds[current].SetActive(true);
     }
 
     public void NextSection()
