@@ -29,6 +29,11 @@ public class Connection : MonoBehaviour
         stars[star - 1] = true;
     }
 
+    public void unsetStar(int star)
+    {
+        stars[star - 1] = false;
+    }
+
     public void OnStart(Run next)
     {
         player = transform.GetComponent<Rigidbody2D>();

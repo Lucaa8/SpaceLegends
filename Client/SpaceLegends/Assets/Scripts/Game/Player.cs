@@ -1,6 +1,8 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -49,22 +51,17 @@ public class Player : MonoBehaviour
         AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
         player = transform.GetComponent<Rigidbody2D>();
         connection = transform.GetComponent<Connection>();
-        connection.OnStart(() =>
-        {
+        connection.OnStart(() => {
             // Decrease opacity of already picked stars
-            foreach (Transform starTransform in Stars.GetComponentsInChildren<Transform>())
-            {
-                if (starTransform == Stars.transform) continue;
-                PickStar state = starTransform.GetComponent<PickStar>();
-                if (connection.getStar(state.StarNumber))
-                {
-                    state.Enabled = false;
-                    starTransform.GetComponent<SpriteRenderer>().color = new Color(89f/255f, 87f/255f, 69f/255f, 0.5f);
-                }
-            }
+            GetStars().Where(s => connection.getStar(s.StarNumber)).ToList()
+            .ForEach(s => {
+                s.Enabled = false;
+                s.Saved = true;
+                s.transform.GetComponent<SpriteRenderer>().color = new Color(89f / 255f, 87f / 255f, 69f / 255f, 0.5f);
+            });
             player.simulated = true;
         });
-        //transform.position = StartPoint.transform.position;
+        transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -110,6 +107,12 @@ public class Player : MonoBehaviour
         IsAlive = false;
         connection.AddDeath();
         AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPlayerDie);
+        GetStars().Where(s => !s.Saved).ToList()
+        .ForEach(s =>
+        {
+            s.ResetStar();
+            connection.unsetStar(s.StarNumber);
+        });
         if (animate)
         {
             animator.SetBool("IsDead", true);
@@ -207,13 +210,8 @@ public class Player : MonoBehaviour
         }
         else if(g.CompareTag("Star"))
         {
-            Animator star = g.GetComponent<Animator>();
-            if(star.GetBool("Pick")) //Cancel re-picking the star during the animation
-            {
-                return;
-            }
-            star.SetBool("Pick", true);
             PickStar state = g.GetComponent<PickStar>();
+            state.Pick();
             if(state.Enabled) // Avoid adding already picked star
             {
                 AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickStar);
@@ -239,6 +237,15 @@ public class Player : MonoBehaviour
             lastCheckpoint = collision.transform.position;
             checkpointController.PositionCheckpoint();
             AudioManager.Instance.PlaySound(AudioManager.Instance.sfxCheckpoint);
+            // Save new stars so the player do not lost them anymore when dying
+            GetStars().Where(s => s.Enabled).ToList()
+            .ForEach(s =>
+            {
+                if(connection.getStar(s.StarNumber))
+                {
+                    s.Saved = true;
+                }
+            });
         }
         else if(g.CompareTag("DeadLine"))
         {
@@ -386,6 +393,18 @@ public class Player : MonoBehaviour
     {
         TimeSpan timeSpan = TimeSpan.FromSeconds(seconds);
         return string.Format("{0}h {1}m {2}s", (int)timeSpan.TotalHours, timeSpan.Minutes, timeSpan.Seconds);
+    }
+
+    public List<PickStar> GetStars()
+    {
+        List<PickStar> stars = new List<PickStar>();
+        foreach (Transform starTransform in Stars.GetComponentsInChildren<Transform>(true))
+        {
+            if (starTransform == Stars.transform) continue;
+            PickStar state = starTransform.GetComponent<PickStar>();
+            stars.Add(state);
+        }
+        return stars;
     }
 
 }

@@ -38,25 +38,33 @@ class CosmicRelic:
     def check_address(self, address: str) -> bool:
         return self.w3.is_address(address) and self.w3.is_checksum_address(address)
 
-    def onchain(self, from_acc: LocalAccount, func_result: any, max_gas: int, gas_price: int, on_receive: callable(any)):
+    def onchain(self, from_acc: LocalAccount, func_result: any, on_receive: callable(any)):
+        current_gas_price = self.w3.eth.gas_price
+
         func_txn = func_result.build_transaction({
             'from': from_acc.address,
             'nonce': self.w3.eth.get_transaction_count(from_acc.address),
-            'gas': max_gas,
-            'gasPrice': self.w3.to_wei(gas_price, 'gwei')
+            'gas': '0',
+            'gasPrice': current_gas_price
         })
 
-        signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=from_acc.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-        print(f'Transaction hash: {self.w3.to_hex(tx_hash)}')
+        gas = self.w3.eth.estimate_gas(func_txn)
+        func_txn.update({'gas': gas})
 
-        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-        on_receive(receipt)
+        price_eth = gas * current_gas_price
+
+        if price_eth <= 0.001:
+            signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=from_acc.key)
+            tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            print(f'Transaction hash: {self.w3.to_hex(tx_hash)}')
+
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+            on_receive(receipt)
 
     def mint_nft(self, addr_to: str, uid_to: str, token_id: int, token_type: int, on_mint: callable(any)):
         addr_to = self.w3.to_checksum_address(addr_to)
         contract_func = self.crel.functions.mint(addr_to, uid_to, token_id, token_type)
-        self.onchain(self.account, contract_func, 200000, 20, lambda receipt: on_mint(receipt))
+        self.onchain(self.account, contract_func, lambda receipt: on_mint(receipt))
 
     def get_balance_eth(self, address: str) -> float:
         if not self.check_address(address):
