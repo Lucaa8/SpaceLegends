@@ -55,12 +55,6 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
         return string(abi.encodePacked(_baseURI(), Strings.toString(tokenId)));
     }
 	
-	// Adding the a new owner inside the history list. Needs to be called after transfer event
-	function pushNewOwner(uint256 tokenId, address newOwnerAddr, string memory newOwnerUid) public onlyOwner {
-		require(exists(tokenId), "ERC721Metadata: History query for nonexistent token");
-		_ownershipHistory[tokenId].push(OwnershipHistory(newOwnerAddr, newOwnerUid));
-	}
-	
 	// Generate a new NFT, add the first account in the history list, set the token creation to now and set the token type.
 	function mint(address addrTo, string memory uidTo, uint256 tokenId, uint256 tokenType) public onlyOwner {
         _mint(addrTo, tokenId);
@@ -75,6 +69,14 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
 		require(exists(tokenId), "ERC721Burn: burn query for nonexistent token");
 		super.burn(tokenId); // The ERC721Burnable#burn is calling the _update method of ERC721 which already checks if the caller is the owner or approved before burning the token.
 		_totalSupply--;
+    }
+    
+    // Custom transfer function that doesn't require approve + transferFrom
+    // Also adds the new owner inside the history list
+    function safeTransfer(uint256 tokenId, address newOwnerAddr, string memory newOwnerUid) public {
+        require(_isAuthorized(ownerOf(tokenId), msg.sender, tokenId), "ERC721: transfer caller is not owner nor approved");
+        _safeTransfer(msg.sender, newOwnerAddr, tokenId);
+        _ownershipHistory[tokenId].push(OwnershipHistory(newOwnerAddr, newOwnerUid));
     }
 
     // Get the history list

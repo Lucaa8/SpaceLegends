@@ -1,1 +1,1 @@
-npx hardhat verify --network sepolia 0x4e4741F0274e9d32372d1E677258Ad1cE88eEA25 "http://localhost/token/"
+npx hardhat verify --network sepolia 0x4cBCBb04878F75CbD0f0CD9e10613480f2b48Aec "https://space-legends.luca-dc.ch/api/token/"

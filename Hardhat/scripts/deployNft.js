@@ -1,11 +1,11 @@
 async function main() {
   const CosmicRelic = await ethers.getContractFactory("CosmicRelic");
   
-  const baseTokenURI = "http://localhost/token/";
+  const baseTokenURI = "https://space-legends.luca-dc.ch/api/token/";
   
   const cosmicRelic = await CosmicRelic.deploy(baseTokenURI);
 
-  console.log("CosmicRelic deployed to:", cosmicRelic.address);
+  console.log("CosmicRelic deployed to:", cosmicRelic);
 }
 
 main()

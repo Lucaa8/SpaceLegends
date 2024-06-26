@@ -8,3 +8,4 @@ from models.User import User
 from models.PerkRental import PerkRental
 from models.TokenRevoked import TokenRevoked
 from models.LiveGame import LiveGame
+from models.ChainTx import ChainTx
