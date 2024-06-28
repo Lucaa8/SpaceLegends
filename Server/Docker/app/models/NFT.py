@@ -49,7 +49,7 @@ class NFT(db.Model):
                 print(f"Failed to mint NFT with id {self.id}!")
                 print(receipt)
 
-        chain.cosmic.mint_nft(wallet, username, self.id, self.type, on_mint)
+        chain.cosmic.mint_nft(wallet, username, self.id, self.type)
 
     @staticmethod
     def get_nft_count_by_type(user_id):

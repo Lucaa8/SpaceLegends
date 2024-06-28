@@ -35,6 +35,12 @@ public class Login : MonoBehaviour
 
     }
 
+    private IEnumerator DisplayDiscord()
+    {
+        yield return new WaitForSeconds(1f);
+        DiscordManager.Instance.ChangeActivity("Chilling on the login page", "Trying to remember his password...");
+    }
+
     public void QuitClick()
     {
         Application.Quit();

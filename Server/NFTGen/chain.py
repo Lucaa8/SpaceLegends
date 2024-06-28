@@ -42,7 +42,7 @@ class CosmicRelic:
         print(f"[{datetime.now()}] There are {len(txs)} queued transactions. Current Gas price [Gwei]: {self.w3.from_wei(current_gas_price, 'gwei')}")
         for tx in txs:
             try:
-                self.send_tx(tx, current_gas_price)
+                self.send_tx(tx[0], current_gas_price)
             except Exception as e:
                 print(f"Something went wrong while trying to send the transaction chain_tx.id=={tx.id} with the following data: {tx.tx}. Error: {str(e)}")
         self.working = False
@@ -67,16 +67,26 @@ class CosmicRelic:
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
             print(f"Transaction chain_tx.id=={tx.id} has been sent to the blockchain with hash: {self.w3.to_hex(tx_hash)}. Waiting for confirmation...")
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-            tx.completed(receipt, self.w3.from_wei)
+            # receipt = {'status': 1, 'effectiveGasPrice': 3492800329, 'gasUsed': 172722}
+            tx.completed(receipt, self)
 
     def mint_nft(self, addr_to: str, uid_to: str, token_id: int, token_type: int) -> None:
         from models.ChainTx import ChainTx
         addr_to = self.w3.to_checksum_address(addr_to)
         ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'mint', (addr_to, uid_to, token_id, token_type))
 
-    def event_mint_successful(self, token_id: int) -> None:
-        # Set NFT to is_minted=1
-        pass
+    @staticmethod
+    def event_mint(args: tuple) -> None:
+        if args is None or len(args) < 4:
+            print("CosmicRelic.event_mint rejected empty arguments transaction")
+            return
+        token_id = args[2]
+        try:
+            from models.NFT import NFT
+            NFT.on_mint(token_id)
+            print(f"Transaction for token.id=={token_id} has been minted successfully.")
+        except Exception as e:
+            print(f"CosmicRelic.event_mint failed to mint token with id=={token_id}: {str(e)}")
 
     def check_address(self, address: str) -> bool:
         return self.w3.is_address(address) and self.w3.is_checksum_address(address)

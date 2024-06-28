@@ -96,7 +96,7 @@ def open_relic(collection: int):
     if nft is not None:
         wallet = current_user.wallet_address
         username = current_user.username
-        Thread(target=nft.mint, args=(wallet, username,)).start()
+        Thread(target=nft.mint, args=(nft.id, wallet, username,)).start()
         item = get_item(nft.type)
         return jsonify(name=f"{item.name} (Row {item.row} | Col {item.col})",
                        type=item.item_id,
@@ -193,10 +193,6 @@ def stop_level():
         progress.relics_found += 1
         progress.update()
         return jsonify(reward={'type': 'RELIC', 'value': reward[1].collection.name}, time=time_spent), 200
-    # Tester ça (si les vies/sdt s'ajoutent à la fin d'un niveau)
-    # Faire le gestionnaire d'évent simple qui appelle event_mint_successful etc..
-    # Tester le mint !!!!
-    # Modifier le fonctionnement de l'ouverture des reliques (ne pas retourner la relique si is_minted=0 mais plutot si is_minted=0 et n'apparait pas dans les tx pending.
     elif reward[0] == 'HEART' or reward[0] == 'SDT':
         from models.User import User
         user = User.get_user_by_id(current_user.id)

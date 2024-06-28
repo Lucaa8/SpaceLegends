@@ -133,7 +133,7 @@ class User(db.Model):
         return False
 
     def increase_lives_count(self, count: int) -> int:
-        if self.set_lives_count(self.money_heart+count):
+        if self.set_heart_money(self.money_heart+count):
             return self.money_heart
         return -1
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,6 +33,15 @@ public class Menu : MonoBehaviour
             button.onClick.AddListener(() => AudioManager.Instance.PlaySound(clip));
         }
 
+
+        StartCoroutine(DisplayDiscord());
+
+    }
+
+    private IEnumerator DisplayDiscord()
+    {
+        yield return new WaitForSeconds(1f);
+        DiscordManager.Instance.ChangeActivity("In the menu", "");
     }
 
     private bool isESCPressed = false;

@@ -186,13 +186,26 @@ def stop_level():
     level: GameLevel = GameLevel.get(game.level_id)
     reward = level.generate_reward()
 
+    # Apply the reward to user
     if reward[0] == 'RELIC':
         from models.NFT import NFT
         NFT.create(reward[1], current_user.id, level.id)
         progress.relics_found += 1
         progress.update()
         return jsonify(reward={'type': 'RELIC', 'value': reward[1].collection.name}, time=time_spent), 200
+    # Tester ça (si les vies/sdt s'ajoutent à la fin d'un niveau)
+    # Faire le gestionnaire d'évent simple qui appelle event_mint_successful etc..
+    # Tester le mint !!!!
+    # Modifier le fonctionnement de l'ouverture des reliques (ne pas retourner la relique si is_minted=0 mais plutot si is_minted=0 et n'apparait pas dans les tx pending.
+    elif reward[0] == 'HEART' or reward[0] == 'SDT':
+        from models.User import User
+        user = User.get_user_by_id(current_user.id)
+        if reward[0] == 'HEART':
+            user.increase_lives_count(reward[1])
+        else:
+            user.set_sdt_money(user.money_sdt + reward[1])
 
+    # Return reward info to client
     return jsonify(reward={'type': reward[0], 'value': reward[1]}, time=time_spent), 200
 
 

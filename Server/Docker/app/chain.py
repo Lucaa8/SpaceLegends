@@ -1,20 +1,22 @@
 import json
 import os
+from datetime import datetime
 
-from eth_account import Account
-from eth_account.signers.local import LocalAccount
-from web3 import Web3
-from web3.exceptions import ContractLogicError
-from web3.middleware import geth_poa_middleware
+import schedule
 from threading import Thread
 import time
+
+from utils import decrypt_wallet_key, encrypt_wallet_key
+
+from eth_account import Account
+from web3 import Web3
+from web3.exceptions import ContractLogicError
 
 
 class CosmicRelic:
     def __init__(self, alchemy_key: str, contract_address: str, contract_abi_path: str):
         self._alchemy = f'https://eth-sepolia.g.alchemy.com/v2/{alchemy_key}'
         self.w3 = Web3(Web3.HTTPProvider(self._alchemy))
-        # self.w3.middleware_onion.inject(geth_poa_middleware, layer=0) # To allow event listening
         assert self.w3.is_connected()
         self.account = Account.from_key(os.getenv("PRIVATE_KEY"))
         cs_contract_address = self.w3.to_checksum_address(contract_address)
@@ -22,41 +24,62 @@ class CosmicRelic:
             contract_abi = json.load(f)
         assert contract_abi is not None
         self.crel = self.w3.eth.contract(address=cs_contract_address, abi=contract_abi)
-        # Thread(target=self._listen_for_mint_events).start() # Working (It can take sometime to display the transaction
+        self.working = False
+        schedule.every(5).seconds.do(self.check_gas_price)
 
-    def _listen_for_mint_events(self):
-        event_filter = self.crel.events.Transfer.create_filter(fromBlock='latest')
-        while True:
+        def check_gas_thread():
+            while True:
+                if not self.working:
+                    schedule.run_pending()
+                time.sleep(5)
+        # Thread(target=check_gas_thread).start()
+
+    def check_gas_price(self):
+        self.working = True
+        from models.ChainTx import ChainTx
+        current_gas_price = self.w3.eth.gas_price + self.w3.to_wei(3, 'gwei')
+        txs = ChainTx.get_all_unsent()
+        print(f"[{datetime.now()}] There are {len(txs)} queued transactions. Current Gas price [Gwei]: {self.w3.from_wei(current_gas_price, 'gwei')}")
+        for tx in txs:
             try:
-                for event in event_filter.get_new_entries():
-                    print(f"New mint event: {event}")
-                    # Ajoutez votre logique ici pour gérer l'événement
+                self.send_tx(tx, current_gas_price)
             except Exception as e:
-                print(f"Error: {e}")
-            time.sleep(5)
+                print(f"Something went wrong while trying to send the transaction chain_tx.id=={tx.id} with the following data: {tx.tx}. Error: {str(e)}")
+        self.working = False
+
+    def send_tx(self, tx, gas_price: int):
+
+        func_txn = tx.prebuild_tx().build_transaction({
+            'from': tx.from_address,
+            'nonce': self.w3.eth.get_transaction_count(tx.from_address),
+            'gas': '0',
+            'gasPrice': gas_price
+        })
+
+        gas = self.w3.eth.estimate_gas(func_txn)
+        func_txn.update({'gas': gas})
+
+        price_eth = self.w3.from_wei(gas * gas_price, 'ether')
+
+        if price_eth < 0.005:
+            signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=decrypt_wallet_key(tx.from_pkey))
+            tx.sent()
+            tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            print(f"Transaction chain_tx.id=={tx.id} has been sent to the blockchain with hash: {self.w3.to_hex(tx_hash)}. Waiting for confirmation...")
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+            tx.completed(receipt, self.w3.from_wei)
+
+    def mint_nft(self, addr_to: str, uid_to: str, token_id: int, token_type: int) -> None:
+        from models.ChainTx import ChainTx
+        addr_to = self.w3.to_checksum_address(addr_to)
+        ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'mint', (addr_to, uid_to, token_id, token_type))
+
+    def event_mint_successful(self, token_id: int) -> None:
+        # Set NFT to is_minted=1
+        pass
 
     def check_address(self, address: str) -> bool:
         return self.w3.is_address(address) and self.w3.is_checksum_address(address)
-
-    def onchain(self, from_acc: LocalAccount, func_result: any, max_gas: int, gas_price: int, on_receive: callable(any)):
-        func_txn = func_result.build_transaction({
-            'from': from_acc.address,
-            'nonce': self.w3.eth.get_transaction_count(from_acc.address),
-            'gas': max_gas,
-            'gasPrice': self.w3.to_wei(gas_price, 'gwei')
-        })
-
-        signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=from_acc.key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-        print(f'Transaction hash: {self.w3.to_hex(tx_hash)}')
-
-        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-        on_receive(receipt)
-
-    def mint_nft(self, addr_to: str, uid_to: str, token_id: int, token_type: int, on_mint: callable(any)):
-        addr_to = self.w3.to_checksum_address(addr_to)
-        contract_func = self.crel.functions.mint(addr_to, uid_to, token_id, token_type)
-        self.onchain(self.account, contract_func, 200000, 20, lambda receipt: on_mint(receipt))
 
     def get_balance_eth(self, address: str) -> float:
         if not self.check_address(address):

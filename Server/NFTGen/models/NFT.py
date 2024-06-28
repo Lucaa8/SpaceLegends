@@ -1,5 +1,5 @@
 from database import db
-from sqlalchemy import func
+from sqlalchemy import func, or_
 import chain
 from collection import Item
 
@@ -13,6 +13,7 @@ class NFT(db.Model):
     # server_default means that the database server which handles the default field. So even if I add manually an entry from Adminer, this default field would be filled for me.
     created_at = db.Column(db.DateTime, server_default=func.now())
     is_minted = db.Column(db.Boolean, default=False, comment='Whether the NFT is already minted on the blockchain or not')
+    is_pending = db.Column(db.Boolean, default=False, comment='Whether the NFT is currently in the process of being minted on the blockchain or not')
     dropped_by_level_id = db.Column(db.Integer, db.ForeignKey('game_level.id'), nullable=True) # if null then it has been received by offer or whatever and default probabilities are used
 
     @staticmethod
@@ -33,23 +34,26 @@ class NFT(db.Model):
         del data['attributes']
         return data
 
-    def mint(self, wallet, username):
-        if self.is_minted:
-            return
+    @staticmethod
+    def mint(token_id, wallet, username):
+        from database import flask_app
+        with flask_app.app_context():
+            nft = db.session.query(NFT).filter(NFT.id == token_id).first()
+            if nft is None or nft.is_minted or nft.is_pending:
+                return
+            nft.is_pending = True
+            db.session.commit()
+            chain.cosmic.mint_nft(wallet, username, nft.id, nft.type)
 
-        def on_mint(receipt):
-            res = chain.cosmic.get_token_type(self.id)  # check if on chain as receipt returns status=0 even if the NFT has been minted ??
-            if res is not None:
-                from database import flask_app
-                with flask_app.app_context():
-                    nft = db.session.query(NFT).filter(NFT.id == self.id).first()
-                    nft.is_minted = True
-                    db.session.commit()
-            else:
-                print(f"Failed to mint NFT with id {self.id}!")
-                print(receipt)
-
-        chain.cosmic.mint_nft(wallet, username, self.id, self.type)
+    @staticmethod
+    def on_mint(token_id):
+        from database import flask_app
+        with flask_app.app_context():
+            nft = db.session.query(NFT).filter(NFT.id == token_id).first()
+            if nft.is_pending:
+                nft.is_minted = True
+                nft.is_pending = False
+                db.session.commit()
 
     @staticmethod
     def get_nft_count_by_type(user_id):
@@ -58,16 +62,20 @@ class NFT(db.Model):
             func.count(NFT.type).label('count')
         ).filter(
             NFT.user_id == user_id,
-            NFT.is_minted == 1
+            # The NFT could not be minted yet, but I still count it as unlocked so he can see it in his game
+            or_(NFT.is_minted == 1, NFT.is_pending == 1)
         ).group_by(
             NFT.type
         ).all()
         return results
 
+    # This method is used to determine how many unopened relics a player has for each collection.
+    # It's then displayed in his shop and if count > 0 then he can open a relic of that collection.
+    # It's important that pending transactions to mint a nft are NOT included in here otherwise a player can open the same relic multiple time before it was minted
     @staticmethod
     def get_unminted_nft_by_collections(user_id):
         from collection import _decode_token_type
-        results = db.session.query(NFT.type).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
+        results = db.session.query(NFT.type).filter(NFT.user_id == user_id, NFT.is_minted == 0, NFT.is_pending == 0).all()
         collec = {}
         for nft in results:
             c = _decode_token_type(nft[0])[0]
@@ -75,10 +83,12 @@ class NFT(db.Model):
 
         return collec
 
+    # This method is used to find a new nft to open when the player clicks on the "open" button of a collection in his shop.
+    # # It's important that pending transactions to mint a nft are NOT included in here otherwise a player can open the same relic multiple time before it was minted
     @staticmethod
     def get_first_unminted_nft(user_id, collec_id):
         from collection import _decode_token_type
-        results = db.session.query(NFT).filter(NFT.user_id == user_id, NFT.is_minted == 0).all()
+        results = db.session.query(NFT).filter(NFT.user_id == user_id, NFT.is_minted == 0, NFT.is_pending == 0).all()
         for nft in results:
             c = _decode_token_type(nft.type)[0]
             if c == collec_id:
@@ -89,7 +99,8 @@ class NFT(db.Model):
     @staticmethod
     def is_collection_complete(user_id, collection_id) -> int:
         from collection import _decode_token_type
-        results = db.session.query(NFT.type).filter(NFT.user_id == user_id, NFT.is_minted == 1).all()
+        # The NFT could not be minted yet, but I still count it as unlocked so he can receive the bonus perk associated with this collection if complete
+        results = db.session.query(NFT.type).filter(NFT.user_id == user_id, or_(NFT.is_minted == 1, NFT.is_pending == 1)).all()
         unique_nft = set()
         for nft in results:
             c = _decode_token_type(nft[0])[0]

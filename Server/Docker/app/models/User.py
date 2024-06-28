@@ -112,6 +112,16 @@ class User(db.Model):
             print(f"An unknown error occurred while changing display name of user.id=={self.id}: {e}")
         return False
 
+    def set_sdt_money(self, new_count: int) -> bool:
+        try:
+            self.money_sdt = new_count
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"An unknown error occurred while setting new sdt value for user.id=={self.id}: {e}")
+        return False
+
     def set_heart_money(self, new_count: int) -> bool:
         try:
             self.money_heart = new_count
@@ -123,7 +133,7 @@ class User(db.Model):
         return False
 
     def increase_lives_count(self, count: int) -> int:
-        if self.set_lives_count(self.money_heart+count):
+        if self.set_heart_money(self.money_heart+count):
             return self.money_heart
         return -1
 

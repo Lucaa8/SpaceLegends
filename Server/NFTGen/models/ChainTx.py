@@ -22,12 +22,10 @@ class ChainTx(db.Model):
     def get_all_unsent():
         try:
             with flask_app.app_context():
-                txs = db.session.execute(select(ChainTx).filter_by(sent_at=None)).all()
-                if txs is not None and len(txs) > 0:
-                    return txs[0]
+                return db.session.execute(select(ChainTx).filter_by(sent_at=None)).all()
         except Exception as e:
             print(f"An unknown error occurred while fetching all unsent transactions: {e}")
-        return tuple()
+        return list()
 
     @staticmethod
     def add_tx(wallet_addr: str, wallet_pkey: str, tx_func: str, tx_args: tuple) -> None:
@@ -38,17 +36,21 @@ class ChainTx(db.Model):
         b64_args: str = base64.b64encode(args.encode()).decode()
         with flask_app.app_context():
             try:
-                txn = ChainTx(from_address=wallet_addr, from_pkey=wallet_pkey, tx=b64_args)
+                txn = ChainTx(from_address=wallet_addr, from_pkey=wallet_pkey, tx=b64_args, created_at=datetime.now())
                 db.session.add(txn)
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 print(f"An unknown error occurred while registering an new transaction: {e}")
 
-    def prebuild_tx(self):
+    def decode_tx(self) -> tuple[str, tuple]:
         data = json.loads(base64.b64decode(self.tx).decode('utf-8'))
+        return data[0], tuple() if len(data) <= 1 else data[1:]
+
+    def prebuild_tx(self):
+        fct, args = self.decode_tx()
         from chain import cosmic
-        return getattr(cosmic.crel.functions, data[0])(*data[1:])
+        return getattr(cosmic.crel.functions, fct)(*args)
 
     def sent(self):
         with flask_app.app_context():
@@ -60,8 +62,8 @@ class ChainTx(db.Model):
                 db.session.rollback()
                 print(f"An unknown error occurred while changing sent_at of chain_tx.id=={self.id}: {e}")
 
-    def completed(self, receipt, gwei_converter):
-        gas_price_gwei = gwei_converter(receipt['effectiveGasPrice'], 'gwei')
+    def completed(self, receipt, cosmic):
+        gas_price_gwei = cosmic.w3.from_wei(receipt['effectiveGasPrice'], 'gwei')
         with flask_app.app_context():
             try:
                 tx = db.session.query(ChainTx).filter(ChainTx.id == self.id).first()
@@ -69,7 +71,11 @@ class ChainTx(db.Model):
                 if receipt['status'] == 1: # transaction accepted
                     tx.gas = receipt['gasUsed']
                     tx.gas_price = gas_price_gwei
-                    # if mint then call chain#event_mint_successful
+                    fct, args = self.decode_tx()
+                    try:
+                        getattr(type(cosmic), f"event_{fct}")(args)
+                    except AttributeError: # if this transaction does not have any event
+                        pass
                 else:
                     print(f'Something went wrong with the chain_tx.id=={tx.id}. Check the receipt for more: {receipt}')
                 db.session.commit()
