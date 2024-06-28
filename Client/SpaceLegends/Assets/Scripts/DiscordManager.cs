@@ -41,7 +41,7 @@ public class DiscordManager : MonoBehaviour
         
     }
 
-    public void ChangeActivity(string where, string details)
+    public void ChangeActivity(string where, string details, string image)
     {
         if (discord == null)
             return;
@@ -54,7 +54,12 @@ public class DiscordManager : MonoBehaviour
                 Details = details,
                 Timestamps =
                 {
-                    Start = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                    Start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                },
+                Assets =
+                {
+                    LargeImage = "spacelegends",
+                    SmallImage = image
                 }
             };
             activityManager.UpdateActivity(activity, (res) => { });

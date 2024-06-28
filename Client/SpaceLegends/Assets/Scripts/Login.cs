@@ -33,12 +33,15 @@ public class Login : MonoBehaviour
             button.onClick.AddListener(() => AudioManager.Instance.PlaySound(AudioManager.Instance.sfxButtonClick));
         }
 
+        StartCoroutine(DisplayDiscord());
+
     }
 
     private IEnumerator DisplayDiscord()
     {
         yield return new WaitForSeconds(1f);
-        DiscordManager.Instance.ChangeActivity("Chilling on the login page", "Trying to remember his password...");
+        Debug.Log("cc");
+        DiscordManager.Instance.ChangeActivity("Chilling on the login page", "Trying to remember his password...", "");
     }
 
     public void QuitClick()

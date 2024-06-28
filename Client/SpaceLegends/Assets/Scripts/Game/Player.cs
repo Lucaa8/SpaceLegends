@@ -69,6 +69,15 @@ public class Player : MonoBehaviour
         lastCheckpoint = transform.position;
         levelLength = Mathf.Abs(EndPoint.transform.position.x - StartPoint.transform.position.x);
         UpdateHealth();
+
+        StartCoroutine(DisplayDiscord());
+    }
+
+    private IEnumerator DisplayDiscord()
+    {
+        yield return new WaitForSeconds(1f);
+        string collec = SceneManager.GetActiveScene().name.Split("_")[0];
+        DiscordManager.Instance.ChangeActivity("On " + collec, "Level 1", collec.ToLower());
     }
 
     private void Update()

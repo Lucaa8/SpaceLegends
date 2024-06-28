@@ -41,7 +41,7 @@ public class Menu : MonoBehaviour
     private IEnumerator DisplayDiscord()
     {
         yield return new WaitForSeconds(1f);
-        DiscordManager.Instance.ChangeActivity("In the menu", "");
+        DiscordManager.Instance.ChangeActivity("In the menu", "", "");
     }
 
     private bool isESCPressed = false;
