@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
             });
             player.simulated = true;
         });
-        transform.position = StartPoint.transform.position;
+        //transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         string collec = SceneManager.GetActiveScene().name.Split("_")[0];
-        DiscordManager.Instance.ChangeActivity("On " + collec, "Level 1", collec.ToLower());
+        DiscordManager.Instance.ChangeActivity("On " + collec, connection.Level, collec.ToLower());
     }
 
     private void Update()
@@ -234,8 +234,16 @@ public class Player : MonoBehaviour
                 return;
             }
             g.GetComponent<Animator>().SetTrigger("Pick");
-            currentHealth = MaxHealth;
+            currentHealth += g.GetComponent<PickPotion>().Value;
+            currentHealth = Math.Min(currentHealth, MaxHealth); // Avoid getting above max health
             UpdateHealth();
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickItem);
+        }
+        else if(g.CompareTag("Coin"))
+        {
+            PickCoin state = g.GetComponent<PickCoin>();
+            state.Pick();
+            connection.AddSDT(g.GetComponent<PickCoin>().Value);
             AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickItem);
         }
         else if(g.CompareTag("Checkpoint"))

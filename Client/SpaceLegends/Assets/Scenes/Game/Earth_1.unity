@@ -1252,10 +1252,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2050409959496585600, guid: 502e92d357355024c90c4efe1c4699e0, type: 3}
-      propertyPath: Potion
-      value: 
-      objectReference: {fileID: 6706606667959162997, guid: 5771e22518eea004782b5b1152cab3ad, type: 3}
     - target: {fileID: 6924372134476948694, guid: 502e92d357355024c90c4efe1c4699e0, type: 3}
       propertyPath: m_Name
       value: EnnGobelinSpear
@@ -13308,10 +13304,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnnGobelin
       objectReference: {fileID: 0}
-    - target: {fileID: 6513198450645476308, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
-      propertyPath: Potion
-      value: 
-      objectReference: {fileID: 6706606667959162997, guid: 5771e22518eea004782b5b1152cab3ad, type: 3}
     - target: {fileID: 7152195608265472283, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -24785,9 +24777,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnnGobelin
       objectReference: {fileID: 0}
+    - target: {fileID: 1021543134943722926, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
+      propertyPath: m_Size.x
+      value: 1.030176
+      objectReference: {fileID: 0}
+    - target: {fileID: 1021543134943722926, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.2043022
+      objectReference: {fileID: 0}
+    - target: {fileID: 1021543134943722926, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.02380058
+      objectReference: {fileID: 0}
     - target: {fileID: 6513198450645476308, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
-      propertyPath: Potion
-      value: 
+      propertyPath: SDTValue
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513198450645476308, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
+      propertyPath: HealValue
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513198450645476308, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
+      propertyPath: DropProbabilities.Array.data[0]
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6513198450645476308, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
+      propertyPath: DropProbabilities.Array.data[1]
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7152195608265472283, guid: 124a0ffcd7a2d1c4c81b2ebb2891cc98, type: 3}
       propertyPath: m_LocalPosition.x

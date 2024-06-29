@@ -174,5 +174,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
-  Objects: {fileID: 0}
-  Potion: {fileID: 8572579823633813730, guid: 6d9f855738b75a144b3462ca2a9bdb1d, type: 3}
+  Potion: {fileID: 6706606667959162997, guid: 5771e22518eea004782b5b1152cab3ad, type: 3}
+  HealValue: 0
+  Coin: {fileID: 1281613590198847374, guid: a1225a8a4b5f4c84fa3c4bd3611e0d7c, type: 3}
+  SDTValue: 0
+  DropProbabilities: 0000000000000000

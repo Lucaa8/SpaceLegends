@@ -96,7 +96,7 @@ def open_relic(collection: int):
     if nft is not None:
         wallet = current_user.wallet_address
         username = current_user.username
-        Thread(target=nft.mint, args=(wallet, username,)).start()
+        Thread(target=nft.mint, args=(nft.id, wallet, username,)).start()
         item = get_item(nft.type)
         return jsonify(name=f"{item.name} (Row {item.row} | Col {item.col})",
                        type=item.item_id,
@@ -135,20 +135,22 @@ def user_lives():
 def start_level(level_id: int):
     from models.LiveGame import LiveGame
     from models.UserProgress import UserProgress
+    from models.GameLevel import GameLevel
     code: str = LiveGame.start(current_user, level_id)
+    if code is None:
+        return jsonify(message="Invalid level"), 400
     try:
         progress: UserProgress = UserProgress.get_progress(current_user.id, level_id, create=True)
         stars = progress.as_json()["stars"]
         progress.total_games += 1
         progress.update()
+        level = GameLevel.get(level_id)
+        if level is not None:
+            level = f"Level {level.level}"
+        return jsonify(code=code, lives=current_user.money_heart, stars=stars, level=level), 200
     except Exception as e:
-        print(f"Something went wrong while getting stars in user progress of user.id=={current_user.id} and level_id=={level_id}: {str(e)}")
-        stars = {
-            'star_1': False,
-            'star_2': False,
-            'star_3': False
-        }
-    return jsonify(code=code, lives=current_user.money_heart, stars=stars), 200
+        print(f"Something went wrong while getting level information for user.id=={current_user.id} and level_id=={level_id}: {str(e)}")
+        return jsonify(message="Error"), 500
 
 
 @api_bp.route('/stop-level', methods=['DELETE'])
@@ -193,10 +195,6 @@ def stop_level():
         progress.relics_found += 1
         progress.update()
         return jsonify(reward={'type': 'RELIC', 'value': reward[1].collection.name}, time=time_spent), 200
-    # Tester ça (si les vies/sdt s'ajoutent à la fin d'un niveau)
-    # Faire le gestionnaire d'évent simple qui appelle event_mint_successful etc..
-    # Tester le mint !!!!
-    # Modifier le fonctionnement de l'ouverture des reliques (ne pas retourner la relique si is_minted=0 mais plutot si is_minted=0 et n'apparait pas dans les tx pending.
     elif reward[0] == 'HEART' or reward[0] == 'SDT':
         from models.User import User
         user = User.get_user_by_id(current_user.id)

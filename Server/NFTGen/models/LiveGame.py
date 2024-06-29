@@ -32,8 +32,8 @@ class LiveGame(db.Model):
             db.session.commit()
             return code
         except Exception as e:
-            print(f"Something went wrong while starting a live game session for user.id=={user.id} and level_id=={level_id}: {str(e)}")
             db.session.rollback()
+            print(f"Something went wrong while starting a live game session for user.id=={user.id} and level_id=={level_id}: {str(e)}")
         return None
 
     def finish(self, completed: bool) -> bool:
@@ -43,6 +43,6 @@ class LiveGame(db.Model):
             db.session.commit()
             return True
         except Exception as e:
-            print(f"Something went wrong while finishing the live game session ({self.code}) of user.id=={self.user_id}: {str(e)}")
             db.session.rollback()
+            print(f"Something went wrong while finishing the live game session ({self.code}) of user.id=={self.user_id}: {str(e)}")
             return False

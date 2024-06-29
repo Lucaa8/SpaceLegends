@@ -439,6 +439,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1678820234343156264, guid: 260085a0ff0380046a11b8e245a86138, type: 3}
+      propertyPath: Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2904589034367499177, guid: 260085a0ff0380046a11b8e245a86138, type: 3}
       propertyPath: m_Name
       value: Discord

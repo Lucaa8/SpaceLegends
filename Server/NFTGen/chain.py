@@ -25,7 +25,7 @@ class CosmicRelic:
         assert contract_abi is not None
         self.crel = self.w3.eth.contract(address=cs_contract_address, abi=contract_abi)
         self.working = False
-        schedule.every(5).seconds.do(self.check_gas_price)
+        schedule.every(5).minutes.do(self.check_gas_price)
 
         def check_gas_thread():
             while True:

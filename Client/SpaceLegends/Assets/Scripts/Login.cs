@@ -40,7 +40,6 @@ public class Login : MonoBehaviour
     private IEnumerator DisplayDiscord()
     {
         yield return new WaitForSeconds(1f);
-        Debug.Log("cc");
         DiscordManager.Instance.ChangeActivity("Chilling on the login page", "Trying to remember his password...", "");
     }
 

@@ -154,6 +154,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   Potion: {fileID: 6706606667959162997, guid: 5771e22518eea004782b5b1152cab3ad, type: 3}
+  Coin: {fileID: 1281613590198847374, guid: a1225a8a4b5f4c84fa3c4bd3611e0d7c, type: 3}
+  DropProbabilities:
+  - 0.33
+  - 0.33
 --- !u!95 &4622138384157847617
 Animator:
   serializedVersion: 5

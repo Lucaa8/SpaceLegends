@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Ennemy : MonoBehaviour
@@ -16,6 +17,12 @@ public class Ennemy : MonoBehaviour
     private float cooldownTimer = Mathf.Infinity;
 
     [SerializeField] GameObject Potion;
+    [SerializeField] float HealValue;
+    [SerializeField] GameObject Coin;
+    [SerializeField] float SDTValue;
+
+    [SerializeField] List<int> DropProbabilities;
+    private GameObject ChosenObject = null;
 
     private Animator anim;
 
@@ -32,6 +39,19 @@ public class Ennemy : MonoBehaviour
         currentHealth = health;
         player = FindFirstObjectByType<Player>();
         playerRb = player.gameObject.GetComponent<Rigidbody2D>();
+
+        string obj = RandomObject();
+        if(obj == "Potion")
+        {
+            ChosenObject = Potion;
+            ChosenObject.GetComponentInChildren<PickPotion>().Value = HealValue;
+        }
+        else if(obj == "Coin")
+        {
+            ChosenObject = Coin;
+            ChosenObject.GetComponentInChildren<PickCoin>().Value = SDTValue;
+        }
+
     }
 
     // Update is called once per frame
@@ -81,9 +101,10 @@ public class Ennemy : MonoBehaviour
             player.GetConnection().AddKill();
             isAlive = false;
             anim.SetTrigger("Die");
-            if(Potion != null)
+            // Drop chosen between heal potion and sdt
+            if(ChosenObject != null)
             {
-                GameObject newPotion = Instantiate(Potion, transform.parent.parent);
+                GameObject newPotion = Instantiate(ChosenObject, transform.parent.parent);
                 newPotion.transform.position = transform.position;
             }
         }
@@ -111,6 +132,24 @@ public class Ennemy : MonoBehaviour
         Vector3 size = new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z);
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(boxCollider.bounds.center + transform.right * range * colliderDistance, size);
+    }
+
+    private string RandomObject()
+    {
+        System.Random rand = new System.Random();
+        int x = rand.Next(0, 100);
+        if ((x -= DropProbabilities[0]) < 0)
+        {
+            return "Potion";
+        }
+        else if ((x -= DropProbabilities[1]) < 0)
+        {
+            return "Coin";
+        }
+        else
+        {
+            return "None";
+        }
     }
 
 }

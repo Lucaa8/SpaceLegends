@@ -12,7 +12,9 @@ public class Connection : MonoBehaviour
     public delegate void Run();
 
     private string code;
+    public string Level { get; private set; }
 
+    public float SDT { get; private set; }
     public int Kills { get; private set; }
     public int Deaths { get; private set; }
     public int Lives { get; private set; }
@@ -76,6 +78,11 @@ public class Connection : MonoBehaviour
                 this.stars[0] = stars.Value<bool>("star_1");
                 this.stars[1] = stars.Value<bool>("star_2");
                 this.stars[2] = stars.Value<bool>("star_3");
+                Level = jrep.Value<string>("level");
+                if(Level == "Level 0")
+                {
+                    Level = "Tutorial";
+                }
                 next();
             }
             else
@@ -110,6 +117,7 @@ public class Connection : MonoBehaviour
         if(Completed)
         {
             body["stars"] = new JObject { { "star_1", stars[0] }, { "star_2", stars[1] }, { "star_3", stars[2] } };
+            body["SDT"] = SDT;
         }
         StartCoroutine(Auth.Instance.MakeRequest(URL, "DELETE", body, Auth.AuthType.ACCESS, onResponse));
     }
@@ -161,6 +169,11 @@ public class Connection : MonoBehaviour
         JObject jobj = new JObject();
         jobj["code"] = code;
         StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("deaths"), "POST", jobj, Auth.AuthType.ACCESS, (o, s, j) => { if (o) Deaths++; }));
+    }
+
+    public void AddSDT(float amount)
+    {
+        SDT += amount;
     }
 
 }

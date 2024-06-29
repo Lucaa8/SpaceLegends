@@ -9,6 +9,8 @@ public class DiscordManager : MonoBehaviour
 
     private Discord.Discord discord;
 
+    [SerializeField] bool Enabled = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +20,14 @@ public class DiscordManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             try
             {
-                discord = new Discord.Discord(1256303445523038369, (ulong)CreateFlags.NoRequireDiscord);
+                if(Enabled)
+                {
+                    discord = new Discord.Discord(1256303445523038369, (ulong)CreateFlags.NoRequireDiscord);
+                }
+                else
+                {
+                    discord = null;
+                }
             }
             catch(Exception)
             {

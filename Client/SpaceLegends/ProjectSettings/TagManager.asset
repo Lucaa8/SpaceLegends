@@ -10,6 +10,7 @@ TagManager:
   - Spikes
   - Checkpoint
   - Potion
+  - Coin
   layers:
   - Default
   - TransparentFX
