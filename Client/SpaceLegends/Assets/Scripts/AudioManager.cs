@@ -39,7 +39,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip sfxPlayerDie;
     public AudioClip sfxCheckpoint;
     public AudioClip sfxPickStar;
-    public AudioClip sfxPickItem;
+    public AudioClip sfxPickPotion;
+    public AudioClip sfxPickCoin;
     public AudioClip sfxWin;
     public AudioClip sfxLose;
 

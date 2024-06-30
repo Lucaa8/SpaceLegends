@@ -11,6 +11,7 @@ TagManager:
   - Checkpoint
   - Potion
   - Coin
+  - Web
   layers:
   - Default
   - TransparentFX

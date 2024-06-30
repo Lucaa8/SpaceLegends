@@ -60,7 +60,8 @@ MonoBehaviour:
   sfxPlayerDie: {fileID: 8300000, guid: 0482807c608ea2145b15725f3515cb2d, type: 3}
   sfxCheckpoint: {fileID: 8300000, guid: 01a8315b4333afd4e827e8f30267aa3e, type: 3}
   sfxPickStar: {fileID: 8300000, guid: 1bda8d9d19ab18846ac6374b318d3cf9, type: 3}
-  sfxPickItem: {fileID: 8300000, guid: 2f92ec6914a17664c93f8fc8c1b068d8, type: 3}
+  sfxPickPotion: {fileID: 8300000, guid: 2f92ec6914a17664c93f8fc8c1b068d8, type: 3}
+  sfxPickCoin: {fileID: 8300000, guid: a9025788bd973b84c9023ac47f7a569d, type: 3}
   sfxWin: {fileID: 8300000, guid: 6859588dac29fb64c96705a71388022e, type: 3}
   sfxLose: {fileID: 8300000, guid: ea940f50b0ce27742b6bcb9b9331de7d, type: 3}
   TransitionTime: 1

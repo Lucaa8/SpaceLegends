@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     [SerializeField] Image ImageHealth;
 
     public static float ArmorModifier = 0f;
+    private float baseJumpForce; // Because cobweb removes the ability to jump, jumpForce is set to 0. But when the player exits the web, I need to reset it back.
 
     [SerializeField] float PassiveDamageAmount = .25f;
     private float damageInterval = .5f; // Time interval between each passive damage tick
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour
         // Because scene names are following the pattern: CollectionName_LevelID, e.g. Earth_0, Mars_1
         AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
         player = transform.GetComponent<Rigidbody2D>();
+        baseJumpForce = transform.GetComponent<PlayerController>().jumpForce;
         connection = transform.GetComponent<Connection>();
         connection.OnStart(() => {
             // Decrease opacity of already picked stars
@@ -61,7 +63,7 @@ public class Player : MonoBehaviour
             });
             player.simulated = true;
         });
-        //transform.position = StartPoint.transform.position;
+        transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -233,18 +235,19 @@ public class Player : MonoBehaviour
             {
                 return;
             }
+            collision.enabled = false;
             g.GetComponent<Animator>().SetTrigger("Pick");
             currentHealth += g.GetComponent<PickPotion>().Value;
             currentHealth = Math.Min(currentHealth, MaxHealth); // Avoid getting above max health
             UpdateHealth();
-            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickItem);
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickPotion);
         }
         else if(g.CompareTag("Coin"))
         {
             PickCoin state = g.GetComponent<PickCoin>();
             state.Pick();
             connection.AddSDT(g.GetComponent<PickCoin>().Value);
-            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickItem);
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickCoin);
         }
         else if(g.CompareTag("Checkpoint"))
         {
@@ -277,6 +280,11 @@ public class Player : MonoBehaviour
             SetupWinScreen();
             AudioManager.Instance.PlayGameState(true);
         }
+        else if(g.CompareTag("Web"))
+        {
+            GetComponent<PlayerController>().speed *= 0.2f;
+            GetComponent<PlayerController>().jumpForce = 0f;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -284,6 +292,11 @@ public class Player : MonoBehaviour
         if (isPassiveDamage(collision.gameObject) && isTakingPassiveDamage)
         {
             isTakingPassiveDamage = false;
+        }
+        if(collision.gameObject.CompareTag("Web"))
+        {
+            GetComponent<PlayerController>().speed /= 0.2f;
+            GetComponent<PlayerController>().jumpForce = baseJumpForce;
         }
     }
 

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Portal : MonoBehaviour
@@ -7,13 +6,37 @@ public class Portal : MonoBehaviour
 
     [SerializeField] Transform Destination;
 
+    private Collider2D player;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+            player = collision;
+            return;
+        }
         // Avoid teleporting back instant if destination is another portal
-        if(Vector2.Distance(collision.transform.position, transform.position) > .3f)
+        if (Vector2.Distance(collision.transform.position, transform.position) > .3f)
         {
             StartCoroutine(Teleport(collision));
-        }    
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            player = null;
+        }
+    }
+
+    private void Update()
+    {
+        if (player != null && Input.GetKeyDown(KeyCode.E))
+        {
+            StartCoroutine(Teleport(player));
+            player = null;
+        }
     }
 
     private IEnumerator Teleport(Collider2D collider)

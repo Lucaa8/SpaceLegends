@@ -24,6 +24,7 @@ public class PickCoin : MonoBehaviour
 
     public void Pick()
     {
+        transform.GetComponent<Collider2D>().enabled = false;
         anim.SetTrigger("Pick");
     }
 

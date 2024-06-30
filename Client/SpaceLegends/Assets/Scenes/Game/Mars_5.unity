@@ -2349,7 +2349,7 @@ MonoBehaviour:
   Stars: {fileID: 611366995}
   MaxHealth: 20
   ImageHealth: {fileID: 1237674234}
-  PassiveDamageAmount: 1
+  PassiveDamageAmount: 3.5
 --- !u!114 &451378854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8936,6 +8936,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnnBear
       objectReference: {fileID: 0}
+    - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
+      propertyPath: SDTValue
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
+      propertyPath: DropProbabilities.Array.data[1]
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 7415965697128678710, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -8994,13 +9002,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 589624655}
     m_Modifications:
+    - target: {fileID: 4350990833574747708, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: m_Size.x
+      value: 1.028524
+      objectReference: {fileID: 0}
+    - target: {fileID: 4350990833574747708, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: m_Size.y
+      value: 1.521137
+      objectReference: {fileID: 0}
+    - target: {fileID: 4350990833574747708, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.1053476
+      objectReference: {fileID: 0}
     - target: {fileID: 4651898416149931736, guid: 6068d73b3a762f6409246404035b529c, type: 3}
       propertyPath: m_Name
-      value: EnnSkelSword (1)
+      value: EnnSkelSwordR
       objectReference: {fileID: 0}
     - target: {fileID: 4651898416149931736, guid: 6068d73b3a762f6409246404035b529c, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4759138639600871651, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: SDTValue
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4759138639600871651, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: DropProbabilities.Array.data[1]
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 6830696065157761887, guid: 6068d73b3a762f6409246404035b529c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9379,9 +9407,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 589624655}
     m_Modifications:
+    - target: {fileID: 4350990833574747708, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: m_Size.x
+      value: 1.028524
+      objectReference: {fileID: 0}
+    - target: {fileID: 4350990833574747708, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: m_Size.y
+      value: 1.521137
+      objectReference: {fileID: 0}
+    - target: {fileID: 4350990833574747708, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.1053476
+      objectReference: {fileID: 0}
     - target: {fileID: 4651898416149931736, guid: 6068d73b3a762f6409246404035b529c, type: 3}
       propertyPath: m_Name
-      value: EnnSkelSword
+      value: EnnSkelSwordL
+      objectReference: {fileID: 0}
+    - target: {fileID: 4759138639600871651, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: SDTValue
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4759138639600871651, guid: 6068d73b3a762f6409246404035b529c, type: 3}
+      propertyPath: DropProbabilities.Array.data[1]
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 6830696065157761887, guid: 6068d73b3a762f6409246404035b529c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15166,7 +15214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6512902388463278563, guid: d581d7afda17df741ae2dda1edd7344e, type: 3}
       propertyPath: m_Name
-      value: EnnPatrol (1)
+      value: EnnPatrol_Skel
       objectReference: {fileID: 0}
     - target: {fileID: 6512902388463278563, guid: d581d7afda17df741ae2dda1edd7344e, type: 3}
       propertyPath: m_IsActive
@@ -15196,6 +15244,22 @@ PrefabInstance:
     - target: {fileID: 4608902046931295387, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: m_Name
       value: EnnBear
+      objectReference: {fileID: 0}
+    - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
+      propertyPath: SDTValue
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
+      propertyPath: HealValue
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
+      propertyPath: DropProbabilities.Array.data[0]
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
+      propertyPath: DropProbabilities.Array.data[1]
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 7415965697128678710, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17972,7 +18036,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6512902388463278563, guid: d581d7afda17df741ae2dda1edd7344e, type: 3}
       propertyPath: m_Name
-      value: EnnPatrol
+      value: EnnPatrol_Bear
       objectReference: {fileID: 0}
     - target: {fileID: 6512902388463278563, guid: d581d7afda17df741ae2dda1edd7344e, type: 3}
       propertyPath: m_IsActive
@@ -18725,6 +18789,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1367304491}
     m_Modifications:
+    - target: {fileID: 767586455377778120, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
+      propertyPath: m_Size.y
+      value: 1.503587
+      objectReference: {fileID: 0}
+    - target: {fileID: 767586455377778120, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.05865526
+      objectReference: {fileID: 0}
     - target: {fileID: 4198320926314392736, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.002
@@ -18764,6 +18836,22 @@ PrefabInstance:
     - target: {fileID: 4198320926314392736, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
+      propertyPath: SDTValue
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
+      propertyPath: HealValue
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
+      propertyPath: DropProbabilities.Array.data[0]
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
+      propertyPath: DropProbabilities.Array.data[1]
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7725052044067238290, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: m_Name
