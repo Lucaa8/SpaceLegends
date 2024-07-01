@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnnemyPatrol : MonoBehaviour
@@ -39,6 +37,11 @@ public class EnnemyPatrol : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if(!ennemy.playerRb.simulated)
+        {
+            return;
+        }
 
         if (movingLeft && ennemy.isAlive)
         {

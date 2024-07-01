@@ -2338,6 +2338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2637e78d425f08345a9a192ee91b540f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Money: {fileID: 1359665357}
   StartPoint: {fileID: 1650138104}
   EndPoint: {fileID: 1164467754}
   checkpointController: {fileID: 1529488955}
@@ -8942,7 +8943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: DropProbabilities.Array.data[1]
-      value: 50
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 7415965697128678710, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15160,6 +15161,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1359665357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4123877011573253818, guid: f11d019dd18beb2438bbf8835f0ccd55, type: 3}
+  m_PrefabInstance: {fileID: 1529488954}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1367304490
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15255,11 +15261,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: DropProbabilities.Array.data[0]
-      value: 35
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4755805943236613401, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: DropProbabilities.Array.data[1]
-      value: 15
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 7415965697128678710, guid: 74f750df8c0411f4d976545153ec3d2b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18843,15 +18849,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: HealValue
-      value: 50
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: DropProbabilities.Array.data[0]
-      value: 40
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7140612573606234931, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: DropProbabilities.Array.data[1]
-      value: 30
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7725052044067238290, guid: 7869af8acea113641ac7b99ec97a79a0, type: 3}
       propertyPath: m_Name

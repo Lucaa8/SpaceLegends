@@ -13,6 +13,8 @@ public class MovingPlatform : MonoBehaviour
     private Vector2 currentTarget;
     private bool isPaused;
 
+    public static bool Moving = true;
+
     void Start()
     {
         currentTarget = EndPoint.position;
@@ -21,6 +23,12 @@ public class MovingPlatform : MonoBehaviour
 
     void Update()
     {
+
+        if(!Moving)
+        {
+            return;
+        }
+
         if (!isPaused)
         {
             MovePlatform();

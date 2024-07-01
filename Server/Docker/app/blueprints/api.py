@@ -184,6 +184,11 @@ def stop_level():
 
     progress.update() # As I'm potentially inserting NFTs later on, I cant keep those unchanged fields to wait for relics_found to be changed and then update it.
 
+    from models.User import User
+    if "SDT" in request.json:
+        user = User.get_user_by_id(current_user.id)
+        user.set_sdt_money(user.money_sdt + float(request.json["SDT"]))
+
     from models.GameLevel import GameLevel
     level: GameLevel = GameLevel.get(game.level_id)
     reward = level.generate_reward()
@@ -196,7 +201,6 @@ def stop_level():
         progress.update()
         return jsonify(reward={'type': 'RELIC', 'value': reward[1].collection.name}, time=time_spent), 200
     elif reward[0] == 'HEART' or reward[0] == 'SDT':
-        from models.User import User
         user = User.get_user_by_id(current_user.id)
         if reward[0] == 'HEART':
             user.increase_lives_count(reward[1])

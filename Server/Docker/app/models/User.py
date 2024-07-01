@@ -112,7 +112,7 @@ class User(db.Model):
             print(f"An unknown error occurred while changing display name of user.id=={self.id}: {e}")
         return False
 
-    def set_sdt_money(self, new_count: int) -> bool:
+    def set_sdt_money(self, new_count: float) -> bool:
         try:
             self.money_sdt = new_count
             db.session.commit()

@@ -17,6 +17,11 @@ public class Player : MonoBehaviour
     private Animator animator;
     private Vector3 initialScale;
 
+    [SerializeField] GameObject Money;
+    private TMP_Text TotalMoneyValue;
+    private TMP_Text AddedMoneyValue;
+    private GameObject BottomMoney;
+
     [SerializeField] GameObject StartPoint;
     [SerializeField] GameObject EndPoint;
     private float levelLength;
@@ -72,6 +77,10 @@ public class Player : MonoBehaviour
         levelLength = Mathf.Abs(EndPoint.transform.position.x - StartPoint.transform.position.x);
         UpdateHealth();
 
+        TotalMoneyValue = Money.transform.Find("Top/Value/Text").GetComponent<TMP_Text>();
+        BottomMoney = Money.transform.Find("Bot").gameObject;
+        AddedMoneyValue = BottomMoney.transform.Find("Value/Text").GetComponent<TMP_Text>();
+
         StartCoroutine(DisplayDiscord());
     }
 
@@ -110,6 +119,7 @@ public class Player : MonoBehaviour
     {
         // Disable player movement and hitboxes before updating the active status
         player.simulated = QuitScreen.activeInHierarchy;
+        MovingPlatform.Moving = player.simulated;
         StartCoroutine(ShowScreen(!QuitScreen.activeInHierarchy, QuitScreen));
     }
 
@@ -247,6 +257,9 @@ public class Player : MonoBehaviour
             PickCoin state = g.GetComponent<PickCoin>();
             state.Pick();
             connection.AddSDT(g.GetComponent<PickCoin>().Value);
+            TotalMoneyValue.text = connection.SDT.ToString();
+            AddedMoneyValue.text = state.Value.ToString();
+            StartCoroutine(ShowMoneyAdded());
             AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickCoin);
         }
         else if(g.CompareTag("Checkpoint"))
@@ -435,6 +448,30 @@ public class Player : MonoBehaviour
             stars.Add(state);
         }
         return stars;
+    }
+
+    private IEnumerator ShowMoneyAdded()
+    {
+        StartCoroutine(ShowMoneyAdded(true));
+        yield return new WaitForSeconds(2);
+        StartCoroutine(ShowMoneyAdded(false));
+    }
+
+    private IEnumerator ShowMoneyAdded(bool show)
+    {
+
+        float duration = 0.3f; // seconds
+        float elapsedTime = 0f;
+        CanvasGroup group = BottomMoney.GetComponent<CanvasGroup>();
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = elapsedTime / duration;
+            group.alpha = show ? alpha : 1f - alpha;
+            yield return null;
+        }
+        group.alpha = show ? 1f : 0f;
+
     }
 
 }

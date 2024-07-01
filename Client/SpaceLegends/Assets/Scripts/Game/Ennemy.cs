@@ -27,7 +27,7 @@ public class Ennemy : MonoBehaviour
     private Animator anim;
 
     private Player player;
-    private Rigidbody2D playerRb;
+    public Rigidbody2D playerRb;
 
     private EnnemyPatrol Patrol;
 

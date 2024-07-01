@@ -1,3 +1,5 @@
+using TMPro;
+using System.Collections;
 using UnityEngine;
 
 public class PickCoin : MonoBehaviour
@@ -32,5 +34,7 @@ public class PickCoin : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+
 
 }
