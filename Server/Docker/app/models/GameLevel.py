@@ -8,6 +8,12 @@ drop_pool = {
     'HARD':   [(0.120, 'HEART', 6), (0.120, 'SDT', 0.20), (0.76, 'RELIC', -1), (0.0, 'NONE', -1)]
 }
 
+xp_pool = {
+    'EASY': 50,
+    'NORMAL': 150,
+    'HARD': 300
+}
+
 
 class GameLevel(db.Model):
     __tablename__ = 'game_level'
@@ -40,6 +46,9 @@ class GameLevel(db.Model):
     @staticmethod
     def get_levels():
         return db.session.query(GameLevel).all()
+
+    def get_exp(self):
+        return xp_pool[self.difficulty]
 
     def as_json(self):
         return {

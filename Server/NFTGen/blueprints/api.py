@@ -184,14 +184,15 @@ def stop_level():
 
     progress.update() # As I'm potentially inserting NFTs later on, I cant keep those unchanged fields to wait for relics_found to be changed and then update it.
 
-    from models.User import User
-    if "SDT" in request.json:
-        user = User.get_user_by_id(current_user.id)
-        user.set_sdt_money(user.money_sdt + float(request.json["SDT"]))
-
     from models.GameLevel import GameLevel
     level: GameLevel = GameLevel.get(game.level_id)
-    # Add XP to user ? with level.difficulty
+
+    from models.User import User
+    user = User.get_user_by_id(current_user.id)
+    user.give_exp(level.get_exp())
+    if "SDT" in request.json:
+        user.set_sdt_money(user.money_sdt + float(request.json["SDT"]))
+
     reward = level.generate_reward()
 
     # Apply the reward to user
