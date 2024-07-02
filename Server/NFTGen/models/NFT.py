@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from database import db
 from sqlalchemy import func, or_
 import chain
@@ -45,12 +47,44 @@ class NFT(db.Model):
         ).filter(
             NFT.user_id == user_id,
             NFT.is_minted == 1,
+            NFT.is_pending == 0,
             NFT.is_listed == 0,
             NFT.type == nft.type
         ).first()
         if results.count <= 1:
             return False
         return True
+
+    @staticmethod
+    def buy(user_id, nft_id) -> str:
+        from models.MarketListing import MarketListing
+        listing = MarketListing.find_by_nft(nft_id)
+        if listing is None:
+            return "This listing does not exist, has been removed or already bought."
+        if listing.nft.user_id == user_id:
+            return "You cant buy your own NFT!"
+        from models.User import User
+        buyer: User = User.get_user_by_id(user_id)
+        if buyer is None:
+            return "Failed to get the user buyer."
+        if buyer.money_sdt < listing.price:
+            return f"Buyer has not enough money ({buyer.money_sdt} was {listing.price})"
+        # Removes money to buyer
+        buyer.money_sdt -= listing.price
+        db.session.commit()
+        # Adds money to vendor
+        vendor: User = User.get_user_by_id(listing.user_id)
+        vendor.money_sdt += listing.price
+        db.session.commit()
+        # Closes the listing and change NFT owner
+        db.session.add(listing)
+        listing.bought_by = user_id
+        listing.bought_time = datetime.utcnow()
+        listing.nft.is_listed = False
+        listing.nft.user_id = user_id
+        db.session.commit()
+
+        return 'OK'
 
     def as_complete_nft(self):
         from collection import get_item

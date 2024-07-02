@@ -11,6 +11,9 @@ class MarketListing(db.Model):
     price = db.Column(db.Float, nullable=False)
     bought_time = db.Column(db.DateTime, nullable=True)
     bought_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    cancelled = db.Column(db.Boolean, nullable=False, server_default='0')
+
+    nft = db.relationship('NFT', backref='nft_item', lazy=True)
 
     @staticmethod
     def add_listing(user_id, nft_id, price) -> bool:
@@ -21,5 +24,29 @@ class MarketListing(db.Model):
             return True
         except Exception as e:
             db.session.rollback()
-            print(f"An unknown error occurred while registering a new market listing: {e}")
+            print(f"An unknown error occurred while registering a new market listing (with nft_id=={nft_id}): {e}")
             return False
+
+    @staticmethod
+    def remove_listing(user_id, nft_id) -> bool:
+        listing = MarketListing.find_by_nft(nft_id)
+        if listing is not None:
+            if listing.user_id != user_id:
+                return False
+            try:
+                listing.cancelled = True
+                db.session.commit()
+                return True
+            except Exception as e:
+                db.session.rollback()
+                print(f"An unknown error occurred while removing a market listing (with nft_id=={nft_id}): {e}")
+        return False
+
+    @staticmethod
+    def find_by_nft(nft_id: int) -> 'MarketListing | None':
+        listing = db.session.query(MarketListing).filter(
+            MarketListing.nft_id == nft_id,
+            MarketListing.bought_time == None, # Has not already ended
+            MarketListing.cancelled == False # Has not been cancelled by the user
+        ).first()
+        return listing

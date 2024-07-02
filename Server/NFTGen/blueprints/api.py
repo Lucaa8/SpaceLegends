@@ -316,6 +316,18 @@ def list_nft(nft_id: int):
     return jsonify(message="You must have a minimum of 2 *MINTED* and *UNLISTED* NFTs of the same type to be able to list one of them."), 400
 
 
+@api_bp.route('/unlist-nft/<int:nft_id>', methods=['DELETE'])
+@jwt_required()
+def unlist_nft(nft_id: int):
+    # A tester
+    from models.MarketListing import MarketListing
+    if MarketListing.remove_listing(current_user.id, nft_id):
+        return '', 204
+    return jsonify(message="Failed to remove the listing for this NFT. Are you sure it's not already sold or cancelled and the listing is yours?"), 400
+
+
 @api_bp.route('/buy-nft/<int:nft_id>', methods=['POST'])
 def buy_nft(nft_id: int):
-    return '', 204
+    from models.NFT import NFT
+    # Tester deja ca puis ajouter le transfert du NFT sur la blockchain
+    return NFT.buy(2, nft_id), 200
