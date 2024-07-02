@@ -297,3 +297,25 @@ def get_resources():
     }
 
     return jsonify(result), 200
+
+
+@api_bp.route('/list-nft/<int:nft_id>', methods=['POST'])
+@jwt_required()
+def list_nft(nft_id: int):
+    if not ("price" in request.json):
+        return jsonify(message="Missing price"), 400
+    try:
+        price = float(request.json["price"])
+        if price < 0.1 or price >= 5000.0:
+            raise ValueError("")
+    except ValueError:
+        return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 5000.0 (exclusive)"), 400
+    from models.NFT import NFT
+    if NFT.list_on_market(current_user.id, nft_id, price):
+        return '', 204
+    return jsonify(message="You must have a minimum of 2 *MINTED* and *UNLISTED* NFTs of the same type to be able to list one of them."), 400
+
+
+@api_bp.route('/buy-nft/<int:nft_id>', methods=['POST'])
+def buy_nft(nft_id: int):
+    return '', 204

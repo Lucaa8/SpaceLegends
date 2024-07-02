@@ -9,3 +9,4 @@ from models.PerkRental import PerkRental
 from models.TokenRevoked import TokenRevoked
 from models.LiveGame import LiveGame
 from models.ChainTx import ChainTx
+from models.MarketListing import MarketListing

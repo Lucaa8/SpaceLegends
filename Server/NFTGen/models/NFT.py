@@ -14,6 +14,7 @@ class NFT(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())
     is_minted = db.Column(db.Boolean, default=False, comment='Whether the NFT is already minted on the blockchain or not')
     is_pending = db.Column(db.Boolean, default=False, comment='Whether the NFT is currently in the process of being minted on the blockchain or not')
+    is_listed = db.Column(db.Boolean, default=False, comment='Whether the NFT is currently listed on the market or not')
     dropped_by_level_id = db.Column(db.Integer, db.ForeignKey('game_level.id'), nullable=True) # if null then it has been received by offer or whatever and default probabilities are used
 
     @staticmethod
@@ -22,11 +23,41 @@ class NFT(db.Model):
         db.session.add(nft)
         db.session.commit()
 
+    @staticmethod
+    def list_on_market(user_id: int, nft_id: int, price: float) -> bool:
+        if not NFT.can_list_on_market(user_id, nft_id):
+            return False
+        from models.MarketListing import MarketListing
+        listed = MarketListing.add_listing(user_id, nft_id, price)
+        if listed:
+            nft = db.session.query(NFT).filter(NFT.id == nft_id).first()
+            nft.is_listed = True
+            db.session.commit()
+        return listed
+
+    @staticmethod
+    def can_list_on_market(user_id: int, nft_id: int) -> bool:
+        nft = db.session.query(NFT.user_id, NFT.type).filter(NFT.id == nft_id).first()
+        if nft is None or nft.user_id != user_id:
+            return False
+        results = db.session.query(
+            func.count(NFT.type).label('count')
+        ).filter(
+            NFT.user_id == user_id,
+            NFT.is_minted == 1,
+            NFT.is_listed == 0,
+            NFT.type == nft.type
+        ).first()
+        if results.count <= 1:
+            return False
+        return True
+
     def as_complete_nft(self):
         from collection import get_item
         nft = get_item(self.type)
         data = nft.to_metadata()
         data['id'] = f"#{self.id}"
+        data['listed'] = self.is_listed
         # Could be fetched on the chain but the profile load during 2-3 seconds and thats bad. For chain fetched information look at the token explorer.
         data['created'] = self.created_at
         for attr in data['attributes']:
