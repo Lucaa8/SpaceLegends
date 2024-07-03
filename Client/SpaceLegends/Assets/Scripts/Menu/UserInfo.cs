@@ -372,6 +372,34 @@ public class UserInfo : MonoBehaviour
         return _relics.GetValueOrDefault(collec, 0);
     }
 
+    public void UpdateTotalNFTCount(int collec)
+    {
+        ISet<long> set = new HashSet<long>();
+        foreach(long item in _nft.Keys)
+        {
+            var decoded = DecodeTokenType(item);
+            if(decoded.Item1 == collec)
+            {
+                set.Add(item);
+            }
+        }
+        if(collec == 0)
+        {
+            if(set.Count == 9 && NFTCountEarth != 9)
+            {
+                TotalDamage += 18;
+            }
+            NFTCountEarth = set.Count;
+        }
+        else if (collec == 1)
+        {
+            if (set.Count == 9 && NFTCountMars != 9)
+            {
+                TotalArmor += 21;
+            }
+            NFTCountMars = set.Count;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()

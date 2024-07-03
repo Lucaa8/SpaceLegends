@@ -30,7 +30,11 @@ class CosmicRelic:
         def check_gas_thread():
             while True:
                 if not self.working:
-                    schedule.run_pending()
+                    try:
+                        schedule.run_pending()
+                    except Exception as e:
+                        print(f"An error occurred in the chain#check_gas_price method. The {datetime.now()} check has been skipped. Error: {str(e)}")
+                        self.working = False
                 time.sleep(5)
         Thread(target=check_gas_thread).start()
 
@@ -61,7 +65,7 @@ class CosmicRelic:
 
         price_eth = self.w3.from_wei(gas * gas_price, 'ether')
 
-        if price_eth < 0.005:
+        if price_eth <= 0.005:
             signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=decrypt_wallet_key(tx.from_pkey))
             tx.sent()
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)

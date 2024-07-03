@@ -111,8 +111,6 @@ public class Shop : MonoBehaviour
                 JArray proba = jrep.Value<JArray>("probabilities");
                 if (proba.Count > 0)
                 {
-                    userInfo.RemoveRelic(collec);
-                    UpdateOpenRelicButton(collec);
                     CaseCell.chances = new System.Collections.Generic.Dictionary<CaseCell.Rarity, float>
                         {
                             {
@@ -129,6 +127,8 @@ public class Shop : MonoBehaviour
                             }
                         };
                 }
+                userInfo.RemoveRelic(collec);
+                UpdateOpenRelicButton(collec);
                 scroll.nftResult = new CaseCell.NFT();
                 scroll.nftResult.name = jrep.Value<string>("name");
                 scroll.nftResult.rarity = (CaseCell.Rarity)(jrep.Value<int>("rarity") - 1);
@@ -137,13 +137,14 @@ public class Shop : MonoBehaviour
                 CaseCell.chances = null;
                 long type = jrep.Value<long>("type");
                 userInfo.SetNFTCount(type, userInfo.GetNFTCount(type) + 1);
+                userInfo.UpdateTotalNFTCount(collec);
             }
         }));
     }
 
     public void WantToOpenEarthRelic()
     {
-        if (userInfo.NFTCountEarth > 0 && CaseSroll.canScroll)
+        if (userInfo.CountRelic(0) > 0 && CaseSroll.canScroll)
         {
             OpenRelic(0, earthScroll);
         }
@@ -151,7 +152,7 @@ public class Shop : MonoBehaviour
 
     public void WantToOpenMarsRelic()
     {
-        if (userInfo.NFTCountMars > 0 && CaseSroll.canScroll)
+        if (userInfo.CountRelic(1) > 0 && CaseSroll.canScroll)
         {
             OpenRelic(1, marsScroll);
         }
