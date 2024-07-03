@@ -290,7 +290,7 @@ def get_resources():
         'resources': {
             'sdt': user.money_sdt,
             'heart': user.money_heart,
-            'eth': chain.cosmic.get_balance_eth(user.wallet_address),
+            'eth': chain.cosmic.get_available_eth(user.wallet_address),
             'perks': user.get_active_perks()
         },
         'levels': progression
@@ -319,7 +319,6 @@ def list_nft(nft_id: int):
 @api_bp.route('/unlist-nft/<int:nft_id>', methods=['DELETE'])
 @jwt_required()
 def unlist_nft(nft_id: int):
-    # A tester
     from models.MarketListing import MarketListing
     if MarketListing.remove_listing(current_user.id, nft_id):
         return '', 204
@@ -327,7 +326,10 @@ def unlist_nft(nft_id: int):
 
 
 @api_bp.route('/buy-nft/<int:nft_id>', methods=['POST'])
+@jwt_required()
 def buy_nft(nft_id: int):
     from models.NFT import NFT
-    # Tester deja ca puis ajouter le transfert du NFT sur la blockchain
-    return NFT.buy(2, nft_id), 200
+    #result = NFT.buy(current_user.id, nft_id)
+    from chain import cosmic
+    return jsonify(eth=str(cosmic.get_available_eth(current_user.wallet_address))), 200
+

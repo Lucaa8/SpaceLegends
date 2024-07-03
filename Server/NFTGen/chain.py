@@ -24,8 +24,9 @@ class CosmicRelic:
             contract_abi = json.load(f)
         assert contract_abi is not None
         self.crel = self.w3.eth.contract(address=cs_contract_address, abi=contract_abi)
+        self.max_fee: float = float(os.getenv("MAX_ETH_GAS_FEE"))
         self.working = False
-        schedule.every(5).minutes.do(self.check_gas_price)
+        # schedule.every(5).minutes.do(self.check_gas_price)
 
         def check_gas_thread():
             while True:
@@ -65,13 +66,12 @@ class CosmicRelic:
 
         price_eth = self.w3.from_wei(gas * gas_price, 'ether')
 
-        if price_eth <= 0.005:
+        if price_eth <= self.max_fee:
             signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=decrypt_wallet_key(tx.from_pkey))
             tx.sent()
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
             print(f"Transaction chain_tx.id=={tx.id} has been sent to the blockchain with hash: {self.w3.to_hex(tx_hash)}. Waiting for confirmation...")
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-            # receipt = {'status': 1, 'effectiveGasPrice': 3492800329, 'gasUsed': 172722}
             tx.completed(receipt, self)
 
     def mint_nft(self, addr_to: str, uid_to: str, token_id: int, token_type: int) -> None:
@@ -79,10 +79,15 @@ class CosmicRelic:
         addr_to = self.w3.to_checksum_address(addr_to)
         ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'mint', (addr_to, uid_to, token_id, token_type))
 
+    def transfer_nft(self, user_from, user_to, token_id: int) -> None:
+        from models.ChainTx import ChainTx
+        addr_to = self.w3.to_checksum_address(user_to.wallet_address)
+        ChainTx.add_tx(user_from.wallet_address, user_from.wallet_key, 'safeTransfer', (token_id, addr_to, user_to.username))
+
     @staticmethod
     def event_mint(args: tuple) -> None:
         if args is None or len(args) < 4:
-            print("CosmicRelic.event_mint rejected empty arguments transaction")
+            print("CosmicRelic.event_mint rejected invalid arguments transaction")
             return
         token_id = args[2]
         try:
@@ -92,14 +97,42 @@ class CosmicRelic:
         except Exception as e:
             print(f"CosmicRelic.event_mint failed to mint token with id=={token_id}: {str(e)}")
 
+    @staticmethod
+    def event_transfer(args: tuple) -> None:
+        if args is None or len(args) < 3:
+            print("CosmicRelic.event_transfer rejected invalid arguments transaction")
+            return
+        token_id = args[0]
+        try:
+            from models.NFT import NFT
+            NFT.on_buy(token_id)
+            print(f"Transaction for token.id=={token_id} has been transferred successfully.")
+        except Exception as e:
+            print(f"CosmicRelic.event_transfer failed to transfer token with id=={token_id}: {str(e)}")
+
     def check_address(self, address: str) -> bool:
         return self.w3.is_address(address) and self.w3.is_checksum_address(address)
 
-    def get_balance_eth(self, address: str) -> float:
+    # This method SHOULD NOT being used to get the available eth for an account. This does not count any currently pending transaction which will cost up to self.max_fee (e.g. 0.005) eth.
+    def _get_balance_eth(self, address: str) -> float:
         if not self.check_address(address):
             return -1
         wei = self.w3.eth.get_balance(self.w3.to_checksum_address(address))
-        return self.w3.from_wei(wei, 'ether')
+        return float(self.w3.from_wei(wei, 'ether'))
+
+    # Same as get_balance_eth but removes the currently reserved eth for gas fee of pending transactions for that address (like transfer nft)
+    def get_available_eth(self, address: str) -> float:
+        eth = self._get_balance_eth(address)
+        if eth < 0:
+            return -1
+        from models.MarketListing import MarketListing
+        # print(MarketListing.find_valid_listings_count(current_user.id))
+        # Ajouter les listings en cours a la reserve
+        from models.ChainTx import ChainTx
+        unsent = ChainTx.get_all_unsent(from_addr=address)
+        count = len(unsent) if unsent is not None else 0
+        reserved_eth = count * self.max_fee
+        return max(0.0, eth - reserved_eth)
 
     def is_valid(self):
         return self.crel is not None

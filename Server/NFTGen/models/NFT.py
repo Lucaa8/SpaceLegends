@@ -25,6 +25,19 @@ class NFT(db.Model):
         db.session.add(nft)
         db.session.commit()
 
+    def as_complete_nft(self):
+        from collection import get_item
+        nft = get_item(self.type)
+        data = nft.to_metadata()
+        data['id'] = f"#{self.id}"
+        data['listed'] = self.is_listed
+        # Could be fetched on the chain but the profile load during 2-3 seconds and thats bad. For chain fetched information look at the token explorer.
+        data['created'] = self.created_at
+        for attr in data['attributes']:
+            data[attr['trait_type']] = nft.format_rarity() if attr['trait_type'] == 'Rarity' else attr['value']
+        del data['attributes']
+        return data
+
     @staticmethod
     def list_on_market(user_id: int, nft_id: int, price: float) -> bool:
         if not NFT.can_list_on_market(user_id, nft_id):
@@ -55,6 +68,7 @@ class NFT(db.Model):
             return False
         return True
 
+    # Paraît correct, ajouter dans can_list_on_market la vérification de available ETH
     @staticmethod
     def buy(user_id, nft_id) -> str:
         from models.MarketListing import MarketListing
@@ -81,23 +95,20 @@ class NFT(db.Model):
         listing.bought_by = user_id
         listing.bought_time = datetime.utcnow()
         listing.nft.is_listed = False
+        listing.nft.is_pending = True # Is not listed anymore but is_pending until the nft is in the buyer wallet. Needed so new buyer cant list this nft before receiving it
         listing.nft.user_id = user_id
         db.session.commit()
-
+        from chain import cosmic
+        cosmic.transfer_nft(vendor, buyer, nft_id)
         return 'OK'
 
-    def as_complete_nft(self):
-        from collection import get_item
-        nft = get_item(self.type)
-        data = nft.to_metadata()
-        data['id'] = f"#{self.id}"
-        data['listed'] = self.is_listed
-        # Could be fetched on the chain but the profile load during 2-3 seconds and thats bad. For chain fetched information look at the token explorer.
-        data['created'] = self.created_at
-        for attr in data['attributes']:
-            data[attr['trait_type']] = nft.format_rarity() if attr['trait_type'] == 'Rarity' else attr['value']
-        del data['attributes']
-        return data
+    @staticmethod
+    def on_buy(token_id):
+        from database import flask_app
+        with flask_app.app_context():
+            nft = db.session.query(NFT).filter(NFT.id == token_id).first()
+            nft.is_pending = False
+            db.session.commit()
 
     @staticmethod
     def mint(token_id, wallet, username):
