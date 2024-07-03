@@ -40,8 +40,6 @@ class NFT(db.Model):
 
     @staticmethod
     def list_on_market(user_id: int, nft_id: int, price: float) -> bool:
-        if not NFT.can_list_on_market(user_id, nft_id):
-            return False
         from models.MarketListing import MarketListing
         listed = MarketListing.add_listing(user_id, nft_id, price)
         if listed:
@@ -51,10 +49,22 @@ class NFT(db.Model):
         return listed
 
     @staticmethod
-    def can_list_on_market(user_id: int, nft_id: int) -> bool:
-        nft = db.session.query(NFT.user_id, NFT.type).filter(NFT.id == nft_id).first()
-        if nft is None or nft.user_id != user_id:
-            return False
+    def can_list_on_market(user_id: int, nft_id: int) -> str:
+        from models.User import User
+        vendor: User = User.get_user_by_id(user_id)
+        if vendor is None:
+            return f"User with id {user_id} not found"
+        from chain import cosmic
+        eth: float = cosmic.get_available_eth(vendor)
+        if eth < cosmic.max_fee:
+            return f"You need at least {cosmic.max_fee} SETH to be able to list a NFT on the market (Gas fee). You have {eth} SETH on your account."
+        nft = db.session.query(NFT).filter(NFT.id == nft_id).first()
+        if nft is None or nft.user_id != user_id or not nft.is_minted:
+            return f"The NFT with id {nft_id} does not exist or is not yours."
+        if nft.is_minted and nft.is_pending:
+            return f"This NFT is not in your wallet yet. Please wait for the transaction to finish."
+        if nft.is_listed:
+            return f"This NFT is already listed."
         results = db.session.query(
             func.count(NFT.type).label('count')
         ).filter(
@@ -65,10 +75,9 @@ class NFT(db.Model):
             NFT.type == nft.type
         ).first()
         if results.count <= 1:
-            return False
-        return True
+            return "You must have a minimum of 2 *MINTED* and *UNLISTED* NFTs of the same type to be able to list one of them."
+        return "OK"
 
-    # Paraît correct, ajouter dans can_list_on_market la vérification de available ETH
     @staticmethod
     def buy(user_id, nft_id) -> str:
         from models.MarketListing import MarketListing
@@ -82,7 +91,7 @@ class NFT(db.Model):
         if buyer is None:
             return "Failed to get the user buyer."
         if buyer.money_sdt < listing.price:
-            return f"Buyer has not enough money ({buyer.money_sdt} was {listing.price})"
+            return f"Buyer has not enough money (Buyer has {buyer.money_sdt} but price is {listing.price})"
         # Removes money to buyer
         buyer.money_sdt -= listing.price
         db.session.commit()

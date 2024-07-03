@@ -290,7 +290,7 @@ def get_resources():
         'resources': {
             'sdt': user.money_sdt,
             'heart': user.money_heart,
-            'eth': chain.cosmic.get_available_eth(user.wallet_address),
+            'eth': chain.cosmic.get_available_eth(user),
             'perks': user.get_active_perks()
         },
         'levels': progression
@@ -311,9 +311,12 @@ def list_nft(nft_id: int):
     except ValueError:
         return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 5000.0 (exclusive)"), 400
     from models.NFT import NFT
-    if NFT.list_on_market(current_user.id, nft_id, price):
-        return '', 204
-    return jsonify(message="You must have a minimum of 2 *MINTED* and *UNLISTED* NFTs of the same type to be able to list one of them."), 400
+    result = NFT.can_list_on_market(current_user.id, nft_id)
+    if result == 'OK':
+        if NFT.list_on_market(current_user.id, nft_id, price):
+            return '', 204
+        return jsonify(message="An unknown error prevented your listing to be added on the market"), 400
+    return jsonify(message=result), 400
 
 
 @api_bp.route('/unlist-nft/<int:nft_id>', methods=['DELETE'])
@@ -329,7 +332,12 @@ def unlist_nft(nft_id: int):
 @jwt_required()
 def buy_nft(nft_id: int):
     from models.NFT import NFT
-    #result = NFT.buy(current_user.id, nft_id)
-    from chain import cosmic
-    return jsonify(eth=str(cosmic.get_available_eth(current_user.wallet_address))), 200
+    try:
+        result = NFT.buy(current_user.id, nft_id)
+        if result == 'OK':
+            return '', 204
+    except Exception as e:
+        result = "An error occurred while buying your NFT. Please try again."
+        print(f"An error occurred while an user (user.id=={current_user.id}) tried to buy a NFT (nft.id=={nft_id}) on the market. Error: {str(e)}")
+    return jsonify(message=result), 400
 

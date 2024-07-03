@@ -26,7 +26,7 @@ class CosmicRelic:
         self.crel = self.w3.eth.contract(address=cs_contract_address, abi=contract_abi)
         self.max_fee: float = float(os.getenv("MAX_ETH_GAS_FEE"))
         self.working = False
-        # schedule.every(5).minutes.do(self.check_gas_price)
+        schedule.every(5).minutes.do(self.check_gas_price)
 
         def check_gas_thread():
             while True:
@@ -97,8 +97,9 @@ class CosmicRelic:
         except Exception as e:
             print(f"CosmicRelic.event_mint failed to mint token with id=={token_id}: {str(e)}")
 
+    # A tester!!
     @staticmethod
-    def event_transfer(args: tuple) -> None:
+    def event_safeTransfer(args: tuple) -> None:
         if args is None or len(args) < 3:
             print("CosmicRelic.event_transfer rejected invalid arguments transaction")
             return
@@ -120,17 +121,16 @@ class CosmicRelic:
         wei = self.w3.eth.get_balance(self.w3.to_checksum_address(address))
         return float(self.w3.from_wei(wei, 'ether'))
 
-    # Same as get_balance_eth but removes the currently reserved eth for gas fee of pending transactions for that address (like transfer nft)
-    def get_available_eth(self, address: str) -> float:
-        eth = self._get_balance_eth(address)
+    # Same as get_balance_eth but removes the currently reserved eth for gas fee of pending transactions/nft listings for that address (like transfer nft)
+    def get_available_eth(self, user) -> float:
+        eth = self._get_balance_eth(user.wallet_address)
         if eth < 0:
             return -1
         from models.MarketListing import MarketListing
-        # print(MarketListing.find_valid_listings_count(current_user.id))
-        # Ajouter les listings en cours a la reserve
+        count = MarketListing.find_valid_listings_count(user.id)
         from models.ChainTx import ChainTx
-        unsent = ChainTx.get_all_unsent(from_addr=address)
-        count = len(unsent) if unsent is not None else 0
+        unsent = ChainTx.get_all_unsent(from_addr=user.wallet_address)
+        count += len(unsent) if unsent is not None else 0
         reserved_eth = count * self.max_fee
         return max(0.0, eth - reserved_eth)
 
