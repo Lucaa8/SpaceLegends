@@ -17,15 +17,12 @@
                     <p class="text-muted">There are {{ listings|length }} relics listed for sale.</p>
                 </div>
             </div>
-            <div class="row d-flex flex-wrap justify-content-center">
-                <!-- Max Price Slider, adapts based on screen size -->
+            <div class="row align-items-center justify-content-center">
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                     <label for="maxPrice" class="form-label">Max Price: <span id="priceValue">50</span></label>
                     <input type="range" class="form-range" id="maxPrice" min="0.1" max="500.0" step="0.1" value="50.0">
                 </div>
-
-                <!-- Dropdowns for Collection, Location and Rarity -->
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                <div class="col-lg-auto col-md-auto col-sm-auto mb-3 px-1">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="collectionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             All Collections
@@ -37,7 +34,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                <div class="col-lg-auto col-md-auto col-sm-auto mb-3 px-1">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Row Any | Col Any
@@ -56,22 +53,23 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                <div class="col-lg-auto col-md-auto col-sm-auto mb-3 px-1">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="rarityDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             All Rarities
                         </button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" data-r="-1">All Rarities</a></li>
-                            <li><a class="dropdown-item" data-c="0">Common</a></li>
-                            <li><a class="dropdown-item" data-c="1">Rare</a></li>
-                            <li><a class="dropdown-item" data-c="2">Epic</a></li>
-                            <li><a class="dropdown-item" data-c="3">Legendary</a></li>
+                            <li><a class="dropdown-item" data-c="1">Common</a></li>
+                            <li><a class="dropdown-item" data-c="2">Rare</a></li>
+                            <li><a class="dropdown-item" data-c="3">Epic</a></li>
+                            <li><a class="dropdown-item" data-c="4">Legendary</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <div class="container mt-4">
             <div class="row">
@@ -100,6 +98,7 @@
         let collec = -1;
         let row = -1;
         let col = -1;
+        let rarity = -1;
         let maxPrice = 50.0;
 
         function updateListings()
@@ -132,6 +131,15 @@
             item.addEventListener('click', function() {
                 document.getElementById('collectionDropdown').textContent = this.textContent;
                 collec = parseInt(item.getAttribute("data-c"));
+                updateListings();
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('#rarityDropdown + .dropdown-menu .dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.getElementById('rarityDropdown').textContent = this.textContent;
+                rarity = parseInt(item.getAttribute("data-r"));
                 updateListings();
             });
         });
