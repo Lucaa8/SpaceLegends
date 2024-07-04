@@ -1,7 +1,141 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <link href="{{ url_for('static', filename='styles/download.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/market.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/explorer.css') }}" rel="stylesheet"> <!-- Needed for rarity classes and cards -->
 {% endblock %}
 {% block content %}
-    <h1>Marketplace page</h1>
+    <div class="container-fluid" style="min-height: 100vh">
+        <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="height: 30vh;">
+            <div>
+                <h1>Welcome to the Galactic Market</h1>
+                <p>Here, you can explore a variety of listings where players showcase their unique relics.</p>
+            </div>
+        </section>
+        <section class="container mt-4">
+            <div class="row">
+                <div class="col-12 text-center mb-3">
+                    <p class="text-muted">There are {{ listings|length }} relics listed for sale.</p>
+                </div>
+            </div>
+            <div class="row d-flex flex-wrap justify-content-center">
+                <!-- Max Price Slider, adapts based on screen size -->
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <label for="maxPrice" class="form-label">Max Price: <span id="priceValue">50</span></label>
+                    <input type="range" class="form-range" id="maxPrice" min="0.1" max="500.0" step="0.1" value="50.0">
+                </div>
+
+                <!-- Dropdowns for Collection, Location and Rarity -->
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="collectionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            All Collections
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-c="-1">All Collections</a></li>
+                            <li><a class="dropdown-item" data-c="0">The Earth Collection</a></li>
+                            <li><a class="dropdown-item" data-c="1">The Mars Collection</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Row Any | Col Any
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-r="-1" data-c="-1">Row Any | Col Any</a></li>
+                            <li><a class="dropdown-item" data-r="1" data-c="1">Row 1 | Col 1</a></li>
+                            <li><a class="dropdown-item" data-r="1" data-c="2">Row 1 | Col 2</a></li>
+                            <li><a class="dropdown-item" data-r="1" data-c="3">Row 1 | Col 3</a></li>
+                            <li><a class="dropdown-item" data-r="2" data-c="1">Row 2 | Col 1</a></li>
+                            <li><a class="dropdown-item" data-r="2" data-c="2">Row 2 | Col 2</a></li>
+                            <li><a class="dropdown-item" data-r="2" data-c="3">Row 2 | Col 3</a></li>
+                            <li><a class="dropdown-item" data-r="3" data-c="1">Row 3 | Col 1</a></li>
+                            <li><a class="dropdown-item" data-r="3" data-c="2">Row 3 | Col 2</a></li>
+                            <li><a class="dropdown-item" data-r="3" data-c="3">Row 3 | Col 3</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="rarityDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            All Rarities
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-r="-1">All Rarities</a></li>
+                            <li><a class="dropdown-item" data-c="0">Common</a></li>
+                            <li><a class="dropdown-item" data-c="1">Rare</a></li>
+                            <li><a class="dropdown-item" data-c="2">Epic</a></li>
+                            <li><a class="dropdown-item" data-c="3">Legendary</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mt-4">
+            <div class="row">
+                {% for listing in listings %}
+                    {% set nft = listing.nft %}
+                    {% set nft_id = nft.id[1:] %}
+                    <div class="col-lg-4 col-md-6 col-12 mb-4" id="listing-{{ nft_id }}">
+                        <div class="card h-100">
+                            <img src="{{ nft.image }}" class="card-img-top" alt="title">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ nft.name }}</h5>
+                                <p>Row {{ nft["Image Row"] }} | Col {{ nft["Image Column"] }}</p>
+                                <p class="text-muted {{ nft.Rarity[1] }}">{{ nft.Rarity[0] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentListings = JSON.parse('{{ json_listings | safe }}');
+    </script>
+    <script>
+        let collec = -1;
+        let row = -1;
+        let col = -1;
+        let maxPrice = 50.0;
+
+        function updateListings()
+        {
+
+        }
+
+    </script>
+    <script>
+        document.getElementById('maxPrice').addEventListener('input', function() {
+            document.getElementById('priceValue').textContent = this.value;
+        });
+        document.getElementById('maxPrice').addEventListener('change', function() {
+            maxPrice = parseFloat(this.value);
+            updateListings();
+        });
+    </script>
+    <script>
+        document.querySelectorAll('#locationDropdown + .dropdown-menu .dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.getElementById('locationDropdown').textContent = this.textContent;
+                row = parseInt(item.getAttribute("data-r"));
+                col = parseInt(item.getAttribute("data-c"));
+                updateListings();
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('#collectionDropdown + .dropdown-menu .dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.getElementById('collectionDropdown').textContent = this.textContent;
+                collec = parseInt(item.getAttribute("data-c"));
+                updateListings();
+            });
+        });
+    </script>
+
+
 {% endblock %}

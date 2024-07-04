@@ -1,3 +1,5 @@
+import json
+
 from flask import render_template, session, redirect, url_for
 from flask.blueprints import Blueprint
 from collection import collections, items
@@ -37,7 +39,13 @@ def download():
 
 @views_bp.route('/market')
 def market():
-    return render_template('market.html')
+    from models.MarketListing import MarketListing
+    listings = []
+    for listing in MarketListing.get_all_valid_listings():
+        listing = listing.as_json()
+        listing['nft']['created'] = listing['nft']['created'].isoformat()
+        listings.append(listing)
+    return render_template('market.html', listings=listings, json_listings=json.dumps(listings))
 
 
 @views_bp.route('/register')

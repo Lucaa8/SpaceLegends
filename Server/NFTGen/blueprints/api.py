@@ -306,10 +306,10 @@ def list_nft(nft_id: int):
         return jsonify(message="Missing price"), 400
     try:
         price = float(request.json["price"])
-        if price < 0.1 or price >= 5000.0:
+        if price < 0.1 or price >= 500.0:
             raise ValueError("")
     except ValueError:
-        return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 5000.0 (exclusive)"), 400
+        return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 500.0 (exclusive)"), 400
     from models.NFT import NFT
     result = NFT.can_list_on_market(current_user.id, nft_id)
     if result == 'OK':
