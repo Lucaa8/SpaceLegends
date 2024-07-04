@@ -299,7 +299,7 @@ def get_resources():
     return jsonify(result), 200
 
 
-@api_bp.route('/list-nft/<int:nft_id>', methods=['POST'])
+@api_bp.route('/list-nft/<int:nft_id>', methods=['PUT'])
 @jwt_required()
 def list_nft(nft_id: int):
     if not ("price" in request.json):

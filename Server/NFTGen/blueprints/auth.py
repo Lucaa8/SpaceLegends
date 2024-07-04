@@ -122,6 +122,9 @@ def logout():
 @jwt_required(refresh=True)
 def refresh():
     access_token = create_access(user=current_user)
+    # When a request gets a 401, user_id is removed from the session to avoid that a user can still access his profile page with invalid token
+    # So if he refreshes successfully, I can put it back in the session
+    session['user_id'] = str(current_user.id)
     return jsonify(access_token=access_token)
 
 

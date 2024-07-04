@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from database import db
 from sqlalchemy import func, or_
 import chain
@@ -14,6 +16,7 @@ class NFT(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())
     is_minted = db.Column(db.Boolean, default=False, comment='Whether the NFT is already minted on the blockchain or not')
     is_pending = db.Column(db.Boolean, default=False, comment='Whether the NFT is currently in the process of being minted on the blockchain or not')
+    is_listed = db.Column(db.Boolean, default=False, comment='Whether the NFT is currently listed on the market or not')
     dropped_by_level_id = db.Column(db.Integer, db.ForeignKey('game_level.id'), nullable=True) # if null then it has been received by offer or whatever and default probabilities are used
 
     @staticmethod
@@ -27,12 +30,95 @@ class NFT(db.Model):
         nft = get_item(self.type)
         data = nft.to_metadata()
         data['id'] = f"#{self.id}"
+        data['listed'] = self.is_listed
+        data['pending'] = self.is_pending
         # Could be fetched on the chain but the profile load during 2-3 seconds and thats bad. For chain fetched information look at the token explorer.
         data['created'] = self.created_at
         for attr in data['attributes']:
             data[attr['trait_type']] = nft.format_rarity() if attr['trait_type'] == 'Rarity' else attr['value']
         del data['attributes']
         return data
+
+    @staticmethod
+    def list_on_market(user_id: int, nft_id: int, price: float) -> bool:
+        from models.MarketListing import MarketListing
+        listed = MarketListing.add_listing(user_id, nft_id, price)
+        if listed:
+            nft = db.session.query(NFT).filter(NFT.id == nft_id).first()
+            nft.is_listed = True
+            db.session.commit()
+        return listed
+
+    @staticmethod
+    def can_list_on_market(user_id: int, nft_id: int) -> str:
+        from models.User import User
+        vendor: User = User.get_user_by_id(user_id)
+        if vendor is None:
+            return f"User with id {user_id} not found"
+        from chain import cosmic
+        eth: float = cosmic.get_available_eth(vendor)
+        if eth < cosmic.max_fee:
+            return f"You need at least {cosmic.max_fee} SETH to be able to list a NFT on the market (Gas fee). You have {eth} SETH on your account."
+        nft = db.session.query(NFT).filter(NFT.id == nft_id).first()
+        if nft is None or nft.user_id != user_id or not nft.is_minted:
+            return f"The NFT with id {nft_id} does not exist or is not yours."
+        if nft.is_minted and nft.is_pending:
+            return f"This NFT is not in your wallet yet. Please wait for the transaction to finish."
+        if nft.is_listed:
+            return f"This NFT is already listed."
+        results = db.session.query(
+            func.count(NFT.type).label('count')
+        ).filter(
+            NFT.user_id == user_id,
+            NFT.is_minted == 1,
+            NFT.is_pending == 0,
+            NFT.is_listed == 0,
+            NFT.type == nft.type
+        ).first()
+        if results.count <= 1:
+            return "You must have a minimum of 2 *MINTED* and *UNLISTED* NFTs of the same type to be able to list one of them."
+        return "OK"
+
+    @staticmethod
+    def buy(user_id, nft_id) -> str:
+        from models.MarketListing import MarketListing
+        listing = MarketListing.find_by_nft(nft_id)
+        if listing is None:
+            return "This listing does not exist, has been removed or already bought."
+        if listing.nft.user_id == user_id:
+            return "You cant buy your own NFT!"
+        from models.User import User
+        buyer: User = User.get_user_by_id(user_id)
+        if buyer is None:
+            return "Failed to get the user buyer."
+        if buyer.money_sdt < listing.price:
+            return f"Buyer has not enough money (Buyer has {buyer.money_sdt} but price is {listing.price})"
+        # Removes money to buyer
+        buyer.money_sdt -= listing.price
+        db.session.commit()
+        # Adds money to vendor
+        vendor: User = User.get_user_by_id(listing.user_id)
+        vendor.money_sdt += listing.price
+        db.session.commit()
+        # Closes the listing and change NFT owner
+        db.session.add(listing)
+        listing.bought_by = user_id
+        listing.bought_time = datetime.utcnow()
+        listing.nft.is_listed = False
+        listing.nft.is_pending = True # Is not listed anymore but is_pending until the nft is in the buyer wallet. Needed so new buyer cant list this nft before receiving it
+        listing.nft.user_id = user_id
+        db.session.commit()
+        from chain import cosmic
+        cosmic.transfer_nft(vendor, buyer, nft_id)
+        return 'OK'
+
+    @staticmethod
+    def on_buy(token_id):
+        from database import flask_app
+        with flask_app.app_context():
+            nft = db.session.query(NFT).filter(NFT.id == token_id).first()
+            nft.is_pending = False
+            db.session.commit()
 
     @staticmethod
     def mint(token_id, wallet, username):

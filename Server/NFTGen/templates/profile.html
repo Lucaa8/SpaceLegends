@@ -112,6 +112,27 @@
                                 <p>Row {{ nft["Image Row"] }} | Col {{ nft["Image Column"] }}</p>
                                 <p class="text-muted {{ nft.Rarity[1] }}">{{ nft.Rarity[0] }}</p>
                                 <p>Created the {{ nft.created|replace(" ", " at ") }}</p>
+                                {% if can_edit %}
+                                    {% if nft.pending %}
+                                        <p>This NFT is not in your wallet yet. You cant list it on the market</p>
+                                    {% else %}
+
+                                        <!-- [1:] removes the # (because nft.id is given as "#1" -->
+                                        <div id="nft-listed-{{ nft.id[1:] }}" style="display: {{ 'block' if nft.listed else 'none' }}">
+                                            <p>This NFT is listed on the market</p>
+                                            <a class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#confirmationModal" onclick="confirmRemoveListing('{{ nft.id[1:] }}', '{{ url_for("api.unlist_nft", nft_id=nft.id[1:]) }}')">Remove</a>
+                                        </div>
+
+                                        <div id="nft-list-{{ nft.id[1:] }}" class="nft-listing" style="display: {{ 'block' if not nft.listed else 'none' }}">
+                                            <p>You can try to list this NFT on the market</p>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control me-1" placeholder="Price" step="0.01" min="0.1" max="5000.0" id="priceInput-{{ nft.id[1:] }}">
+                                                <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#confirmationModal" onclick="confirmListing('{{ nft.id[1:] }}', '{{ url_for('api.list_nft', nft_id=nft.id[1:]) }}')">List</button>
+                                            </div>
+                                        </div>
+
+                                    {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>

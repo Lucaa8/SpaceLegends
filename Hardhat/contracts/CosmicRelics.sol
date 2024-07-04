@@ -64,6 +64,7 @@ contract CosmicRelic is ERC721, ERC721Burnable, Ownable {
 		_tokenType[tokenId] = tokenType;
     }
 	
+    // This method should clear _ownershipHistory for this tokenId. Otherwise, when a new token is created with this id, it would carry the older token's history
 	// This method override the ERC721Burnable#burn method to decrement _totalSupply is burn call is successfull
     function burn(uint256 tokenId) public override {
 		require(exists(tokenId), "ERC721Burn: burn query for nonexistent token");

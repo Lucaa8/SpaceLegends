@@ -169,3 +169,26 @@
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
 }
+
+.nft-listing .input-group .form-control {
+    flex-grow: 1;
+    max-width:70%;
+}
+
+.nft-listing .input-group .btn {
+    flex-grow: 1;
+    max-width: 30%;
+}
+
+.nft-listing .input-group .form-control,
+.nft-listing .input-group .btn {
+    height: 34px;
+}
+
+.nft-listing .input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+}
+

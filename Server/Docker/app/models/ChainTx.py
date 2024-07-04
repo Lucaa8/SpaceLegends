@@ -19,10 +19,14 @@ class ChainTx(db.Model):
     gas_price = db.Column(db.Float, nullable=True, server_default='0.0')
 
     @staticmethod
-    def get_all_unsent():
+    def get_all_unsent(from_addr=None):
         try:
             with flask_app.app_context():
-                return db.session.execute(select(ChainTx).filter_by(sent_at=None)).all()
+                if from_addr is None:
+                    stmt = select(ChainTx).filter_by(sent_at=None)
+                else:
+                    stmt = select(ChainTx).filter_by(sent_at=None, from_address=from_addr)
+                return db.session.execute(stmt).all()
         except Exception as e:
             print(f"An unknown error occurred while fetching all unsent transactions: {e}")
         return list()

@@ -31,6 +31,7 @@ class NFT(db.Model):
         data = nft.to_metadata()
         data['id'] = f"#{self.id}"
         data['listed'] = self.is_listed
+        data['pending'] = self.is_pending
         # Could be fetched on the chain but the profile load during 2-3 seconds and thats bad. For chain fetched information look at the token explorer.
         data['created'] = self.created_at
         for attr in data['attributes']:

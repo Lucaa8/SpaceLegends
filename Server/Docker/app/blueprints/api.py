@@ -290,10 +290,54 @@ def get_resources():
         'resources': {
             'sdt': user.money_sdt,
             'heart': user.money_heart,
-            'eth': chain.cosmic.get_balance_eth(user.wallet_address),
+            'eth': chain.cosmic.get_available_eth(user),
             'perks': user.get_active_perks()
         },
         'levels': progression
     }
 
     return jsonify(result), 200
+
+
+@api_bp.route('/list-nft/<int:nft_id>', methods=['PUT'])
+@jwt_required()
+def list_nft(nft_id: int):
+    if not ("price" in request.json):
+        return jsonify(message="Missing price"), 400
+    try:
+        price = float(request.json["price"])
+        if price < 0.1 or price >= 5000.0:
+            raise ValueError("")
+    except ValueError:
+        return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 5000.0 (exclusive)"), 400
+    from models.NFT import NFT
+    result = NFT.can_list_on_market(current_user.id, nft_id)
+    if result == 'OK':
+        if NFT.list_on_market(current_user.id, nft_id, price):
+            return '', 204
+        return jsonify(message="An unknown error prevented your listing to be added on the market"), 400
+    return jsonify(message=result), 400
+
+
+@api_bp.route('/unlist-nft/<int:nft_id>', methods=['DELETE'])
+@jwt_required()
+def unlist_nft(nft_id: int):
+    from models.MarketListing import MarketListing
+    if MarketListing.remove_listing(current_user.id, nft_id):
+        return '', 204
+    return jsonify(message="Failed to remove the listing for this NFT. Are you sure it's not already sold or cancelled and the listing is yours?"), 400
+
+
+@api_bp.route('/buy-nft/<int:nft_id>', methods=['POST'])
+@jwt_required()
+def buy_nft(nft_id: int):
+    from models.NFT import NFT
+    try:
+        result = NFT.buy(current_user.id, nft_id)
+        if result == 'OK':
+            return '', 204
+    except Exception as e:
+        result = "An error occurred while buying your NFT. Please try again."
+        print(f"An error occurred while an user (user.id=={current_user.id}) tried to buy a NFT (nft.id=={nft_id}) on the market. Error: {str(e)}")
+    return jsonify(message=result), 400
+
