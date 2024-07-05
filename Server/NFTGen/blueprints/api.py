@@ -36,6 +36,21 @@ def get_metadata(token_id):
     return jsonify(meta), 200
 
 
+@api_bp.route('/history/<int:token_id>', methods=['GET'])
+def get_history(token_id: int):
+    if not chain.cosmic.is_valid():
+        return jsonify(message='API not initialized.'), 500
+    from models.NFT import NFT
+    if not NFT.is_token_minted(token_id):
+        return jsonify(message='Item not found'), 404
+    try:
+        ownership_history = chain.cosmic.get_ownership_history(token_id)
+        return jsonify(ownership_history), 200
+    except Exception as e:
+        print("Something went wrong while fetching the history of NFT " + str(token_id) + ". Error: " + str(e))
+        return jsonify(message="Something went wrong while fetching the history of NFT " + str(token_id)), 500
+
+
 @api_bp.route('/verification/<code>', methods=['GET'])
 def verification(code: str):
     from models import User
@@ -255,6 +270,12 @@ def increment_deaths():
     except Exception as e:
         print(f"Something went wrong while updating deaths in user progress of user.id=={current_user.id} and level_id=={game.level_id}: {str(e)}")
         return jsonify(message="Failed to deaths kills"), 400
+
+
+@api_bp.route('/money-sdt', methods=['GET'])
+@jwt_required()
+def get_money_sdt():
+    return jsonify(money=current_user.money_sdt), 200
 
 
 @api_bp.route('/user', methods=['GET'])

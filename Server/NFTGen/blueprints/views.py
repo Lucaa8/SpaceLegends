@@ -1,3 +1,4 @@
+import base64
 import json
 
 from flask import render_template, session, redirect, url_for
@@ -45,7 +46,8 @@ def market():
         listing = listing.as_json()
         listing['nft']['created'] = listing['nft']['created'].isoformat()
         listings.append(listing)
-    return render_template('market.html', listings=listings, json_listings=json.dumps(listings))
+    encoded = base64.b64encode(json.dumps(listings).encode())
+    return render_template('market.html', listings=listings, json_listings=encoded.decode())
 
 
 @views_bp.route('/register')
