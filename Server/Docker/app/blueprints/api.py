@@ -1,11 +1,9 @@
-from typing import Tuple
-
-import flask
-from flask import jsonify, redirect, url_for, request, Response
+from flask import jsonify, redirect, url_for, request
 from flask.blueprints import Blueprint
 from flask_jwt_extended import jwt_required, current_user
 from collection import Item, get_item, collections
 import chain
+import smtp_service
 from utils import save_profile_pic, delete_profile_pic
 from threading import Thread
 
@@ -34,6 +32,21 @@ def get_metadata(token_id):
     meta['ownership_history'] = ownership_history
     meta['rarity'] = item.format_rarity()
     return jsonify(meta), 200
+
+
+@api_bp.route('/history/<int:token_id>', methods=['GET'])
+def get_history(token_id: int):
+    if not chain.cosmic.is_valid():
+        return jsonify(message='API not initialized.'), 500
+    from models.NFT import NFT
+    if not NFT.is_token_minted(token_id):
+        return jsonify(message='Item not found'), 404
+    try:
+        ownership_history = chain.cosmic.get_ownership_history(token_id)
+        return jsonify(ownership_history), 200
+    except Exception as e:
+        print("Something went wrong while fetching the history of NFT " + str(token_id) + ". Error: " + str(e))
+        return jsonify(message="Something went wrong while fetching the history of NFT " + str(token_id)), 500
 
 
 @api_bp.route('/verification/<code>', methods=['GET'])
@@ -257,6 +270,12 @@ def increment_deaths():
         return jsonify(message="Failed to deaths kills"), 400
 
 
+@api_bp.route('/money-sdt', methods=['GET'])
+@jwt_required()
+def get_money_sdt():
+    return jsonify(money=current_user.money_sdt), 200
+
+
 @api_bp.route('/user', methods=['GET'])
 @jwt_required()
 def get_resources():
@@ -306,10 +325,10 @@ def list_nft(nft_id: int):
         return jsonify(message="Missing price"), 400
     try:
         price = float(request.json["price"])
-        if price < 0.1 or price >= 5000.0:
+        if price < 0.1 or price >= 500.0:
             raise ValueError("")
     except ValueError:
-        return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 5000.0 (exclusive)"), 400
+        return jsonify(message="Price must be a decimal number between 0.1 (inclusive) and 500.0 (exclusive)"), 400
     from models.NFT import NFT
     result = NFT.can_list_on_market(current_user.id, nft_id)
     if result == 'OK':
@@ -333,8 +352,10 @@ def unlist_nft(nft_id: int):
 def buy_nft(nft_id: int):
     from models.NFT import NFT
     try:
-        result = NFT.buy(current_user.id, nft_id)
-        if result == 'OK':
+        # NFT#buy returns a str with the error if something went wrong. Returns the seller otherwise.
+        result = NFT.buy(current_user, nft_id)
+        if type(result) is not str:
+            smtp_service.smtp_service.send_listing_bought_email(result, current_user.username, nft_id)
             return '', 204
     except Exception as e:
         result = "An error occurred while buying your NFT. Please try again."

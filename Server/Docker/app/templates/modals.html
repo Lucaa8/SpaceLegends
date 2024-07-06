@@ -1,4 +1,4 @@
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,8 +6,9 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to do this?</p>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="f()">Confirm</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <p id="confirmation-note" style="display: none">Note</p>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="_confirmationClick()">Confirm</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="_resetConfirmationNote()">Cancel</button>
             </div>
         </div>
     </div>
@@ -17,5 +18,21 @@
     let f = async function()
     {
         console.log("confirm function has not been set yet.");
+    }
+    const note = document.getElementById('confirmation-note');
+    function setConfirmationNote(txt)
+    {
+        note.innerText = txt;
+        note.style.display = 'block';
+    }
+    function _resetConfirmationNote()
+    {
+        note.style.display = 'none';
+        note.innerText = "Note";
+    }
+    function _confirmationClick()
+    {
+        f();
+        _resetConfirmationNote();
     }
 </script>

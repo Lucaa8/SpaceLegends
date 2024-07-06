@@ -1,5 +1,6 @@
 from database import db
 from sqlalchemy import func
+from flask import url_for
 
 
 class MarketListing(db.Model):
@@ -14,6 +15,30 @@ class MarketListing(db.Model):
     cancelled = db.Column(db.Boolean, nullable=False, server_default='0')
 
     nft = db.relationship('NFT', backref='nft_item', lazy=True)
+
+    def as_json(self):
+        from models.User import User
+        author: User = User.get_user_by_id(user_id=self.user_id)
+        return {
+            'author': {
+                'name': author.username,
+                'profile': url_for('views.user_profile', username=author.username)
+            },
+            'added_time': self.added_time.isoformat(),
+            'price': self.price,
+            'nft': self.nft.as_complete_nft()
+        }
+
+    @staticmethod
+    def get_all_valid_listings():
+        try:
+            return db.session.query(MarketListing).filter(
+                MarketListing.bought_time == None,  # Has not already ended
+                MarketListing.cancelled == False  # Has not been cancelled by the user
+            ).all()
+        except Exception as e:
+            print(f"Error while getting all market listings. Error: {str(e)}")
+            return []
 
     @staticmethod
     def add_listing(user_id, nft_id, price) -> bool:

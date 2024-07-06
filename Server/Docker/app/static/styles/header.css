@@ -25,3 +25,11 @@ img {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+.modal-backdrop.show {
+    z-index: 1040;
+}
+
+.modal.show {
+    z-index: 1050;
+}

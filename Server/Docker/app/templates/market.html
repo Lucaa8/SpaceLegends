@@ -1,7 +1,177 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <link href="{{ url_for('static', filename='styles/download.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles/explorer.css') }}" rel="stylesheet"> <!-- Needed for rarity classes and cards -->
 {% endblock %}
 {% block content %}
-    <h1>Marketplace page</h1>
+
+    <!-- Modal -->
+    <div class="modal fade bg-dark bg-opacity-50" id="nftModal" tabindex="-1" aria-labelledby="nftModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="nftModalLabel">NFT Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <!-- Image and Description -->
+                <div class="col-md-6">
+                  <img id="listing-nft-img" alt="NFT Image" class="img-fluid">
+                  <div class="mt-3">
+                    <h5 id="listing-nft-name">NFT name</h5>
+                    <p id="listing-nft-rarity" style="margin-bottom: 5px" class="text-muted">Rarity</p>
+                    <p id="listing-nft-description">Description</p>
+                  </div>
+                </div>
+
+                <!-- Details -->
+                <div class="col-md-6">
+                  <div class="row text-center">
+                    <div class="col-6">
+                      <h6>Collection</h6>
+                      <p id="listing-nft-collection">The Earth Collection</p>
+                    </div>
+                    <div class="col-3">
+                      <h6>Row</h6>
+                      <p id="listing-nft-row">3</p>
+                    </div>
+                    <div class="col-3">
+                      <h6>Column</h6>
+                      <p id="listing-nft-col">1</p>
+                    </div>
+                  </div>
+                  <div class="row text-center">
+                    <div class="col-6">
+                      <h6>NFT Creation Date</h6>
+                      <p id="listing-nft-created">2024-04-01 at 12:30:00</p>
+                    </div>
+                    <div class="col-3">
+                      <h6>Seller</h6>
+                      <p id="listing-seller">lucaa_8</p>
+                    </div>
+                    <div class="col-3">
+                      <h6>Price</h6>
+                      <p id="listing-price">1.234 SDT</p>
+                    </div>
+                  </div>
+                  <div class="row text-center">
+                    <div class="col-12">
+                      <h6>Ownership History</h6>
+                      <div class="overflow-auto" style="max-height: 200px;">
+                        <ul id="listing-nft-history" class="list-unstyled">
+
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <p id="user-sdt" >(You have ... SDT)</p>
+            <button id="listing-buy-btn" type="button" class="btn btn-primary">Buy</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid" style="min-height: 100vh">
+        <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="height: 30vh;">
+            <div>
+                <h1>Welcome to the Galactic Market</h1>
+                <p>Here, you can explore a variety of listings where players showcase their unique relics.</p>
+            </div>
+        </section>
+        <section class="container mt-4">
+            <div class="row">
+                <div class="col-12 text-center mb-3">
+                    <p id="listings-count" class="text-muted">There are {{ listings|length }} relics listed for sale.</p>
+                </div>
+            </div>
+            <div class="row align-items-center justify-content-center">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <label for="maxPrice" class="form-label">Max Price: <span id="priceValue">500.0</span></label>
+                    <input type="range" class="form-range" id="maxPrice" min="0.1" max="500.0" step="0.1" value="500.0">
+                </div>
+                <div class="col-lg-auto col-md-auto col-sm-auto mb-3 px-1">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="collectionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            All Collections
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-c="-1">All Collections</a></li>
+                            <li><a class="dropdown-item" data-c="0">The Earth Collection</a></li>
+                            <li><a class="dropdown-item" data-c="1">The Mars Collection</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-auto col-md-auto col-sm-auto mb-3 px-1">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Row Any | Col Any
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-r="-1" data-c="-1">Row Any | Col Any</a></li>
+                            <li><a class="dropdown-item" data-r="1" data-c="1">Row 1 | Col 1</a></li>
+                            <li><a class="dropdown-item" data-r="1" data-c="2">Row 1 | Col 2</a></li>
+                            <li><a class="dropdown-item" data-r="1" data-c="3">Row 1 | Col 3</a></li>
+                            <li><a class="dropdown-item" data-r="2" data-c="1">Row 2 | Col 1</a></li>
+                            <li><a class="dropdown-item" data-r="2" data-c="2">Row 2 | Col 2</a></li>
+                            <li><a class="dropdown-item" data-r="2" data-c="3">Row 2 | Col 3</a></li>
+                            <li><a class="dropdown-item" data-r="3" data-c="1">Row 3 | Col 1</a></li>
+                            <li><a class="dropdown-item" data-r="3" data-c="2">Row 3 | Col 2</a></li>
+                            <li><a class="dropdown-item" data-r="3" data-c="3">Row 3 | Col 3</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-auto col-md-auto col-sm-auto mb-3 px-1">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="rarityDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            All Rarities
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item">All Rarities</a></li>
+                            <li><a class="dropdown-item">Common</a></li>
+                            <li><a class="dropdown-item">Rare</a></li>
+                            <li><a class="dropdown-item">Epic</a></li>
+                            <li><a class="dropdown-item">Legendary</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <div class="container mt-4">
+            <div class="row">
+                {% for listing in listings %}
+                    {% set nft = listing.nft %}
+                    {% set nft_id = nft.id[1:] %}
+                    <div class="col-lg-4 col-md-6 col-12 mb-4" id="listing-{{ nft_id }}" data-bs-toggle="modal" data-bs-target="#nftModal" onclick="listingClick('{{ nft.id }}')">
+                        <div class="card h-100">
+                            <img src="{{ nft.image }}" class="card-img-top" alt="title">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ nft.name }} {{ nft.id }}</h5>
+                                <p style="margin-bottom: 5px">Row {{ nft["Image Row"] }} | Col {{ nft["Image Column"] }}</p>
+                                <p style="margin-bottom: 5px" class="text-muted {{ nft.Rarity[1] }}">{{ nft.Rarity[0] }}</p>
+                                <p>Price : {{ listing.price }} SDT</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <h2 id="empty" style="display: {{ 'block' if listings|length == 0 else 'none' }}; text-align: center">Nothing to show...</h2>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts/market.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initListings('{{ json_listings }}');
+        });
+    </script>
+
 {% endblock %}

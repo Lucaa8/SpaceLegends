@@ -1,11 +1,9 @@
-from typing import Tuple
-
-import flask
-from flask import jsonify, redirect, url_for, request, Response
+from flask import jsonify, redirect, url_for, request
 from flask.blueprints import Blueprint
 from flask_jwt_extended import jwt_required, current_user
 from collection import Item, get_item, collections
 import chain
+import smtp_service
 from utils import save_profile_pic, delete_profile_pic
 from threading import Thread
 
@@ -354,8 +352,10 @@ def unlist_nft(nft_id: int):
 def buy_nft(nft_id: int):
     from models.NFT import NFT
     try:
-        result = NFT.buy(current_user.id, nft_id)
-        if result == 'OK':
+        # NFT#buy returns a str with the error if something went wrong. Returns the seller otherwise.
+        result = NFT.buy(current_user, nft_id)
+        if type(result) is not str:
+            smtp_service.smtp_service.send_listing_bought_email(result, current_user.username, nft_id)
             return '', 204
     except Exception as e:
         result = "An error occurred while buying your NFT. Please try again."

@@ -80,37 +80,35 @@ class NFT(db.Model):
         return "OK"
 
     @staticmethod
-    def buy(user_id, nft_id) -> str:
+    def buy(buyer, nft_id) -> 'str | Any':
         from models.MarketListing import MarketListing
         listing = MarketListing.find_by_nft(nft_id)
         if listing is None:
             return "This listing does not exist, has been removed or already bought."
-        if listing.nft.user_id == user_id:
+        if listing.nft.user_id == buyer.id:
             return "You cant buy your own NFT!"
-        from models.User import User
-        buyer: User = User.get_user_by_id(user_id)
-        if buyer is None:
-            return "Failed to get the user buyer."
         if buyer.money_sdt < listing.price:
             return f"Buyer has not enough money (Buyer has {buyer.money_sdt} but price is {listing.price})"
         # Removes money to buyer
+        db.session.add(buyer)
         buyer.money_sdt -= listing.price
         db.session.commit()
         # Adds money to vendor
+        from models.User import User
         vendor: User = User.get_user_by_id(listing.user_id)
         vendor.money_sdt += listing.price
         db.session.commit()
         # Closes the listing and change NFT owner
         db.session.add(listing)
-        listing.bought_by = user_id
+        listing.bought_by = buyer.id
         listing.bought_time = datetime.utcnow()
         listing.nft.is_listed = False
         listing.nft.is_pending = True # Is not listed anymore but is_pending until the nft is in the buyer wallet. Needed so new buyer cant list this nft before receiving it
-        listing.nft.user_id = user_id
+        listing.nft.user_id = buyer.id
         db.session.commit()
         from chain import cosmic
         cosmic.transfer_nft(vendor, buyer, nft_id)
-        return 'OK'
+        return vendor
 
     @staticmethod
     def on_buy(token_id):

@@ -61,6 +61,19 @@ class SMTPServer:
         """
         return self.send_email(user.email, sub, body)
 
+    def send_listing_bought_email(self, seller, buyer_username, nft_id) -> bool:
+        sub = f"{seller.username}, you sold a NFT on the market!"
+        body = f"""
+        <html>
+            <body>
+                <h3>Hello {seller.display_name},</h3>
+                <p><a href="https://space-legends.luca-dc.ch/profile/{buyer_username}">{buyer_username}</a> bought the NFT #{nft_id} you listed on the market!</p>
+                <p>Best regards,<br>The Space Legends Team</p>
+            </body>
+        </html>
+        """
+        return self.send_email(seller.email, sub, body)
+
 
 smtp_service: SMTPServer | None = None
 

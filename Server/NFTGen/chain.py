@@ -41,15 +41,15 @@ class CosmicRelic:
 
     def check_gas_price(self):
         self.working = True
-        from models.ChainTx import ChainTx
         current_gas_price = self.w3.eth.gas_price + self.w3.to_wei(3, 'gwei')
+        from models.ChainTx import ChainTx
         txs = ChainTx.get_all_unsent()
         print(f"[{datetime.now()}] There are {len(txs)} queued transactions. Current Gas price [Gwei]: {self.w3.from_wei(current_gas_price, 'gwei')}")
         for tx in txs:
             try:
                 self.send_tx(tx[0], current_gas_price)
             except Exception as e:
-                print(f"Something went wrong while trying to send the transaction chain_tx.id=={tx.id} with the following data: {tx.tx}. Error: {str(e)}")
+                print(f"Something went wrong while trying to send the transaction chain_tx.id=={tx[0].id} with the following data: {tx[0].tx}. Error: {str(e)}")
         self.working = False
 
     def send_tx(self, tx, gas_price: int):
