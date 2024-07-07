@@ -97,8 +97,8 @@ class CosmicRelic:
     def mint_sdt(self, addr_to: str, amount_sdt_ether: float) -> None:
         from models.ChainTx import ChainTx
         addr_to = self.w3.to_checksum_address(addr_to)
-        # I directly call the mint function with ether value as the mint function of the contract convert them to wei
-        ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'sdt', 'mint', (addr_to, amount_sdt_ether))
+        amount_to_wei = self.w3.to_wei(amount_sdt_ether, 'ether')
+        ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'sdt', 'mint', (addr_to, amount_to_wei))
 
     def transfer_sdt(self, user_from, user_to, amount_sdt_ether: float) -> None:
         from models.ChainTx import ChainTx
@@ -132,6 +132,18 @@ class CosmicRelic:
             print(f"Transaction for token.id=={token_id} has been transferred successfully.")
         except Exception as e:
             print(f"CosmicRelic.event_transfer failed to transfer token with id=={token_id}: {str(e)}")
+
+    @staticmethod
+    def event_sdt_mint(args: tuple) -> None:
+        print(f"Mint transaction of {cosmic.w3.from_wei(args[1], 'ether')} SDT for address={args[0]} has been completed successfully.")
+
+    @staticmethod
+    def event_sdt_burn(args: tuple) -> None:
+        print(f"Burn transaction of {cosmic.w3.from_wei(args[0], 'ether')} SDT has been completed successfully.")
+
+    @staticmethod
+    def event_sdt_transfer(args: tuple) -> None:
+        print(f"Transfer transaction of {cosmic.w3.from_wei(args[1], 'ether')} SDT to address={args[0]} has been completed successfully.")
 
     def check_address(self, address: str) -> bool:
         return self.w3.is_address(address) and self.w3.is_checksum_address(address)
