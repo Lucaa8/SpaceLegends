@@ -14,17 +14,21 @@ from web3.exceptions import ContractLogicError
 
 
 class CosmicRelic:
-    def __init__(self, alchemy_key: str, contract_address: str, contract_abi_path: str):
+    def __init__(self, alchemy_key: str, nft_abi_path: str, sdt_abi_path: str):
         self._alchemy = f'https://eth-sepolia.g.alchemy.com/v2/{alchemy_key}'
         self.w3 = Web3(Web3.HTTPProvider(self._alchemy))
         assert self.w3.is_connected()
         self.account = Account.from_key(os.getenv("PRIVATE_KEY"))
-        cs_contract_address = self.w3.to_checksum_address(contract_address)
-        with open(contract_abi_path, 'r', encoding='utf-8') as f:
-            contract_abi = json.load(f)
-        assert contract_abi is not None
-        self.crel = self.w3.eth.contract(address=cs_contract_address, abi=contract_abi)
-        self.max_fee: float = float(os.getenv("MAX_ETH_GAS_FEE"))
+        with open(nft_abi_path, 'r', encoding='utf-8') as f:
+            nft_contract_abi = json.load(f)
+        assert nft_contract_abi is not None
+        with open(sdt_abi_path, 'r', encoding='utf-8') as f:
+            sdt_contract_abi = json.load(f)
+        assert sdt_contract_abi is not None
+        self.crel = self.w3.eth.contract(address=self.w3.to_checksum_address(os.getenv("NFT_ADDRESS")), abi=nft_contract_abi)
+        self.sdt = self.w3.eth.contract(address=self.w3.to_checksum_address(os.getenv("SDT_ADDRESS")), abi=sdt_contract_abi)
+        self.max_fee_crl: float = float(os.getenv("MAX_ETH_GAS_FEE_CRL")) # e.g. 0.005, so nft mint action ~180'000 gas is limited to 29 gwei
+        self.max_fee_sdt: float = float(os.getenv("MAX_ETH_GAS_FEE_SDT")) # e.g. 0.0011, so sdt mint action ~40'000 gas is limited to 29 gwei too.
         self.working = False
         schedule.every(5).minutes.do(self.check_gas_price)
 
@@ -65,8 +69,9 @@ class CosmicRelic:
         func_txn.update({'gas': gas})
 
         price_eth = self.w3.from_wei(gas * gas_price, 'ether')
+        max_fee = self.max_fee_crl if tx.tx_type == 'crel' else self.max_fee_sdt
 
-        if price_eth <= self.max_fee:
+        if price_eth <= max_fee:
             signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=decrypt_wallet_key(tx.from_pkey))
             tx.sent()
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
@@ -77,15 +82,32 @@ class CosmicRelic:
     def mint_nft(self, addr_to: str, uid_to: str, token_id: int, token_type: int) -> None:
         from models.ChainTx import ChainTx
         addr_to = self.w3.to_checksum_address(addr_to)
-        ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'mint', (addr_to, uid_to, token_id, token_type))
+        ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'crel', 'mint', (addr_to, uid_to, token_id, token_type))
 
     def transfer_nft(self, user_from, user_to, token_id: int) -> None:
         from models.ChainTx import ChainTx
         addr_to = self.w3.to_checksum_address(user_to.wallet_address)
-        ChainTx.add_tx(user_from.wallet_address, user_from.wallet_key, 'safeTransfer', (token_id, addr_to, user_to.username))
+        ChainTx.add_tx(user_from.wallet_address, user_from.wallet_key, 'crel', 'safeTransfer', (token_id, addr_to, user_to.username))
+
+    def burn_sdt(self, user_from, amount_sdt_ether: float) -> None:
+        from models.ChainTx import ChainTx
+        amount_to_wei = self.w3.to_wei(amount_sdt_ether, 'ether')
+        ChainTx.add_tx(user_from.wallet_address, user_from.wallet_key, 'sdt', 'burn', (amount_to_wei,))
+
+    def mint_sdt(self, addr_to: str, amount_sdt_ether: float) -> None:
+        from models.ChainTx import ChainTx
+        addr_to = self.w3.to_checksum_address(addr_to)
+        # I directly call the mint function with ether value as the mint function of the contract convert them to wei
+        ChainTx.add_tx(self.account.address, encrypt_wallet_key(self.account.key.hex()), 'sdt', 'mint', (addr_to, amount_sdt_ether))
+
+    def transfer_sdt(self, user_from, user_to, amount_sdt_ether: float) -> None:
+        from models.ChainTx import ChainTx
+        addr_to = self.w3.to_checksum_address(user_to.wallet_address)
+        amount_to_wei = self.w3.to_wei(amount_sdt_ether, 'ether')
+        ChainTx.add_tx(user_from.wallet_address, user_from.wallet_key, 'sdt', 'transfer', (addr_to, amount_to_wei))
 
     @staticmethod
-    def event_mint(args: tuple) -> None:
+    def event_crel_mint(args: tuple) -> None:
         if args is None or len(args) < 4:
             print("CosmicRelic.event_mint rejected invalid arguments transaction")
             return
@@ -99,7 +121,7 @@ class CosmicRelic:
 
     # A tester!!
     @staticmethod
-    def event_safeTransfer(args: tuple) -> None:
+    def event_crel_safeTransfer(args: tuple) -> None:
         if args is None or len(args) < 3:
             print("CosmicRelic.event_transfer rejected invalid arguments transaction")
             return
@@ -126,13 +148,26 @@ class CosmicRelic:
         eth = self._get_balance_eth(user.wallet_address)
         if eth < 0:
             return -1
+        # Every current available nft listing on the market count as a potential transfer for this user so I remove max_fee_crl for each one
         from models.MarketListing import MarketListing
         count = MarketListing.find_valid_listings_count(user.id)
+        available_eth = eth - (count * self.max_fee_crl)
+        # Every current pending transaction (transaction is waiting for the gwei to be low enough to send it to the chain) needs to be counted as potential maximum send fee
         from models.ChainTx import ChainTx
         unsent = ChainTx.get_all_unsent(from_addr=user.wallet_address)
-        count += len(unsent) if unsent is not None else 0
-        reserved_eth = count * self.max_fee
-        return max(0.0, eth - reserved_eth)
+        for tx in unsent:
+            available_eth -= self.max_fee_crl if tx.tx_type == 'crel' else self.max_fee_sdt
+        return max(0.0, available_eth)
+
+    def get_balance_sdt(self, address: str) -> float:
+        if not self.check_address(address):
+            return -1
+        try:
+            amount_wei = self.sdt.functions.__getitem__("balanceOf")(address).call()
+            return self.w3.from_wei(amount_wei, 'ether')
+        except ContractLogicError as logic:
+            print(f"[chain.py get_balance_sdt] A Contract Logic error occurred while trying to call the function balanceOf with address {address}:")
+            print(logic)
 
     def is_valid(self):
         return self.crel is not None
@@ -159,4 +194,4 @@ cosmic: CosmicRelic | None = None
 
 def load():
     global cosmic
-    cosmic = CosmicRelic(os.getenv("ALCHEMY_API_KEY"), os.getenv("NFT_ADDRESS"), 'contracts/crel.json')
+    cosmic = CosmicRelic(os.getenv("ALCHEMY_API_KEY"), 'contracts/crel.json', 'contracts/sdt.json')

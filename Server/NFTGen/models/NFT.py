@@ -57,8 +57,8 @@ class NFT(db.Model):
             return f"User with id {user_id} not found"
         from chain import cosmic
         eth: float = cosmic.get_available_eth(vendor)
-        if eth < cosmic.max_fee:
-            return f"You need at least {cosmic.max_fee} SETH to be able to list a NFT on the market (Gas fee). You have {eth} SETH on your account."
+        if eth < cosmic.max_fee_crl:
+            return f"You need at least {cosmic.max_fee_crl} SETH to be able to list a NFT on the market (Gas fee). You have {eth} SETH on your account."
         nft = db.session.query(NFT).filter(NFT.id == nft_id).first()
         if nft is None or nft.user_id != user_id or not nft.is_minted:
             return f"The NFT with id {nft_id} does not exist or is not yours."

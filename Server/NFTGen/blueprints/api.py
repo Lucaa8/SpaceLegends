@@ -362,3 +362,15 @@ def buy_nft(nft_id: int):
         print(f"An error occurred while an user (user.id=={current_user.id}) tried to buy a NFT (nft.id=={nft_id}) on the market. Error: {str(e)}")
     return jsonify(message=result), 400
 
+
+@api_bp.route('/sync-sdt', methods=['POST'])
+@jwt_required()
+def sync_sdt():
+    from chain import cosmic
+    from models.User import User
+    #current_sdt = current_user.money_sdt
+    #chain_sdt = cosmic.get_balance_sdt(current_user.wallet_address)
+    #diff = current_sdt - chain_sdt
+    cosmic.mint_sdt(User.get_user_by_id(2).wallet_address, 2.34)
+    cosmic.burn_sdt(User.get_user_by_id(2), 1.1112)
+    return jsonify(message='ok'), 200
