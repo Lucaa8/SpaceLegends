@@ -32,6 +32,7 @@ if not os.path.isdir(f"static/{utils.PROFILE_PIC_FOLDER}"):
 
 # Inject the function format_number in the jinja2 environment. Now this function can be called inside templates (if used with render_template)
 app.jinja_env.filters['format_number'] = lambda value: f"{value:,}".replace(",", "'")
+app.jinja_env.filters['round'] = lambda value: float(round(value, 2))
 
 
 @app.errorhandler(404)

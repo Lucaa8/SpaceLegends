@@ -17,12 +17,12 @@ contract StarDust is ERC20, ERC20Burnable, Ownable {
         _mint(to, amount);
     }
     
-    // Recover tokens accidentally sent to the contract
-    // This function allows the contract owner to recover ERC20 tokens that were sent to this contract address by mistake.
-    // This can be crucial in preventing accidental loss of tokens and provides a way to return them to their rightful owner.
-    function recoverToken(address tokenAddress, uint256 tokenAmount) public onlyOwner {
-        require(tokenAmount > 0, "Amount must be greater than 0");
-        IERC20(tokenAddress).transfer(owner(), tokenAmount);
+    // Allows the owner of the contract to burn tokens from a specified address
+    // This is to avoid any account to pay gas fee for a SDT sync between their player account and their wallet
+    // If the game shuts down, the owner must renounceOwnership on this contract and this function cant be used anymore :)
+    function burnFor(address account, uint256 amount) public onlyOwner {
+        require(balanceOf(account) >= amount, "Insufficient balance to burn");
+        _burn(account, amount);
     }
 	
 }

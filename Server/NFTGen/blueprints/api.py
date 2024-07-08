@@ -367,10 +367,21 @@ def buy_nft(nft_id: int):
 @jwt_required()
 def sync_sdt():
     from chain import cosmic
-    from models.User import User
-    #current_sdt = current_user.money_sdt
-    #chain_sdt = cosmic.get_balance_sdt(current_user.wallet_address)
-    #diff = current_sdt - chain_sdt
-    cosmic.mint_sdt(User.get_user_by_id(2).wallet_address, 2.34)
-    cosmic.burn_sdt(User.get_user_by_id(2), 1.1112)
-    return jsonify(message='ok'), 200
+    current_sdt = current_user.money_sdt
+    chain_sdt = cosmic.get_balance_sdt(current_user.wallet_address)
+    diff = float(current_sdt) - float(chain_sdt)
+    # If the difference between the wallet and the user's sdt in the database is smaller than 5 then I reject the sync.
+    # Otherwise, players could earn 0.03 sdt in a level, sync, earn 0.03 sdt, sync, etc... and my wallet would be at 0 eth in like 1 day
+    if abs(diff) <= 5:
+        return jsonify(message=f"You must have an absolute difference of 5 minimum to be able to synchronize your SDT. Current difference: {abs(diff)} SDT"), 400
+    from models.ChainTx import ChainTx
+    unsent = ChainTx.get_all_unsent(current_user.wallet_address)
+    if unsent is not None and len(unsent) > 0:
+        for tx in unsent:
+            if tx[0].tx_type == 'sdt':
+                return jsonify(message=f"You already have a synchronization in progress."), 400
+    if diff > 0:
+        cosmic.mint_sdt(current_user.wallet_address, diff)
+    else:
+        cosmic.burnFor_sdt(current_user.wallet_address, abs(diff))
+    return jsonify(message="StarDust synchronization started successfully."), 200
