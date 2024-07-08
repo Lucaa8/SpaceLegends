@@ -63,3 +63,13 @@ async function changePassword(url) {
     }
 
 }
+
+async function confirmSync(url)
+{
+    f = async function()
+    {
+        const response = await authenticatedRequest(url, { method: 'POST' });
+        await _displayResult(response);
+    }
+    setConfirmationNote('(Please note that it may take up to 24 hours for the updated SDT amount to be visible on Etherscan or any block explorator)');
+}

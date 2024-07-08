@@ -33,6 +33,15 @@ class ChainTx(db.Model):
         return list()
 
     @staticmethod
+    def get_all_sdt_unsent():
+        try:
+            with flask_app.app_context():
+                return db.session.execute(select(ChainTx).filter_by(sent_at=None, tx_type='sdt')).all()
+        except Exception as e:
+            print(f"An unknown error occurred while fetching all unsent transactions: {e}")
+        return list()
+
+    @staticmethod
     def add_tx(wallet_addr: str, wallet_pkey: str, tx_type: str, tx_func: str, tx_args: tuple) -> None:
         args = [tx_func,]
         for arg in tx_args:

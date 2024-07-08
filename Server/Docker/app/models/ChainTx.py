@@ -14,6 +14,7 @@ class ChainTx(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
     sent_at = db.Column(db.DateTime, nullable=True)
     completed_at = db.Column(db.DateTime, nullable=True)
+    tx_type = db.Column(db.String(4), nullable=False) # Either sdt or crel
     tx = db.Column(db.String(1024), unique=False, nullable=False)
     gas = db.Column(db.BigInteger, nullable=True, server_default='0')
     gas_price = db.Column(db.Float, nullable=True, server_default='0.0')
@@ -32,7 +33,16 @@ class ChainTx(db.Model):
         return list()
 
     @staticmethod
-    def add_tx(wallet_addr: str, wallet_pkey: str, tx_func: str, tx_args: tuple) -> None:
+    def get_all_sdt_unsent():
+        try:
+            with flask_app.app_context():
+                return db.session.execute(select(ChainTx).filter_by(sent_at=None, tx_type='sdt')).all()
+        except Exception as e:
+            print(f"An unknown error occurred while fetching all unsent transactions: {e}")
+        return list()
+
+    @staticmethod
+    def add_tx(wallet_addr: str, wallet_pkey: str, tx_type: str, tx_func: str, tx_args: tuple) -> None:
         args = [tx_func,]
         for arg in tx_args:
             args.append(arg)
@@ -40,7 +50,7 @@ class ChainTx(db.Model):
         b64_args: str = base64.b64encode(args.encode()).decode()
         with flask_app.app_context():
             try:
-                txn = ChainTx(from_address=wallet_addr, from_pkey=wallet_pkey, tx=b64_args, created_at=datetime.now())
+                txn = ChainTx(from_address=wallet_addr, from_pkey=wallet_pkey, tx_type=tx_type, tx=b64_args, created_at=datetime.now())
                 db.session.add(txn)
                 db.session.commit()
             except Exception as e:
@@ -54,7 +64,8 @@ class ChainTx(db.Model):
     def prebuild_tx(self):
         fct, args = self.decode_tx()
         from chain import cosmic
-        return getattr(cosmic.crel.functions, fct)(*args)
+        contract = getattr(cosmic, self.tx_type) # Either sdt or crel
+        return getattr(contract.functions, fct)(*args)
 
     def sent(self):
         with flask_app.app_context():
@@ -77,7 +88,7 @@ class ChainTx(db.Model):
                     tx.gas_price = gas_price_gwei
                     fct, args = self.decode_tx()
                     try:
-                        getattr(type(cosmic), f"event_{fct}")(args)
+                        getattr(type(cosmic), f"event_{tx.tx_type}_{fct}")(args)
                     except AttributeError: # if this transaction does not have any event
                         pass
                 else:

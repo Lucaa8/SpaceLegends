@@ -78,7 +78,8 @@ def own_profile(user):
 @views_bp.route('/edit-profile', methods=['GET'])
 @user_session()
 def edit_profile(user):
-    return render_template('edit_profile.html')
+    from chain import cosmic
+    return render_template('edit_profile.html', current_sdt=cosmic.get_balance_sdt(user.wallet_address))
 
 
 @views_bp.route('/profile/<username>', methods=['GET'])
