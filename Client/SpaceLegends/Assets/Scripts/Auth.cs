@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 public class Auth : MonoBehaviour
 {
 
+    public static string CLIENT_VERSION = "1.0.0";
+
     public static Auth Instance { get; private set; }
 
     public void Awake()

@@ -45,18 +45,20 @@ class CosmicRelic:
 
     def check_gas_price(self):
         self.working = True
-        current_gas_price = self.w3.eth.gas_price + self.w3.to_wei(3, 'gwei')
         from models.ChainTx import ChainTx
         txs = ChainTx.get_all_unsent()
-        print(f"[{datetime.now()}] There are {len(txs)} queued transactions. Current Gas price [Gwei]: {self.w3.from_wei(current_gas_price, 'gwei')}")
+        print(f"[{datetime.now()}] There are {len(txs)} queued transactions. Current Gas price [Gwei]: {self.w3.from_wei(self.w3.eth.gas_price, 'gwei')}")
         for tx in txs:
             try:
-                self.send_tx(tx[0], current_gas_price)
+                self.send_tx(tx[0])
             except Exception as e:
                 print(f"Something went wrong while trying to send the transaction chain_tx.id=={tx[0].id} with the following data: {tx[0].tx}. Error: {str(e)}")
         self.working = False
 
-    def send_tx(self, tx, gas_price: int):
+    def send_tx(self, tx):
+
+        # The priority fee is somewhere between 1-2 but to be REALLY sure the transaction does not get stuck I add 3 to the max gas price.
+        gas_price = self.w3.eth.gas_price + self.w3.to_wei(3, 'gwei')
 
         func_txn = tx.prebuild_tx().build_transaction({
             'from': tx.from_address,
@@ -75,7 +77,7 @@ class CosmicRelic:
             signed_txn = self.w3.eth.account.sign_transaction(func_txn, private_key=decrypt_wallet_key(tx.from_pkey))
             tx.sent()
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-            print(f"Transaction chain_tx.id=={tx.id} has been sent to the blockchain with hash: {self.w3.to_hex(tx_hash)}. Waiting for confirmation...")
+            print(f"[{datetime.now()}] [{self.w3.from_wei(gas_price, 'gwei')} Gwei] Transaction chain_tx.id=={tx.id} has been sent to the blockchain with hash: {self.w3.to_hex(tx_hash)}. Waiting for confirmation...")
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
             tx.completed(receipt, self)
 

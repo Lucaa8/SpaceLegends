@@ -4,9 +4,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
 using UnityEngine.UI;
+using Discord;
 
 public class Login : MonoBehaviour
 {
+
+    private delegate void OnVersionChecked(bool ok);
 
     [SerializeField] TMP_InputField username;
     [SerializeField] TMP_InputField password;
@@ -18,15 +21,27 @@ public class Login : MonoBehaviour
     [SerializeField] CanvasGroup LoginForm;
     [SerializeField] CanvasGroup LoggedInForm;
     [SerializeField] TMP_Text LoggedInAs;
+    [SerializeField] TMP_Text AppCredits;
 
 
     public void Start()
     {
-        BtnLogin.onClick.AddListener(LoginClick);
-        BtnQuit.onClick.AddListener(QuitClick);
-        BtnContinue.onClick.AddListener(ContinueClick);
-        BtnLogout.onClick.AddListener(LogoutClick);
-        GetUser(false);
+        CheckVersion((ok) =>
+        {
+            if(ok)
+            {
+                BtnLogin.onClick.AddListener(LoginClick);
+                BtnQuit.onClick.AddListener(QuitClick);
+                BtnContinue.onClick.AddListener(ContinueClick);
+                BtnLogout.onClick.AddListener(LogoutClick);
+                GetUser(false);
+            }
+            else
+            {
+                //Display an error message
+                //Maybe check if error is internet not available ? (I think code == -1 in this case?)
+            }
+        });
 
         foreach (Button button in FindObjectsOfType<Button>(true))
         {
@@ -125,6 +140,23 @@ public class Login : MonoBehaviour
                 GetUser(true);
             }
         }
+    }
+
+    private void CheckVersion(OnVersionChecked versionCheckOver)
+    {
+        AppCredits.text = "Space Legends v" + Auth.CLIENT_VERSION;
+        Auth.OnResponse Callback = (ok, status, jrep) =>
+        {
+            if(status == 200 && jrep.Value<string>("version") == Auth.CLIENT_VERSION)
+            {
+                versionCheckOver(true);
+            }
+            else
+            {
+                versionCheckOver(false);
+            }
+        };
+        StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("version"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.NONE, Callback));
     }
 
     private void GetUser(bool Direct)

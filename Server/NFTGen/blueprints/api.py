@@ -1,3 +1,5 @@
+import os
+
 from flask import jsonify, redirect, url_for, request
 from flask.blueprints import Blueprint
 from flask_jwt_extended import jwt_required, current_user
@@ -8,6 +10,11 @@ from utils import save_profile_pic, delete_profile_pic
 from threading import Thread
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
+
+
+@api_bp.route('/version')
+def version():
+    return jsonify(version=os.getenv("GAME_VERSION")), 200
 
 
 @api_bp.route('/token/<int:token_id>')
