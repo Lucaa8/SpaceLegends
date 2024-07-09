@@ -175,6 +175,7 @@ class User(db.Model):
         perks = []
         for rental in active_rentals:
             perks.append({
+                "perk_id": rental.perk_id,
                 "type": rental.perk.type,
                 "value": rental.perk.value,
                 "end_time": int(rental.end_time.timestamp())

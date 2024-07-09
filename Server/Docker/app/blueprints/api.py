@@ -370,6 +370,56 @@ def buy_nft(nft_id: int):
     return jsonify(message=result), 400
 
 
+@api_bp.route('/buy-perk', methods=['POST'])
+@jwt_required()
+def buy_perk():
+    if "id" not in request.json or "duration" not in request.json:
+        return jsonify(message="Bad request. Must include an id and a duration."), 400
+    try:
+        perk_id = int(request.json["id"])
+    except ValueError:
+        return jsonify(message="The perk id was not an integer."), 400
+    from models.Perk import Perk
+    perk: Perk = Perk.get_perk_by_id(perk_id)
+    if perk is None:
+        return jsonify(message="The perk was not found."), 400
+    user_perks = current_user.get_active_perks()
+    for active_perk in user_perks:
+        if active_perk["perk_id"] == perk_id:
+            return jsonify(message="Perk already active"), 400
+    try:
+        duration: str = request.json["duration"]
+        price = getattr(perk, f"price_{duration.lower()}")
+    except AttributeError as e:
+        print(e)
+        return jsonify(message=f"Failed the parse the duration parameter: {request.json['duration']}"), 400
+    from models.PerkRental import PerkRental
+    rent: PerkRental = PerkRental.rent(perk_id, current_user.id, price, duration)
+    if rent is None:
+        return jsonify(message="Something went wrong while renting a new perk. maybe have you not enough money? Please try again"), 400
+    return jsonify({
+        "type": rent.perk.type,
+        "value": rent.perk.value,
+        "end_time": int(rent.end_time.timestamp())
+    }), 200
+
+
+@api_bp.route('/buy-lives/<int:offer_id>', methods=['POST'])
+@jwt_required()
+def buy_lives(offer_id: int):
+    # Offers below id 5 are SDT/eth offers
+    if offer_id < 5 or offer_id > 8:
+        return jsonify(message="The offer was not found."), 400
+    from models.Offer import Offer
+    offer: Offer = Offer.get_offer_by_id(offer_id)
+    if offer is None:
+        return jsonify(message="The offer was not found."), 400
+    new_amount: int = offer.buy(current_user)
+    if new_amount == -1:
+        return jsonify(message="Something went wrong while buying this offer. maybe have you not enough money? Please try again"), 400
+    return jsonify(lives=new_amount), 200
+
+
 @api_bp.route('/sync-sdt', methods=['POST'])
 @jwt_required()
 def sync_sdt():

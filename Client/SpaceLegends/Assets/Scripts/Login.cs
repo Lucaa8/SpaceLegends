@@ -9,7 +9,7 @@ using Discord;
 public class Login : MonoBehaviour
 {
 
-    private delegate void OnVersionChecked(bool ok);
+    private delegate void OnVersionChecked(long status);
 
     [SerializeField] TMP_InputField username;
     [SerializeField] TMP_InputField password;
@@ -26,22 +26,30 @@ public class Login : MonoBehaviour
 
     public void Start()
     {
-        CheckVersion((ok) =>
+        CheckVersion((status) =>
         {
-            if(ok)
+            if(status == 200)
             {
                 BtnLogin.onClick.AddListener(LoginClick);
-                BtnQuit.onClick.AddListener(QuitClick);
                 BtnContinue.onClick.AddListener(ContinueClick);
                 BtnLogout.onClick.AddListener(LogoutClick);
                 GetUser(false);
             }
             else
             {
-                //Display an error message
-                //Maybe check if error is internet not available ? (I think code == -1 in this case?)
+                if(status == -1)
+                {
+                    error.text = "Cannot reach remote server";
+                }
+                else
+                {
+                    error.text = "Your client version is outdated";
+                }
+                error.gameObject.SetActive(true);
             }
         });
+
+        BtnQuit.onClick.AddListener(QuitClick);
 
         foreach (Button button in FindObjectsOfType<Button>(true))
         {
@@ -147,13 +155,13 @@ public class Login : MonoBehaviour
         AppCredits.text = "Space Legends v" + Auth.CLIENT_VERSION;
         Auth.OnResponse Callback = (ok, status, jrep) =>
         {
-            if(status == 200 && jrep.Value<string>("version") == Auth.CLIENT_VERSION)
+            if(status == 200)
             {
-                versionCheckOver(true);
+                versionCheckOver(jrep.Value<string>("version") == Auth.CLIENT_VERSION ? 200 : 400);
             }
             else
             {
-                versionCheckOver(false);
+                versionCheckOver(-1);
             }
         };
         StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("version"), UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.NONE, Callback));

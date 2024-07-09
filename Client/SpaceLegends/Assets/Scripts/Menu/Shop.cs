@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -37,6 +38,90 @@ public class Shop : MonoBehaviour
             }
         });
         HelpButton.onClick.AddListener(Help);
+
+        if(Auth.Instance == null)
+        {
+            return;
+        }
+
+        // Add click event on combat perk to buy them
+        for(int i = 1; i <= 3; i++)
+        {
+            foreach (Button buy in transform.Find("Shop/Scroll View/Viewport/Content/Transactions/Combat/Offer"+i+"/Buy").GetComponentsInChildren<Button>())
+            {
+                int id = i;
+                buy.onClick.AddListener(() =>
+                {
+                    int price = 0;
+                    int.TryParse(buy.GetComponentInChildren<TMP_Text>().text.Split(" ")[0], out price);
+                    // This one is also checked server-side, but this avoid the server being spammed if the player spams the button without enough money
+                    if (userInfo.SDT < price)
+                    {
+                        return;
+                    }
+                    Auth.OnResponse r = (ok, status, perk) =>
+                    {
+                        if(ok)
+                        {
+                            userInfo.SDT -= price;
+                            string type = perk.Value<string>("type");
+                            int value = perk.Value<int>("value");
+                            long end_time = perk.Value<long>("end_time");
+                            if (type == "damage")
+                            {
+                                userInfo.PerkDamage = value;
+                                userInfo.TotalDamage += value;
+                                userInfo.PerkDamageEnd = end_time;
+                            }
+                            if (type == "armor")
+                            {
+                                userInfo.PerkArmor = value;
+                                userInfo.TotalArmor += value;
+                                userInfo.PerkArmorEnd = end_time;
+                            }
+                            if (type == "speed")
+                            {
+                                userInfo.PerkSpeed = value;
+                                userInfo.TotalSpeed += value;
+                                userInfo.PerkSpeedEnd = end_time;
+                            }
+                        }
+                    };
+                    JObject body = new JObject { { "id",  id }, { "duration", buy.transform.parent.name } };
+                    StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("buy-perk"), "POST", body, Auth.AuthType.ACCESS, r));
+                });
+            }
+        }
+
+        // Add click event on shop lives offers to buy them
+        for (int i = 1; i <= 4; i++)
+        {
+            foreach (Button buy in transform.Find("Shop/Scroll View/Viewport/Content/Transactions/Lives/Offer" + i + "/Buy").GetComponentsInChildren<Button>())
+            {
+                // +4 because id 1 -> 4 are for ETH to SDT offers in the server's db. So lives are 5 -> 8
+                int id = i+4;
+                buy.onClick.AddListener(() =>
+                {
+                    int price = 0;
+                    int.TryParse(buy.GetComponentInChildren<TMP_Text>().text.Split(" ")[0], out price);
+                    // This one is also checked server-side, but this avoid the server being spammed if the player spams the button without enough money
+                    if (userInfo.SDT < price)
+                    {
+                        return;
+                    }
+                    Auth.OnResponse r = (ok, status, lives) =>
+                    {
+                        if (ok)
+                        {
+                            userInfo.SDT -= price;
+                            userInfo.Hearts = lives.Value<int>("lives");
+                        }
+                    };
+                    StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("buy-lives")+"/"+id.ToString(), "POST", null, Auth.AuthType.ACCESS, r));
+                });
+            }
+        }
+
     }
 
     // Update is called once per frame
