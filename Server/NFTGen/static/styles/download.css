@@ -1,0 +1,73 @@
+.hero-section {;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 65vh;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.hero-section > div {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 0.5rem;
+}
+
+.content {
+    padding: 20px;
+}
+
+.faq-section {
+    margin: 20px 0;
+}
+
+.faq-question {
+    cursor: pointer;
+    padding: 15px;
+    background: #333;
+    color: #fff;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.faq-answer {
+    display: none;
+    padding: 15px;
+    background: #444;
+    border: 1px solid #555;
+    border-radius: 5px;
+    margin: 5px 0 10px 0;
+}
+
+.faq-question.active + .faq-answer {
+    display: block;
+}
+
+.download-section {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.download-button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+    margin-top: 20px;
+}
