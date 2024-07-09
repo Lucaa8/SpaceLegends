@@ -73,8 +73,8 @@ public class GameLevel
 		if(json.ContainsKey("progress"))
 		{
             JObject progress = json.Value<JObject>("progress");
-            Games = progress.Value<int>("total_games");
-            Completions = progress.Value<int>("total_completions");
+            Games = progress.Value<int>("games");
+            Completions = progress.Value<int>("completions");
 			Kills = progress.Value<int>("kills");
 			Deaths = progress.Value<int>("deaths");
 			JObject stars = progress.Value<JObject>("stars");

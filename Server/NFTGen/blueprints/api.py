@@ -112,8 +112,12 @@ def open_relic(collection: int):
     from models.NFT import NFT
     from collection import get_item
     from models.CRELProbabilty import CRELPropability
+    if current_user.money_sdt < 0.5:
+        return jsonify(message="Not enough money to open relic (0.5 SDT)"), 400
     nft: NFT = NFT.get_first_unminted_nft(current_user.id, collection)
     if nft is not None:
+        if not current_user.set_sdt_money(current_user.money_sdt - 0.5):
+            return jsonify(message="Something went wrong while paying the Relic opening. please retry later."), 400
         wallet = current_user.wallet_address
         username = current_user.username
         Thread(target=nft.mint, args=(nft.id, wallet, username,)).start()
@@ -323,6 +327,24 @@ def get_resources():
     }
 
     return jsonify(result), 200
+
+
+@api_bp.route('/leaderboard', methods=['GET'])
+def get_leaderboard():
+    from leaderboard import get_leaderboard
+    leaderboard: dict[str, list[tuple]] = get_leaderboard()
+    return jsonify(leaderboard), 200
+
+
+@api_bp.route('/leaderboard/<player_name>', methods=['GET'])
+def get_player_leaderboard(player_name: str):
+    from models.User import User
+    u: User = User.get_user_by_creds(username=player_name, email=None)
+    if u is None:
+        return jsonify(message="Unknown user"), 400
+    from leaderboard import get_leaderboard, find_player
+    leaderboard: dict[str, tuple] = find_player(get_leaderboard(), u.username)
+    return jsonify(leaderboard), 200
 
 
 @api_bp.route('/list-nft/<int:nft_id>', methods=['PUT'])

@@ -18,6 +18,8 @@ public class Shop : MonoBehaviour
     [SerializeField] CaseSroll earthScroll;
     [SerializeField] CaseSroll marsScroll;
 
+    [SerializeField] TMP_Text SDTInfo;
+
     [SerializeField] UserInfo userInfo; //Needed to get relics counts and probabilities
 
     private bool isHelpDisplay = false;
@@ -189,6 +191,11 @@ public class Shop : MonoBehaviour
 
     private void OpenRelic(int collec, CaseSroll scroll)
     {
+        if(userInfo.SDT < 0.5)
+        {
+            SDTInfo.GetComponent<Animator>().SetTrigger("Color");
+            return;
+        }
         StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("open-relic/"+collec.ToString()), UnityWebRequest.kHttpVerbPOST, null, Auth.AuthType.ACCESS, (isOk, status, jrep) =>
         {
             if (isOk)
@@ -223,6 +230,7 @@ public class Shop : MonoBehaviour
                 long type = jrep.Value<long>("type");
                 userInfo.SetNFTCount(type, userInfo.GetNFTCount(type) + 1);
                 userInfo.UpdateTotalNFTCount(collec);
+                userInfo.SDT -= 0.5f;
             }
         }));
     }

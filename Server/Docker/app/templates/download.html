@@ -3,12 +3,311 @@
     <link href="{{ url_for('static', filename='styles/download.css') }}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="container-fluid" style="min-height: 100vh">
-        <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="height: 30vh;">
-            <div>
-                <h1>Download Space Legends</h1>
-                <p>Space Legends 1.0 (Beta) is currently available on PC platform</p>
+    <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="background-image: url('{{ url_for('static', filename='files/game/SL_Kill_Enemies.png') }}')">
+        <div style="padding: 20px">
+            <h1>Download Space Legends</h1>
+            <p>A Beta of Space Legends is currently available on PC platform</p>
+        </div>
+    </section>
+    <div class="content container">
+        <h1 class="text-center">Download</h1>
+        <div class="download-section">
+            <p>Build (Beta) version: 1.0.0 (Date: 2024-07-09)</p>
+            <a href="{{ url_for('static', filename='files/download/SpaceLegends1.0.0.zip') }}" class="download-button btn btn-primary" download>Download</a>
+            <h2 class="mt-4">How to Install</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <p>Step 1: You must have an account before you can start playing. (<a href="{{ url_for("views.register") }}">Register</a>)</p>
+                    <p>Step 2: Download the game using the button above.</p>
+                    <p>Step 3: Extract the downloaded file.</p>
+                    <p>Step 4: Run the SpaceLegends.exe file to start the game.</p>
+                </div>
             </div>
-        </section>
+        </div>
+        <h1 class="text-center mt-5">FAQ</h1>
+        <div class="faq-section">
+            <div class="faq-item">
+                <div class="faq-question">What is a NFT and can I win/lose money by playing Space Legends?</div>
+                <div class="faq-answer">
+                    <h4>What is an NFT?</h4>
+                    <p>An NFT, which stands for "Non-Fungible Token", is a method used by Space Legends to provide players with unique items that they fully own, rather than these items being stored on our servers.</p>
+                    <p>In other words, if the Space Legends servers were to shut down, players would still retain their items, and those items would not lose their value.</p>
+                    <h4>Can you lose money by possessing/trading NFTs?</h4>
+                    <p>NFTs are recorded on a "blockchain." In short, a blockchain is a decentralized way to store immutable information. This means that no one, not even us, can delete or change the value of your NFTs.</p>
+                    <p>On the Ethereum blockchain, you would trade your NFTs with real Ethereum, which can be quite expensive. So technically, yes, you could gain or lose money.</p>
+                    <p>However, Space Legends is built on a "testnet" blockchain called Sepolia. This means that all the advantages of blockchain, like immutability and decentralization, are preserved, but you do not use real Ethereum.</p>
+                    <p><strong>So the final answer is</strong> no, you do not use real Ethereum (and thus real money) on Space Legends. Whatever you do, you won't gain or lose any money.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How to get SepoliaETH ?</div>
+                <div class="faq-answer">
+                    <h4>How Does It Work?</h4>
+                    <p>On testnets like Sepolia, you can get "fake" Ethereum for free in very small quantities. Some time ago, you could easily get some by simply entering your public wallet address and clicking a "Send me ETH" button. However, as always, some people abused the system and took all the test ETH for themselves. Now, on most sites, you must prove you are not an abuser.</p>
+                    <h4>Where to Get SepoliaETH</h4>
+                    <p>Find your wallet address on your <a href="{{ url_for('views.own_profile') }}" target="_blank">profile</a> page.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/ProfileAddress.png') }}" alt="Profile address location" class="img-fluid">
+                    <p class="mt-4">The easiest one is the <a href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia" target="_blank">Google Web3 Faucet</a>, which rewards you without verification with 0.05 SepoliaETH per day.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/Google_Faucet.png') }}" alt="Google web3 faucet" class="img-fluid">
+                    <p class="mt-4">Another easy option is the <a href="https://bwarelabs.com/faucets/ethereum-sepolia" target="_blank">Bwarelabs Faucet</a>, which provides 0.025 SepoliaETH per day, but it sometimes fails.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/Bware_Faucet.png') }}" alt="Bware faucet" class="img-fluid">
+                    <p class="mt-4">You can find others faucets like <a href="https://www.alchemy.com/faucets/ethereum-sepolia" target="_blank">Alchemy Faucet</a> but they require some mainnet (Ethereum) activity, which you may not have on your wallet.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/Alchemy_Faucet.png') }}" alt="Alchemy faucet" class="img-fluid">
+                    <p class="mt-4">Feel free to find other faucets that you can use to get free SepoliaETH! However, keep in mind that a transaction fee costs up to 0.005 SETH, so you do not need a lot of SETH.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Where are my NFTs stored and how can I manage them?</div>
+                <div class="faq-answer">
+                    <h4>What is a Blockchain Wallet?</h4>
+                    <p>A blockchain wallet is a digital wallet that allows users to store and manage their cryptocurrencies and NFTs. Unlike traditional wallets, which store physical currency, a blockchain wallet stores cryptographic keys: a public key, which acts like an address for receiving assets, and a private key, which is used to authorize transactions and access your assets.</p>
+                    <h4>How are NFTs Stored on a Blockchain Wallet?</h4>
+                    <p>When you own an NFT, it is associated with your blockchain wallet's address. The actual NFT is recorded on the blockchain, while your wallet holds the cryptographic key needed to access and transfer the NFT.</p>
+                    <h4>Managing Private Keys for Player Wallets</h4>
+                    <p>To prevent any abuse or unwanted actions against Space Legends, we securely store the private keys of players' wallets on our servers. This ensures that players can enjoy the game without worrying about losing access to their assets. Our system is designed to protect these keys from unauthorized access and misuse.</p>
+                    <p>However, we understand the importance of player autonomy. In the unlikely event that our servers shut down, we have a plan in place to transfer the private keys to the players. Each player will receive their private key, allowing them to import their wallet into a personal blockchain wallet service like MetaMask. This way, they can continue to manage and use their NFTs independently, without any dependency on Space Legends.</p>
+                    <h4>Using MetaMask to Manage Your Wallet</h4>
+                    <p>MetaMask is a popular blockchain wallet service that can be used to manage your Ethereum-based assets, including NFTs. By importing your private key into MetaMask, you can easily view, transfer, and manage your NFTs. MetaMask provides a user-friendly interface and robust security features to help you maintain control over your digital assets.</p>
+                    <p><strong>In summary:</strong> While we securely manage the private keys for player wallets to prevent abuse and ensure a smooth gaming experience, players will always have the option to take full control of their assets if the servers are ever shut down. This ensures that your NFTs remain safe and accessible, giving you peace of mind and complete ownership of your digital assets.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What is a FT?</div>
+                <div class="faq-answer">
+                    <p>A FT, which stands for "Fungible Token", is similar to NFTs in that they are also stored on the blockchain. However, the key difference is that FTs are not unique.</p>
+                    <p>An example of a fungible token would be currency. The amount of currency you have is recorded on the blockchain and associated with your wallet. No one can make you lose your money except yourself.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Where can I check my wallet, transactions and (N)FTs ?</div>
+                <div class="faq-answer">
+                    <p>Almost all important information can be found within the game or on the Space Legends website. However, if you are curious or want to ensure you own your items, you can check your wallet on a block explorer.</p>
+                    <h4>Etherscan: The Famous Block Explorer</h4>
+                    <p>Find your wallet address on your <a href="{{ url_for('views.own_profile') }}" target="_blank">profile</a> page.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/ProfileAddress.png') }}" alt="Profile address location" class="img-fluid mt-2">
+                    <p class="mt-4">On <a href="https://sepolia.etherscan.io/" target="_blank">Sepolia Etherscan</a>, you can enter any address (wallet, transaction, etc.) and see what's happening with it.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/SepEtherscan.png') }}" alt="Sepolia Etherscan" class="img-fluid mt-2">
+                    <p class="mt-4">By typing your own or a friend's address, you can see how much SETH, SDT, or even Relics that address owns.</p>
+                    <img src="{{ url_for('static', filename='files/FAQ/AddressOverview.png') }}" alt="Address Sepolia Etherscan" class="img-fluid mt-2">
+                    <h4>OpenSea: A Place to See NFTs</h4>
+                    <p>This website specializes in NFTs. You can view any address's NFTs, whole collections, and more.</p>
+                    <p>You can simply click on any player's profile address (the long blue string starting with 0x) and you'll be taken to their OpenSea page.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How Space Legends integrate those FT and NFT concepts?</div>
+                <div class="faq-answer">
+                    <h4>FT: StarDust</h4>
+                    <p>By playing the game, you can earn StarDust (SDT). You can obtain SDT by killing enemies, completing levels, or selling your relics on the market.</p>
+                    <p>With this currency, you can buy relics on the market, bonuses/perks in the game shop or open relics.</p>
+                    <h4>NFT: Cosmic Relics</h4>
+                    <p>A relic is a locked artifact. When you receive a relic, it is not an NFT yet. You must open it to release its full power and show other players your dedication by completing collections.</p>
+                    <h5>How to Obtain These Relics?</h5>
+                    <p>You can win these relics by completing levels in Space Legends. In the game, you can complete levels on different planets, such as Earth, Mars, and more. Whenever you complete a level on one of these planets, you have a chance to drop a relic for that planet's collection.</p>
+                    <p>You can then open these relics in the shop (you must pay a certain amount of SDT because these relics are very powerful).</p>
+                    <h5>Collections</h5>
+                    <p>You can check relic collections on the <a href="{{ url_for('views.token_explorer') }}" target="_blank">Token Explorer</a> page.</p>
+                    <p>Every collection is composed of 9 pieces with different probabilities of dropping. The pieces with more details and prettier environments are rarer.</p>
+                    <h5>Collections Perks</h5>
+                    <p><strong>The Earth Collection</strong> gives you a permanent <strong>+18% damage</strong> in every level you play</p>
+                    <p><strong>The Mars Collection</strong> gives you a permanent <strong>+21% armor (damage reduction)</strong> in every level you play</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">When and how can I sell my opened relics?</div>
+                <div class="faq-answer">
+                    <h4>How Do Transactions Work?</h4>
+                    <p>To trade your NFTs, you need to understand how blockchain transfers work.</p>
+                    <p>When you sell an NFT, you are transferring it from your wallet to another player's wallet.</p>
+                    <p>To complete this transaction, you must pay fees to add your transaction (e.g., "I (Wallet address: 0xABC) send my NFT #12 to this other wallet address: 0xDEF") to the blockchain. In a real scenario, you would pay these fees with Ethereum in your wallet. However, in the case of Space Legends, you will pay with SepoliaETH.</p>
+                    <p>We, at Space Legends, handle the process of adding transactions to the blockchain for you. However, we do not cover the fees. This means you won't be able to trade on our market if your wallet does not contain a sufficient amount of SepoliaETH.</p>
+                    <h4>When Can You List an Artifact Piece on the Market?</h4>
+                    <ul>
+                        <li>You must have opened the relic.</li>
+                        <li>The piece must be a <strong>duplicate</strong>; you cannot sell a part of a collection if you do not own at least <strong>two</strong> of the same part.</li>
+                        <li>The price you set for it must be between 0.1 SDT and 500.0 SDT.</li>
+                        <li>You must have a minimum of 0.005 SepoliaETH in your wallet (note that other pending listings you've made are also deducted).</li>
+                    </ul>
+                    <h4>When Those Requirements are Met, How Do I List an NFT?</h4>
+                    <ul>
+                        <li>Go to your <a href="{{ url_for('views.own_profile') }}" target="_blank">profile</a> page.</li>
+                        <li>Find and click the NFT you want to list on the market.</li>
+                        <li>If you see a prompt for the price, you're all set! Enter the price you want and then click on "List".</li>
+                        <li>If you see a message telling you that this NFT is still pending, it means you recently bought this NFT and must wait for it to arrive in your wallet.</li>
+                    </ul>
+                    <h4>How Do I Remove a Listing?</h4>
+                    <ul>
+                        <li>Go to your <a href="{{ url_for('views.own_profile') }}" target="_blank">profile</a> page.</li>
+                        <li>Find and click the NFT you want to remove from the market.</li>
+                        <li>If you see a "Remove" button, it means the NFT is currently listed and you can click the button to remove it from the market.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Why does it sometimes take a long time to receive my NFT after a trade?</div>
+                <div class="faq-answer">
+                    <h4>Network Congestion</h4>
+                    <p>Network congestion occurs when there are too many transactions being processed at the same time on the blockchain, causing fees to increase. We have set a limit of 0.005 SETH for the fee on any transaction. If the fee price exceeds this limit, your transaction will wait until the price drops below the SETH limit, which can cause delays in your trades.</p>
+                    <p>This limit is in place to avoid your NFT trade consuming 90% of your remaining SETH if it's possible to wait an hour and pay much less.</p>
+                    <h4>Error</h4>
+                    <p>If your NFT does not arrive even after 24 hours, please contact us (lucaa_8 on Discord) so we can investigate what's happening with your transaction.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">I earned/lost some StarDust, but my wallet on Etherscan does not show the changes</div>
+                <div class="faq-answer">
+                    <h4>Why Is My Wallet Not Synchronized?</h4>
+                    <p>If you read the question <strong>How Do Transactions Work? in When and How Can I Sell My Opened Relics?</strong>, you probably know that your transactions cost SETH.</p>
+                    <p>If we had to apply every change to your SDT counter, even after completing a level and earning a small amount like 0.03 SDT, you would incur enormous fees just to keep your wallet up-to-date.</p>
+                    <p>That's why we do not update your blockchain wallet every time you gain or lose SDT.</p>
+                    <h4>How Do I Synchronize My Wallet?</h4>
+                    <p>Firstly, know that you can do everything in-game and on the website without syncing your wallet. We keep track of your SDT on our side, and you do not need an up-to-date wallet to buy or sell items.</p>
+                    <p>If you still want to sync your wallet for a specific reason, you can go to your <a href="{{ url_for('views.edit_profile') }}#sync-sdt">edit profile</a> page and click on "Synchronize".</p>
+                    <p>Note: The difference between your wallet and account must be greater than 5 SDT to proceed and that you can't have two Sync at the same time.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What are in game probabilities for rewards and Relics?</div>
+                <div class="faq-answer">
+                    <h4>Enemies Loot Pool</h4>
+                    <p>Each enemy you kill during a level can drop one of the following:</p>
+                    <ul>
+                        <li>Between 0.02 and 0.07 SDT currency</li>
+                        <li>A heal potion that regenerates a varying amount of your health</li>
+                        <li>Nothing! :(</li>
+                    </ul>
+                    <p>The probabilities vary depending on the damage, health, or difficulty of the enemy.</p>
+                    <p><strong>Note: To actually receive the SDT you earned by killing an enemy, you must COMPLETE the level.</strong></p>
+                    <h4>Level Completion Rewards Pool</h4>
+                    <p>Each time you complete a level, you can get one of the following:</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Level Difficulty</th>
+                                <th>Nothing</th>
+                                <th>Hearts (Lives)</th>
+                                <th>StarDust (currency)</th>
+                                <th>Cosmic Relic</th>
+                                <th>Level XP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Easy (and Tutorial)</td>
+                                <td>50%</td>
+                                <td>12.5% (1)</td>
+                                <td>12.5% (0.03)</td>
+                                <td>25%</td>
+                                <td>50 XP</td>
+                            </tr>
+                            <tr>
+                                <td>Normal</td>
+                                <td>0%</td>
+                                <td>18% (2)</td>
+                                <td>18% (0.07)</td>
+                                <td>64%</td>
+                                <td>150 XP</td>
+                            </tr>
+                            <tr>
+                                <td>Hard</td>
+                                <td>0%</td>
+                                <td>12% (6)</td>
+                                <td>12% (0.2)</td>
+                                <td>76%</td>
+                                <td>300 XP</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>(You receive the amount of XP each time you complete a level)</p>
+                    <h4>Cosmic Relics Opening Probabilities</h4>
+                    <p>The probability of getting a rarer part of any collection is determined by the difficulty of the level where you dropped the relic.</p>
+                    <p>Example: If you dropped an Earth Relic in the tutorial, you'll have a very small chance of getting an Epic rarity part from this relic. However, if you dropped this relic from the last Earth level, your chances of getting an Epic part increase significantly.</p>
+                    <p>The Earth Collection</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Common</th>
+                                <th>Rare</th>
+                                <th>Epic</th>
+                                <th>Legendary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tutorial</td>
+                                <td>100%</td>
+                                <td>0%</td>
+                                <td>0%</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Level 1 (Easy)</td>
+                                <td>90%</td>
+                                <td>8%</td>
+                                <td>2%</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Level 2 (Normal)</td>
+                                <td>75%</td>
+                                <td>20%</td>
+                                <td>5%</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Level 3 (Hard)</td>
+                                <td>51%</td>
+                                <td>40%</td>
+                                <td>9%</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>The Mars Collection</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Common</th>
+                                <th>Rare</th>
+                                <th>Epic</th>
+                                <th>Legendary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Level 1 (Easy)</td>
+                                <td>85%</td>
+                                <td>10%</td>
+                                <td>4.7%</td>
+                                <td>0.3%</td>
+                            </tr>
+                            <tr>
+                                <td>Level 2 (Normal)</td>
+                                <td>70%</td>
+                                <td>23%</td>
+                                <td>6.5%</td>
+                                <td>0.5%</td>
+                            </tr>
+                            <tr>
+                                <td>Level 3 (Hard)</td>
+                                <td>50%</td>
+                                <td>35%</td>
+                                <td>14%</td>
+                                <td>1%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', event => {
+                item.classList.toggle('active');
+            });
+        });
+    </script>
 {% endblock %}

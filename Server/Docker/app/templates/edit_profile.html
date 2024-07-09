@@ -28,7 +28,7 @@
                             <button onclick="changePassword('{{ url_for('auth.change_password') }}')" class="btn btn-primary mt-2">Change Password</button>
                         </div>
 
-                        <h4>Synchronize your StarDust</h4>
+                        <h4 id="sync-sdt">Synchronize your StarDust</h4>
                         <div class="mb-3">
                             <p>You currently have {{ user.money_sdt | format_number }} SDT in your account and {{ current_sdt | round | format_number }} SDT in your blockchain wallet.</p>
                             <p>By synchronizing your SDT, you'll write {{ user.money_sdt | format_number }} on the blockchain.</p>

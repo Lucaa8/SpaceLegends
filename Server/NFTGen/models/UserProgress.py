@@ -18,6 +18,10 @@ class UserProgress(db.Model):
 
     __table_args__ = (db.UniqueConstraint('user_id', 'game_level_id', name='unique_player_level'),)
 
+    def get_user(self):
+        from models.User import User
+        return User.get_user_by_id(self.user_id)
+
     def get_level(self):
         return db.session.query(GameLevel).filter(GameLevel.id == self.game_level_id).first()
 
@@ -52,5 +56,9 @@ class UserProgress(db.Model):
             db.session.commit()
             return progress
         return progress
+
+    @staticmethod
+    def get_all():
+        return db.session.query(UserProgress).all()
 
     

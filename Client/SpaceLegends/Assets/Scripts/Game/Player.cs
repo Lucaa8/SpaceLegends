@@ -81,6 +81,8 @@ public class Player : MonoBehaviour
         BottomMoney = Money.transform.Find("Bot").gameObject;
         AddedMoneyValue = BottomMoney.transform.Find("Value/Text").GetComponent<TMP_Text>();
 
+        MovingPlatform.Moving = true;
+
         StartCoroutine(DisplayDiscord());
     }
 

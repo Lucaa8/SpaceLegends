@@ -95,8 +95,10 @@ public class UserInfo : MonoBehaviour
         set
         {
             _SDT = value;
-            Profile.transform.Find("Resources/List/SDTCurrencyDisplay/TextSection/SDT").GetComponent<TMP_Text>().text = _SDT.ToString("F2");
-            Shop.transform.Find("Scroll View/Viewport/Content/Transactions/SDT/SDTCount/CurrencySDT/TextSection/Currency").GetComponent<TMP_Text>().text = _SDT.ToString("F2");
+            string sdt = _SDT.ToString("F2");
+            Profile.transform.Find("Resources/List/SDTCurrencyDisplay/TextSection/SDT").GetComponent<TMP_Text>().text = sdt;
+            Shop.transform.Find("Scroll View/Viewport/Content/Transactions/SDT/SDTCount/CurrencySDT/TextSection/Currency").GetComponent<TMP_Text>().text = sdt;
+            Shop.transform.Find("Scroll View/Viewport/Content/Relics/SDTInfo").GetComponent<TMP_Text>().text = "Opening a Cosmic Relic costs 0.5 SDT. (You have: "+sdt+" SDT)";
         }
     }
 
