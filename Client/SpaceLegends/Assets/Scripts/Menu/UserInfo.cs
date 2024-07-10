@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using Newtonsoft.Json.Linq;
-using static CaseCell;
 
 public class UserInfo : MonoBehaviour
 {
@@ -407,6 +406,16 @@ public class UserInfo : MonoBehaviour
     void Start()
     {
 
+        Auth.OnResponse UpdateLeaderboard = (ok, status, j) =>
+        {
+            if(ok)
+            {
+                Kills = new int[] { Kills[0], j.Value<JArray>("kills")[0].Value<int>() };
+                Deaths = new int[] { Deaths[0], j.Value<JArray>("deaths")[0].Value<int>() };
+                Games = new int[] { Games[0], j.Value<JArray>("completed")[0].Value<int>() };
+            }
+        };
+
         Auth.OnResponse Update = (ok, status, j) =>
         {
             if(ok)
@@ -481,6 +490,7 @@ public class UserInfo : MonoBehaviour
                     SetRelicsCount(collec, (int)property.Value);
                     transform.GetComponent<Shop>().UpdateOpenRelicButton(collec);
                 }
+                StartCoroutine(Auth.Instance.MakeRequest(Auth.GetApiURL("leaderboard")+"/"+_username, UnityWebRequest.kHttpVerbGET, null, Auth.AuthType.ACCESS, UpdateLeaderboard));
             }
         };
 
