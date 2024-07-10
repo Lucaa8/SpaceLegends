@@ -72,7 +72,9 @@ def forgot_password():
 @views_bp.route('/profile', methods=['GET'])
 @user_session()
 def own_profile(user):
-    return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), ppic=get_profile_pic(user.id))
+    from leaderboard import get_leaderboard, find_player
+    leaderboard = find_player(get_leaderboard(), user.username)
+    return render_template('profile.html', displayed_user=user, can_edit=True, max=len(items), current=len(user.nfts_discovered()), ppic=get_profile_pic(user.id), lb=leaderboard)
 
 
 @views_bp.route('/edit-profile', methods=['GET'])
@@ -87,5 +89,7 @@ def user_profile(username: str):
     from models.User import User
     user = User.get_user_by_creds(username=username, email=None)
     if user and user.email_verified:
-        return render_template('profile.html', displayed_user=user, can_edit=False, max=len(items), current=len(user.nfts_discovered()), ppic=get_profile_pic(user.id))
+        from leaderboard import get_leaderboard, find_player
+        leaderboard = find_player(get_leaderboard(), user.username)
+        return render_template('profile.html', displayed_user=user, can_edit=False, max=len(items), current=len(user.nfts_discovered()), ppic=get_profile_pic(user.id), lb=leaderboard)
     return render_template('404.html'), 404
