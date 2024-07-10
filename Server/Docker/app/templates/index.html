@@ -6,32 +6,66 @@
     <section class="hero-section text-white text-center d-flex align-items-center justify-content-center" style="background-image: url('{{ url_for('static', filename='files/spacelegends.png') }}'); height: 100vh;">
         <div>
             <h1>Welcome on Space Legends</h1>
-            <p>Explore the solar system and craft powerful artifacts</p>
+            <p>Explore the solar system and unveil powerful artifacts</p>
             <div>
-                <a href="{{ url_for('views.register') }}" class="btn btn-primary">Sign Up</a>
-                <a href="{{ url_for('views.download') }}" class="btn btn-secondary">Download</a>
+                <a href="{{ url_for('views.register') }}" class="btn btn-primary"><i class="fas fa-user-plus" style="margin-right: 3px"></i>Sign Up</a>
+                <a href="{{ url_for('views.download') }}" class="btn btn-secondary"><i class="fas fa-download" style="margin-right: 3px"></i>Download</a>
             </div>
         </div>
     </section>
-    <section class="container my-5">
+    <h2 class="section-title mt-4" style="text-align: center">Space Legends</h2>
+    <section class="home-container container my-5">
         <div class="row align-items-center">
-            <div class="col-lg-6">
-                <img src="{{ url_for('static', filename='files/spacelegends.png') }}" class="img-fluid" alt="Espace">
+            <div class="col-10 mx-auto">
+                <p class="section-text">Space Legends is a 2D platformer game where players complete various artifacts by progressing through the game. Players can also buy and sell items on the Galactic Market to advance more quickly. The in-game currency (StarDust) and items (Cosmic Relics) are deployed on the blockchain, making them immutable and fully owned by the players.</p>
             </div>
-            <div class="col-lg-6">
-                <h2>Découverte de l'espace</h2>
-                <p>Rejoignez-nous pour explorer de nouveaux mondes et civilisations au-delà de notre galaxie.</p>
+            <div class="col-10 mx-auto">
+                <p class="section-text">If you have any question about Space Legends, please check our <a href="{{ url_for("views.download") }}#faq">FAQ</a>!</p>
             </div>
         </div>
     </section>
-    <section class="container my-5">
+    <hr/>
+    <section class="home-container container my-5">
         <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h2>Conquête spatiale</h2>
-                <p>Prenez les commandes de vaisseaux spatiaux avancés et défiez les frontières de l'espace connu.</p>
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='files/game/SL.png') }}" class="img-fluid" alt="Espace">
             </div>
             <div class="col-lg-6">
-                <img src="{{ url_for('static', filename='files/spacelegends.png') }}" class="img-fluid" alt="Vaisseau Spatial">
+                <h2 class="section-title">Explore Space-Themed Levels</h2>
+                <p class="section-text">Join us to play on unique 2D levels set on Solar System planets</p>
+            </div>
+        </div>
+    </section>
+    <section class="home-container container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='files/game/SL_Collect_Stars.png') }}" class="img-fluid" alt="Vaisseau Spatial">
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <h2 class="section-title">Discover Hidden Paths</h2>
+                <p class="section-text">Become the top player on the leaderboard by collecting all the stars</p>
+            </div>
+        </div>
+    </section>
+    <section class="home-container container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='files/game/SL_Kill_Enemies.png') }}" class="img-fluid" alt="Vaisseau Spatial">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="section-title">Defeat Enemies to Earn Rewards</h2>
+                <p class="section-text">Eliminate your foes and collect valuable rewards to boost your account</p>
+            </div>
+        </div>
+    </section>
+    <section class="home-container container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='files/game/SL_Win.png') }}" class="img-fluid" alt="Vaisseau Spatial">
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <h2 class="section-title">Find Mysterious Relics</h2>
+                <p class="section-text">Complete levels to discover strange relics that conceal powerful artifacts</p>
             </div>
         </div>
     </section>
