@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 {% endif %}
-                <div class="col-10">
+                <div class="col-xxl-5 col-6">
                     <div class="name-display">
                         <h3>{{ displayed_user.display_name }}</h3>
                         <div class="level-icon" data-bs-toggle="modal" data-bs-target="#levelModal">
@@ -90,6 +90,38 @@
                         <p style="overflow-wrap: break-word;">@{{ displayed_user.username }} - <a id="walletAddr" target="_blank" href="{{ 'https://testnets.opensea.io/'~displayed_user.wallet_address }}">{{ displayed_user.wallet_address }}</a><i class="cpy-icon text-secondary fas fa-copy" onclick="copyWallet(this)"></i></p>
                     </div>
                     <p>Joined the {{ displayed_user.joined_date|replace(" ", " at ") }} | Money: {{ displayed_user.money_sdt }} SDT | NFTs discovered: {{ current }}/{{ max }}</p>
+                </div>
+                <div class="col-xxl-4 col-6 center-on-small">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Player Statistics</th>
+                                <th>Kills</th>
+                                <th>Deaths</th>
+                                <th>Games Started</th>
+                                <th>Games Completed</th>
+                                <th>Stars Collected</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ranking</td>
+                                <td># {{ lb['kills'][0] }}</td>
+                                <td># {{ lb['deaths'][0] }}</td>
+                                <td># {{ lb['games'][0] }}</td>
+                                <td># {{ lb['completed'][0] }}</td>
+                                <td># {{ lb['stars'][0] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Count</td>
+                                <td>{{ lb['kills'][2] }}</td>
+                                <td>{{ lb['deaths'][2] }}</td>
+                                <td>{{ lb['games'][2] }}</td>
+                                <td>{{ lb['completed'][2] }}</td>
+                                <td>{{ lb['stars'][2] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <hr/>
