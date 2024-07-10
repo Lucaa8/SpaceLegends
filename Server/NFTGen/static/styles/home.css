@@ -11,6 +11,25 @@
 }
 
 img.img-fluid {
+    border-radius: 15px;
     max-width: 100%;
     height: auto;
+    transition: transform 0.2s;
+}
+
+.img-fluid:hover {
+    transform: scale(1.05);
+}
+
+.section-title {
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.section-text {
+    font-size: 1.2rem;
+}
+
+.home-container {
+    padding: 50px 0;
 }
