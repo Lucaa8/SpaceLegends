@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
     [SerializeField] CanvasGroup RespawnButton;
 
     [SerializeField] GameObject Stars;
+    [SerializeField] List<Key> Keys;
 
     public bool IsAlive { get; private set; } = true;
     [SerializeField] float MaxHealth;
@@ -53,6 +54,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        //PlayerController.SpeedModifier = 0.13f;
         // Because scene names are following the pattern: CollectionName_LevelID, e.g. Earth_0, Mars_1
         AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
         player = transform.GetComponent<Rigidbody2D>();
@@ -136,6 +138,7 @@ public class Player : MonoBehaviour
             s.ResetStar();
             connection.unsetStar(s.StarNumber);
         });
+        Keys.Where(k => !k.Saved).ToList().ForEach(k => k.ResetState());
         if (animate)
         {
             animator.SetBool("IsDead", true);
@@ -268,6 +271,7 @@ public class Player : MonoBehaviour
         {
             collision.enabled = false;
             g.GetComponent<Animator>().SetTrigger("Pickup");
+            g.GetComponent<Key>().Picked = true;
             AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickStar);
         }
         else if(g.CompareTag("Checkpoint"))
@@ -287,6 +291,7 @@ public class Player : MonoBehaviour
                     s.Saved = true;
                 }
             });
+            Keys.Where(k => k.Picked).ToList().ForEach(k => k.Saved = true);
         }
         else if(g.CompareTag("DeadLine"))
         {

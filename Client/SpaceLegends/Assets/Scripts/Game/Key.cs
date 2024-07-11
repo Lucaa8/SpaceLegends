@@ -1,18 +1,39 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Key : MonoBehaviour
 {
 
-    [SerializeField] GameObject ToHide;
+    public bool Picked = false;
+    public bool Saved = false;
 
-    public void Open()
+    [SerializeField] UnityEvent<string> OnKeyCollected;
+
+    public void ExecuteEvent()
     {
-        ToHide.gameObject.SetActive(false);
+        if(OnKeyCollected != null)
+        {
+            OnKeyCollected.Invoke("pick");
+        }
+    }
+
+    public void ResetState()
+    {
+        GetComponent<Collider2D>().enabled = true;
+        transform.gameObject.SetActive(true);
+        Picked = false;
+        if (OnKeyCollected != null)
+        {
+            OnKeyCollected.Invoke("reset");
+        }       
     }
 
     public void Remove()
     {
-        transform.gameObject.SetActive(false);
+        if(Picked)
+        {
+            transform.gameObject.SetActive(false);
+        }
     }
 
 }

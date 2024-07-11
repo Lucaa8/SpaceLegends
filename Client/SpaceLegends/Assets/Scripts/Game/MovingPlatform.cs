@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-    [SerializeField] Transform StartPoint;
-    [SerializeField] Transform EndPoint;
-    [SerializeField] Transform Platform;
+    [SerializeField] public Transform StartPoint;
+    [SerializeField] public Transform EndPoint;
+    [SerializeField] public Transform Platform;
 
-    [SerializeField] float Speed = 2.5f;
+    [SerializeField] public float Speed = 2.5f;
     [SerializeField] float PauseDuration = 0.4f;
 
     private Vector2 currentTarget;
