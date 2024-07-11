@@ -35,12 +35,14 @@ public class AudioManager : MonoBehaviour
     public AudioClip sfxButtonClickLevel;
     public AudioClip sfxPlayerJump;   
     public AudioClip sfxPlayerHit;
+    public AudioClip sfxBarrelHit;
     public AudioClip sfxPlayerHurt;
     public AudioClip sfxPlayerDie;
     public AudioClip sfxCheckpoint;
     public AudioClip sfxPickStar;
     public AudioClip sfxPickPotion;
     public AudioClip sfxPickCoin;
+    public AudioClip sfxDestroyBarrel;
     public AudioClip sfxWin;
     public AudioClip sfxLose;
 

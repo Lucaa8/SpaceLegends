@@ -14,6 +14,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] float RangeX;
     [SerializeField] float RangeY;
     [SerializeField] LayerMask EnnemiesMask;
+    [SerializeField] LayerMask GroundMask;
 
     private Player player;
     private Rigidbody2D rb;
@@ -70,19 +71,35 @@ public class PlayerAttack : MonoBehaviour
     private void Attack(float damage)
     {
         damage += damage * DamageModifier;
-        bool hit = false;
+        bool playerHit = false;
+        bool barrelHit = false;
+        foreach (Collider2D barrel in Physics2D.OverlapBoxAll(AttackArea.position, new Vector2(RangeX, RangeY), 0, GroundMask))
+        {
+            Barrel b = barrel.GetComponent<Barrel>();
+            if(b == null || !b.IsIntact() || !b.IsBreakable())
+            {
+                continue;
+            }
+            b.Damage(damage);
+            barrelHit = true;
+        }
         foreach (Collider2D ennemy in Physics2D.OverlapBoxAll(AttackArea.position, new Vector2(RangeX, RangeY), 0, EnnemiesMask))
         {
             Ennemy e = ennemy.transform.GetComponent<Ennemy>();
             if(e.isAlive)
             {
                 e.TakeDamage(damage);
-                hit = true;
+                playerHit = true;
             }         
         }
-        if(hit)
+        if(playerHit)
         {
             AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPlayerHit);
+            return; //If playerhit is played, dont play barrelhit even il a barrel has been also hit
+        }
+        if(barrelHit)
+        {
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxBarrelHit);
         }
     }
 

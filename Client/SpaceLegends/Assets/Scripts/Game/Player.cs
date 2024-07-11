@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
             });
             player.simulated = true;
         });
-        transform.position = StartPoint.transform.position;
+        //transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -263,6 +263,12 @@ public class Player : MonoBehaviour
             AddedMoneyValue.text = state.Value.ToString();
             StartCoroutine(ShowMoneyAdded());
             AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickCoin);
+        }
+        else if (g.CompareTag("Key"))
+        {
+            collision.enabled = false;
+            g.GetComponent<Animator>().SetTrigger("Pickup");
+            AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPickStar);
         }
         else if(g.CompareTag("Checkpoint"))
         {

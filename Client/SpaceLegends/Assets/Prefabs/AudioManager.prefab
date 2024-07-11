@@ -56,12 +56,14 @@ MonoBehaviour:
   sfxButtonClickLevel: {fileID: 8300000, guid: de90a3e8bc6504b10b4d36b3cc01b5ef, type: 3}
   sfxPlayerJump: {fileID: 8300000, guid: 738a9c78ace9b1340a0d803af77760b2, type: 3}
   sfxPlayerHit: {fileID: 8300000, guid: accab4f216ea01a43a13de76cce98b93, type: 3}
+  sfxBarrelHit: {fileID: 8300000, guid: 5051185a4c5d01540a086b98ccd87cc8, type: 3}
   sfxPlayerHurt: {fileID: 8300000, guid: 28b2b50a39bf6ad4287d4e8f1fd823c5, type: 3}
   sfxPlayerDie: {fileID: 8300000, guid: 0482807c608ea2145b15725f3515cb2d, type: 3}
   sfxCheckpoint: {fileID: 8300000, guid: 01a8315b4333afd4e827e8f30267aa3e, type: 3}
   sfxPickStar: {fileID: 8300000, guid: 1bda8d9d19ab18846ac6374b318d3cf9, type: 3}
   sfxPickPotion: {fileID: 8300000, guid: 2f92ec6914a17664c93f8fc8c1b068d8, type: 3}
   sfxPickCoin: {fileID: 8300000, guid: a9025788bd973b84c9023ac47f7a569d, type: 3}
+  sfxDestroyBarrel: {fileID: 8300000, guid: 4c701712c8cdb1f40b5990f9d11d63d0, type: 3}
   sfxWin: {fileID: 8300000, guid: 6859588dac29fb64c96705a71388022e, type: 3}
   sfxLose: {fileID: 8300000, guid: ea940f50b0ce27742b6bcb9b9331de7d, type: 3}
   TransitionTime: 1

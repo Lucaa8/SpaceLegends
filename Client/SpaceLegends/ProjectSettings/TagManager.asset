@@ -12,6 +12,7 @@ TagManager:
   - Potion
   - Coin
   - Web
+  - Key
   layers:
   - Default
   - TransparentFX

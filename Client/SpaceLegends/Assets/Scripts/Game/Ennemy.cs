@@ -27,6 +27,7 @@ public class Ennemy : MonoBehaviour
     private Animator anim;
 
     private Player player;
+    // I access it from EnnemyPatrol script so its in public, but dont need to assign it from editor.
     public Rigidbody2D playerRb;
 
     private EnnemyPatrol Patrol;
