@@ -52,6 +52,8 @@ public class Player : MonoBehaviour
     private float timeSinceLastDamage;
     private bool isTakingPassiveDamage = false;
 
+    private bool isEndingSession = false;
+
     private void Start()
     {
         //PlayerController.SpeedModifier = 0.13f;
@@ -70,7 +72,7 @@ public class Player : MonoBehaviour
             });
             player.simulated = true;
         });
-        //transform.position = StartPoint.transform.position;
+        transform.position = StartPoint.transform.position;
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -117,6 +119,25 @@ public class Player : MonoBehaviour
     public Connection GetConnection()
     {
         return connection;
+    }
+
+    public void Restart()
+    {
+        if (isEndingSession)
+        {
+            return;
+        }
+        isEndingSession = true;
+        connection.Completed = false;
+        // Waits that the communication ends before reloading the scene
+        connection.OnEnd((jrep) =>
+        {
+            LevelChanger manager = FindObjectOfType<LevelChanger>();
+            if (manager != null)
+            {
+                manager.FadeToLevel(SceneManager.GetActiveScene().name);
+            }
+        });
     }
 
     public void UpdateQuitScreen()
@@ -426,6 +447,11 @@ public class Player : MonoBehaviour
 
     public void EndAndQuit()
     {
+        if(isEndingSession)
+        {
+            return;
+        }
+        isEndingSession = true;
         connection.Completed = false;
         AudioManager.Instance.PlayGameState(false); // Initially the death music but too long. So It will play like a "loose" sounds when the player quits
         // Waits that the communication ends before unloading the scene
