@@ -11,11 +11,11 @@ public class Keys_3 : MonoBehaviour
 
         if (picked)
         {
-            DoorStar2.transform.localPosition = new Vector3(83.186f, -6.701f, 0);
+            DoorStar2.transform.localPosition = new Vector3(83f, -6.701f, 0);
         }
         else
         {
-            DoorStar2.transform.localPosition = new Vector3(83.186f, -5.657f, 0);
+            DoorStar2.transform.localPosition = new Vector3(83f, -5.657f, 0);
         }
 
     }

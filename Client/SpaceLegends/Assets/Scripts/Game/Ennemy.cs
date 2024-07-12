@@ -44,12 +44,14 @@ public class Ennemy : MonoBehaviour
         string obj = RandomObject();
         if(obj == "Potion")
         {
-            ChosenObject = Potion;
+            ChosenObject = Instantiate(Potion, transform.parent.parent);
+            ChosenObject.SetActive(false);
             ChosenObject.GetComponentInChildren<PickPotion>().Value = HealValue;
         }
         else if(obj == "Coin")
         {
-            ChosenObject = Coin;
+            ChosenObject = Instantiate(Coin, transform.parent.parent);
+            ChosenObject.SetActive(false);
             ChosenObject.GetComponentInChildren<PickCoin>().Value = SDTValue;
         }
 
@@ -105,8 +107,8 @@ public class Ennemy : MonoBehaviour
             // Drop chosen between heal potion and sdt
             if(ChosenObject != null)
             {
-                GameObject newPotion = Instantiate(ChosenObject, transform.parent.parent);
-                newPotion.transform.position = transform.position;
+                ChosenObject.transform.position = transform.position;
+                ChosenObject.SetActive(true);
             }
         }
     }
