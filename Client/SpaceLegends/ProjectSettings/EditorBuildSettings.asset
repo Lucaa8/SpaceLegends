@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Game/Earth_2.unity
     guid: e904489472e9ab045b90d234ac0b505f
   - enabled: 1
+    path: Assets/Scenes/Game/Earth_3.unity
+    guid: 9ce58f01048892b49933cfe04bff3ba5
+  - enabled: 1
     path: Assets/Scenes/Game/Mars_5.unity
     guid: 371d7e1d1e8be90498e701acd74e3830
   m_configObjects: {}

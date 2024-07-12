@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     [SerializeField] CanvasGroup RespawnButton;
 
     [SerializeField] GameObject Stars;
-    [SerializeField] List<Key> Keys;
+    [SerializeField] List<Key> Keys = new List<Key>();
 
     public bool IsAlive { get; private set; } = true;
     [SerializeField] float MaxHealth;
@@ -53,6 +53,8 @@ public class Player : MonoBehaviour
     private bool isTakingPassiveDamage = false;
 
     private bool isEndingSession = false;
+
+    [SerializeField] bool Debug_UseSpawnPoint;
 
     private void Start()
     {
@@ -72,7 +74,11 @@ public class Player : MonoBehaviour
             });
             player.simulated = true;
         });
-        transform.position = StartPoint.transform.position;
+        // While editing a level, its possible to disable spawning the player at the start point of the level to test some part of the level
+        if(Debug_UseSpawnPoint)
+        {
+            transform.position = StartPoint.transform.position;
+        }
         sprite = transform.GetComponent<SpriteRenderer>();
         animator = transform.GetComponent<Animator>();    
         initialScale = transform.localScale;
@@ -153,13 +159,6 @@ public class Player : MonoBehaviour
         IsAlive = false;
         connection.AddDeath();
         AudioManager.Instance.PlaySound(AudioManager.Instance.sfxPlayerDie);
-        GetStars().Where(s => !s.Saved).ToList()
-        .ForEach(s =>
-        {
-            s.ResetStar();
-            connection.unsetStar(s.StarNumber);
-        });
-        Keys.Where(k => !k.Saved).ToList().ForEach(k => k.ResetState());
         if (animate)
         {
             animator.SetBool("IsDead", true);
@@ -195,6 +194,14 @@ public class Player : MonoBehaviour
     private void Respawn()
     {
         StartCoroutine(ShowScreen(false, DeathScreen));
+        // Reset unsaved stars/keys pickup
+        GetStars().Where(s => !s.Saved).ToList()
+        .ForEach(s =>
+        {
+            s.ResetStar();
+            connection.unsetStar(s.StarNumber);
+        });
+        Keys.Where(k => !k.Saved).ToList().ForEach(k => k.ResetState());
         currentHealth = MaxHealth;
         UpdateHealth();
         player.velocity = Vector3.zero;
