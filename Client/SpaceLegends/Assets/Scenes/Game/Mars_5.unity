@@ -2291,7 +2291,7 @@ MonoBehaviour:
   fallThreshold: 1.8
   speed: 5
   acceleration: 8
-  deccelleration: 9
+  deccelleration: 10.5
   velPower: 1
   isFacingRight: 1
   _cameraFollowGO: {fileID: 1751811510}
@@ -2352,9 +2352,11 @@ MonoBehaviour:
   DeathScreenRemaining: {fileID: 787296097}
   RespawnButton: {fileID: 1131036944}
   Stars: {fileID: 611366995}
+  Keys: []
   MaxHealth: 20
   ImageHealth: {fileID: 1237674234}
   PassiveDamageAmount: 3.5
+  Debug_UseSpawnPoint: 0
 --- !u!114 &451378854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2390,6 +2392,9 @@ MonoBehaviour:
   EnnemiesMask:
     serializedVersion: 2
     m_Bits: 512
+  GroundMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &460982874
 PrefabInstance:
   m_ObjectHideFlags: 0

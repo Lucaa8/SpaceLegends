@@ -2693,7 +2693,7 @@ MonoBehaviour:
   fallThreshold: 1.8
   speed: 5
   acceleration: 8
-  deccelleration: 9
+  deccelleration: 10.5
   velPower: 1
   isFacingRight: 1
   _cameraFollowGO: {fileID: 1751811510}
@@ -2760,6 +2760,7 @@ MonoBehaviour:
   MaxHealth: 20
   ImageHealth: {fileID: 1875517146}
   PassiveDamageAmount: 2.5
+  Debug_UseSpawnPoint: 0
 --- !u!114 &451378854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19638,7 +19639,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 47
-      m_TileSpriteIndex: 47
+      m_TileSpriteIndex: 48
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -20721,10 +20722,10 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 1787266090147368514, guid: 7176edf8b0389e74f89300594e73c7cb, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 1787266090147368514, guid: 7176edf8b0389e74f89300594e73c7cb, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -1409934969919403920, guid: 42582e3eb736a7c4a9147ba7e59978a3, type: 3}
   - m_RefCount: 2

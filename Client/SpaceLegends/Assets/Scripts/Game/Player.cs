@@ -58,7 +58,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        //PlayerController.SpeedModifier = 0.13f;
         // Because scene names are following the pattern: CollectionName_LevelID, e.g. Earth_0, Mars_1
         AudioManager.Instance.PlayLevelMusic(SceneManager.GetActiveScene().name.Split('_')[0]);
         player = transform.GetComponent<Rigidbody2D>();
@@ -212,18 +211,11 @@ public class Player : MonoBehaviour
 
     private void TakeDamage()
     {
-        if (isTakingPassiveDamage)
+        timeSinceLastDamage -= Time.deltaTime;
+        timeSinceLastDamage = Mathf.Max(0f, timeSinceLastDamage); //Avoid hitting useless low values
+        if (isTakingPassiveDamage && timeSinceLastDamage <= 0f)
         {
-            timeSinceLastDamage += Time.deltaTime;
-
-            if (timeSinceLastDamage >= damageInterval)
-            {
-                TakeDamage(PassiveDamageAmount);
-                timeSinceLastDamage = 0f;
-            }
-        }
-        else
-        {
+            TakeDamage(PassiveDamageAmount);
             timeSinceLastDamage = damageInterval;
         }
     }
