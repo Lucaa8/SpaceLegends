@@ -17369,7 +17369,7 @@ PrefabInstance:
       objectReference: {fileID: 451378853}
     - target: {fileID: 996831542960364747, guid: f11d019dd18beb2438bbf8835f0ccd55, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UpdateQuitScreen
+      value: Restart
       objectReference: {fileID: 0}
     - target: {fileID: 1219450377596258094, guid: f11d019dd18beb2438bbf8835f0ccd55, type: 3}
       propertyPath: m_Pivot.x
