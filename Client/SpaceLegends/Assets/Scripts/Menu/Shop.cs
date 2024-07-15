@@ -54,8 +54,8 @@ public class Shop : MonoBehaviour
                 int id = i;
                 buy.onClick.AddListener(() =>
                 {
-                    int price = 0;
-                    int.TryParse(buy.GetComponentInChildren<TMP_Text>().text.Split(" ")[0], out price);
+                    float price = 0;
+                    float.TryParse(buy.GetComponentInChildren<TMP_Text>().text.Split(" ")[0], out price);
                     // This one is also checked server-side, but this avoid the server being spammed if the player spams the button without enough money
                     if (userInfo.SDT < price)
                     {

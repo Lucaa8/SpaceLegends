@@ -2760,7 +2760,7 @@ MonoBehaviour:
   MaxHealth: 20
   ImageHealth: {fileID: 1875517146}
   PassiveDamageAmount: 2.5
-  Debug_UseSpawnPoint: 0
+  Debug_UseSpawnPoint: 1
 --- !u!114 &451378854
 MonoBehaviour:
   m_ObjectHideFlags: 0
