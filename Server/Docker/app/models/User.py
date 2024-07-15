@@ -22,8 +22,8 @@ class User(db.Model):
     wallet_key = db.Column(db.String(128), nullable=False) # Encrypted private key in base64
     banned = db.Column(db.Integer, nullable=False, server_default='0') # 0 = not banned, 1 = banned
     level_xp = db.Column(db.Integer, nullable=False, server_default='0')
-    money_sdt = db.Column(db.Float, nullable=False, server_default='2')
-    money_heart = db.Column(db.Integer, nullable=False, server_default='3')
+    money_sdt = db.Column(db.Float, nullable=False, server_default='1')
+    money_heart = db.Column(db.Integer, nullable=False, server_default='30')
 
     # Relationship to nfts
     nfts = db.relationship('NFT', backref='owner', lazy=True)
