@@ -19,7 +19,10 @@ def inject_user():
 
 @views_bp.route('/')
 def index():
-    return render_template('index.html')
+    from leaderboard import get_leaderboard, refresh_every_x_seconds
+    lb: dict[str, list[tuple]] = get_leaderboard()
+    from leaderboard import last_update # In case get_leaderboard update the leaderboard, to get the updated value
+    return render_template('index.html', lb={category: data[:10] for category, data in lb.items()}, lb_updated=last_update, update_rate=refresh_every_x_seconds//60)
 
 
 @views_bp.route('/token-explorer')

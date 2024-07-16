@@ -69,4 +69,39 @@
             </div>
         </div>
     </section>
+    <hr/>
+    <section class="container mb-4">
+        <h2 class="section-title mt-4" style="text-align: center">Game Leaderboard</h2>
+        <p style="text-align: center">(Leaderboard updates every {{ update_rate }} minutes, only the top 10 is displayed for each category)</p>
+        <p style="text-align: center">(Updated {{ lb_updated }})</p>
+        <div class="row align-items-center">
+        {% for category, players in lb.items() %}
+            {% if category != 'games' %}
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <h4 style="text-align: center">{{ "Levels Completed" if category == 'completed' else category.capitalize() }}</h4>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-1">#</th>
+                                    <th scope="col" class="col-2">Player</th>
+                                    <th scope="col" class="col-2">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for player in players %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td><a href="{{ url_for('views.user_profile', username=player[0]) }}" target="_blank">{{ player[0] }}</a></td>
+                                    <td>{{ player[1] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </section>
 {% endblock %}
