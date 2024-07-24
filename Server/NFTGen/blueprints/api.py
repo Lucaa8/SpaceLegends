@@ -188,10 +188,11 @@ def stop_level():
     if game is None or game.has_ended():
         return jsonify(message="This game is invalid or has already ended"), 400
 
+    # game.finish(bool) does delete game from the database if request.json["completed"] is false.
     if not game.finish(request.json["completed"]):
         return jsonify(message="Something went wrong while validating your session"), 500
 
-    if not game.completed: # Used left the level without ending it
+    if not request.json["completed"]: # User left the level without ending it
         return '', 204
 
     time_spent = (game.finished_at - game.started_at).total_seconds()

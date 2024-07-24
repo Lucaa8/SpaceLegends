@@ -38,8 +38,12 @@ class LiveGame(db.Model):
 
     def finish(self, completed: bool) -> bool:
         try:
-            self.finished_at = datetime.now()
-            self.completed = completed
+            if completed:
+                self.finished_at = datetime.utcnow()
+                self.completed = True
+            else:
+                # Initially it was planned to keep every record. But some levels like the Mars level 2 encourage the player to die and retry to get star 1 and it could lead to a lot of trash records
+                db.session.delete(self)
             db.session.commit()
             return True
         except Exception as e:
