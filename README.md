@@ -20,8 +20,8 @@ The second collection is representing a sci-fi Martian base with a lot of techno
 You can find the images hosted on [IPFS Mars](https://bafybeifku5g36btmudmnsmrgyranj2dljz2ydwkywi3pwzquzkfvekgsh4.ipfs.w3s.link/)
 
 ## Website
-Find the Space Legends website at https://space-legends.luca-dc.ch/
-Download the game at https://space-legends.luca-dc.ch/download
+Find the Space Legends website at https://space-legends.luca-dc.ch/ \
+Download the game at https://space-legends.luca-dc.ch/download (Not available anymore, as I cant support the game)
 
 ## Last Updated
 26.07.2024 at 1:21pm
