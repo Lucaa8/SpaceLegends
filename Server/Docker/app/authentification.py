@@ -34,12 +34,12 @@ def load(app):
 
 
 def user_identity_lookup(user_id):
-    return user_id
+    return str(user_id)
 
 
 def user_lookup_callback(_jwt_header, jwt_data):
     from models import User
-    identity = jwt_data["sub"]
+    identity = int(jwt_data["sub"])
     return User.get_user_by_id(identity)
 
 
@@ -74,7 +74,7 @@ def check_if_token_valid(jwt_header, jwt_payload: dict) -> bool:
             session.pop('user_id', None)
         return True
     from models.User import User
-    user_id = jwt_payload.get('sub') # A little bit of copy paste from the check_if_user_banned. But in some case user_id is not in the session and some /api call can be still done. We need to recheck here.
+    user_id = int(jwt_payload.get('sub')) # A little bit of copy paste from the check_if_user_banned. But in some case user_id is not in the session and some /api call can be still done. We need to recheck here.
     user = User.get_user_by_id(user_id)
     valid: bool = user is not None and user.banned != 1
     if not valid and "user_id" in session:
@@ -94,8 +94,8 @@ def check_if_user_banned():
 
 
 def create_refresh(user):
-    return create_refresh_token(identity=user.id)
+    return create_refresh_token(identity=str(user.id))
 
 
 def create_access(user):
-    return create_access_token(identity=user.id)
+    return create_access_token(identity=str(user.id))
