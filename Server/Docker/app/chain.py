@@ -63,7 +63,7 @@ class CosmicRelic:
         func_txn = tx.prebuild_tx().build_transaction({
             'from': tx.from_address,
             'nonce': self.w3.eth.get_transaction_count(tx.from_address),
-            'gas': '0',
+            # 'gas': '0', # gas set to 0 here does not work anymore. estimate_gas will fail with : gas required exceeds allowance (0)
             'gasPrice': gas_price
         })
 
